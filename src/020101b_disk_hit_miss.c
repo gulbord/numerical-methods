@@ -26,7 +26,7 @@ int main() {
     int hits, throws;
     double x, y;
     double mc_pi;
-    FILE* file = fopen("020101_out.txt", "w");
+    FILE* file = fopen("../out/020101b_out.txt", "w");
 
     for (n = 0; n < n_plot; ++n) {
         hits = 0; // reset hit counter
