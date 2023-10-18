@@ -1,12 +1,12 @@
 CC := gcc
-CFLAGS := -O3 -Wall -Wextra
+CFLAGS := -O3 -Wall -Wextra -lm
 
 SRCDIR := src
 LIBDIR := lib
 EXEDIR := exe
 
 SRCS := $(wildcard $(SRCDIR)/*.c)
-LIBS := $(wildcard $(LIBDIR)/*.c)
+LIBS := $(wildcard $(LIBDIR)/*.c) -lm
 
 all: $(SRCS:$(SRCDIR)/%.c=$(EXEDIR)/%)
 
