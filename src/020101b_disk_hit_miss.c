@@ -16,7 +16,7 @@ int main() {
     // set the seed
     RngStream_SetPackageSeed(vseed);
     // start the rng and let it run for some steps
-    RngStream rngs = RngStream_CreateStream("ch02");
+    RngStream rngs = RngStream_CreateStream("020101b");
     for (i = 0; i < 1000; ++i)
         RngStream_RandU01(rngs);
 
@@ -32,8 +32,8 @@ int main() {
         hits = 0; // reset hit counter
         throws = (1 + n) * dn;
         for (i = 0; i < throws; ++i) {
-            x = RngStream_RandU01(rngs); 
-            y = RngStream_RandU01(rngs); 
+            x = RngStream_RandU01(rngs);
+            y = RngStream_RandU01(rngs);
             if (x * x + y * y < 1)
                 ++hits;
         }
