@@ -15,7 +15,7 @@ int main(int argc, const char* argv[]) {
 
     // compose file name
     char fname[100];
-    snprintf(fname, 100, "%s%s%s", "out/0202a_out_", argv[1], ".txt");
+    snprintf(fname, 100, "%s%s%s", "out/0202a_", argv[1], ".txt");
     FILE* file = fopen(fname, "w");
 
     // rho(x) = (n + 1) * x^n --> sample with F^(-1)(p) = p^(1/(n+1))
