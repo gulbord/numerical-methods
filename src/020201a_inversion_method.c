@@ -18,12 +18,11 @@ int main(int argc, const char* argv[]) {
     snprintf(fname, 100, "%s%s%s", "out/020201a_out_", argv[1], ".txt");
     FILE* file = fopen(fname, "w");
 
-    // rho(x) = (n + 1) x^n --> sample with F^(-1)(p) = p^(1 / (n + 1))
+    // rho(x) = (n + 1) * x^n --> sample with F^(-1)(p) = p^(1/(n+1))
     int n = atoi(argv[1]);
     int n_smp = atoi(argv[2]);
     double* x = malloc(n_smp * sizeof(*x));
-    int i;
-    for (i = 0; i < n_smp; ++i)
+    for (int i = 0; i < n_smp; ++i)
         x[i] = pow(drand48(), 1.0 / (n + 1));
 
     // write the entire array to out (in binary)
