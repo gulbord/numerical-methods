@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define P 1
+#define P M_SQRT1_2
 
 int main(int argc, const char* argv[]) {
     if (argc != 2) {
