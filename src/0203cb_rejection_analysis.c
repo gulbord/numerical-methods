@@ -17,7 +17,7 @@ int main(int argc, const char* argv[]) {
     long int seed = 123456;
     srand48(seed);
 
-    FILE* file = fopen("out/0203c.txt", "w");
+    FILE* file = fopen("out/0203cb.txt", "w");
  
     // read max value of p, # of p's and # of darts for each p from cl
     double max_p = atof(argv[1]);
