@@ -28,7 +28,7 @@ int main(int argc, const char* argv[]) {
 
     int acc = 0;
     while (acc < n_smp) {
-        u = drand48(); 
+        u = drand48();
         if (u < A * P) {
             // sample from unif g(x) = A
             x = u / A;
