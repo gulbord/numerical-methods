@@ -5,9 +5,7 @@
 
 #define TRUE_INT 0.25
 
-double g(double x) {
-    return x * cos(x * x);
-}
+double g(double x) { return x * cos(x * x); }
 
 int main(int argc, const char* argv[]) {
     if (argc != 2) {
@@ -20,15 +18,15 @@ int main(int argc, const char* argv[]) {
     srand48(seed);
 
     // read # of samples from cl
-    int n_smp = atoi(argv[2]);
+    int n_smp = atoi(argv[1]);
 
     double r, t;
     double g_sum = 0.0;
     int n = 0;
     while (n < n_smp) {
-        r = sqrt(-2 * log(drand48()));
-        t = 2 * M_PI * drand48();
-        g_sum += g(r * fabs(cos(t))) + g(r * fabs(sin(t)));
+        r = sqrt(-log(drand48()));
+        t = -M_PI_2 + M_PI * drand48();
+        g_sum += g(r * cos(t)) + g(r * fabs(sin(t)));
         n += 2;
     }
 
