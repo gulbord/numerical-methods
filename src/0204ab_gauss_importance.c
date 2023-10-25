@@ -24,6 +24,7 @@ int main(int argc, const char* argv[]) {
     double g_sum = 0.0;
     int n = 0;
     while (n < n_smp) {
+        // sample two x with modified Box-Müller
         r = sqrt(-log(drand48()));
         t = -M_PI_2 + M_PI * drand48();
         g_sum += g(r * cos(t)) + g(r * fabs(sin(t)));
