@@ -31,7 +31,7 @@ int main(int argc, const char* argv[]) {
     double res = max_x * f_sum / n_smp;
     double err = fabs(1 - res / TRUE_INT);
 
-    printf("I = %g\n", max_x * f_sum / n_smp);
+    printf("I = %g\n", res);
     printf("True value = %g --> Error = %2.2f%%\n", TRUE_INT, err * 100);
 
     return 0;
