@@ -3,7 +3,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define TRUE_INT 1.0
+// sample for N_PTS different values of N
+// ranging from DN to N_PTS * DN, with steps of DN
+// N_SMP samplings for each N in [DN, N_PTS * DN]
+#define N_PTS 100
+#define DN 2
+#define N_SMP 10
 
 double integral_cos(int N)
 {
@@ -18,33 +23,32 @@ double integral_cos(int N)
     return M_PI * f_sum / (3 * N);
 }
 
-int main(int argc, const char* argv[])
+int main()
 {
-    if (argc != 2) {
-        printf("Wrong number of arguments!\n");
-        return 1;
-    }
-
     // set seed for rng drand48()
     long int seed = (long int)time(NULL);
     srand48(seed);
 
-    // read # of samples from cl
-    int n_smp = atoi(argv[1]);
+    FILE* file = fopen("out/0204b.txt", "w");
 
-    double x;
-    double f_sum = 0.0;
-    for (int i = 0; i < n_smp; ++i) {
-        // sample x ~ g(x) = (3/pi)(1 - (4/pi^2)x^2)
-        x = M_PI * sin(asin(drand48()) / 3);
-        f_sum += cos(x) / (1 - M_2_PI * M_2_PI * x * x);
+    int n;
+    double n_tow; // just the n to write to file
+    double int_n[N_SMP];
+    int i, j;
+    for (i = 0; i < N_PTS; ++i) {
+        // calculate the current N
+        n = (i + 1) * DN;
+        // estimate the integral N_SMP times
+        for (j = 0; j < N_SMP; ++j)
+            int_n[j] = integral_cos(n);
+
+        // write to file --> N int_n[1], ..., int_n[N_SMP]
+        n_tow = (double)n;
+        fwrite(&n_tow, sizeof(double), 1, file);
+        fwrite(int_n, sizeof(double), N_SMP, file);
     }
 
-    double res = M_PI * f_sum / (3 * n_smp);
-    double err = fabs(1 - res / TRUE_INT);
-
-    printf("I = %g\n", res);
-    printf("True value = %g --> Error = %2.2f%%\n", TRUE_INT, err * 100);
+    fclose(file);
 
     return 0;
 }
