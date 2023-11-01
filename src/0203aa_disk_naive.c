@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(int argc, const char* argv[]) {
+int main(int argc, const char* argv[])
+{
     if (argc != 2) {
         printf("Wrong number of arguments!\n");
         return 1;

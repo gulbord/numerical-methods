@@ -5,12 +5,14 @@
 
 #define TRUE_INT 0.25
 
-double f(double x) {
+double f(double x)
+{
     double x2 = x * x;
     return x * cos(x2) * exp(-x2);
 }
 
-int main(int argc, const char* argv[]) {
+int main(int argc, const char* argv[])
+{
     if (argc != 3) {
         printf("Wrong number of arguments!\n");
         return 1;

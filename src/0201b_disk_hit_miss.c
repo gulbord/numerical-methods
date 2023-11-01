@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-int main() {
+int main()
+{
     unsigned long seed = (unsigned long)time(NULL);
 
     // use the above seed to generate the other 5 needed

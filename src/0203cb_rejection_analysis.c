@@ -4,7 +4,8 @@
 
 #define MIN_P M_SQRT1_2
 
-int main(int argc, const char* argv[]) {
+int main(int argc, const char* argv[])
+{
     if (argc != 4) {
         printf("Wrong number of arguments!\n");
         return 1;
