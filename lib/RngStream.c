@@ -111,8 +111,7 @@ static void MatVecModM(double A[3][3], double s[3], double v[3], double m)
 
 /*-------------------------------------------------------------------------*/
 
-static void MatMatModM(double A[3][3], double B[3][3], double C[3][3],
-                       double m)
+static void MatMatModM(double A[3][3], double B[3][3], double C[3][3], double m)
 /* Returns C = A*B % m. Work even if A = C or B = C or A = B = C. */
 {
     int i, j;
@@ -178,7 +177,8 @@ static void MatPowModM(double A[3][3], double B[3][3], double m, long n)
 
 /*-------------------------------------------------------------------------*/
 
-static double U01(RngStream g) {
+static double U01(RngStream g)
+{
     long k;
     double p1, p2, u;
 
@@ -209,7 +209,8 @@ static double U01(RngStream g) {
 
 /*-------------------------------------------------------------------------*/
 
-static double U01d(RngStream g) {
+static double U01d(RngStream g)
+{
     double u;
     u = U01(g);
     if (g->Anti == 0) {
@@ -224,7 +225,8 @@ static double U01d(RngStream g) {
 
 /*-------------------------------------------------------------------------*/
 
-static int CheckSeed(unsigned long seed[6]) {
+static int CheckSeed(unsigned long seed[6])
+{
     /* Check that the seeds are legitimate values. Returns 0 if legal
       seeds, -1 otherwise */
     int i;
@@ -269,7 +271,8 @@ static int CheckSeed(unsigned long seed[6]) {
 /* Public part.                                                        */
 /*---------------------------------------------------------------------*/
 
-RngStream RngStream_CreateStream(const char name[]) {
+RngStream RngStream_CreateStream(const char name[])
+{
     int i;
     RngStream g;
     size_t len;
@@ -298,7 +301,8 @@ RngStream RngStream_CreateStream(const char name[]) {
 
 /*-------------------------------------------------------------------------*/
 
-void RngStream_DeleteStream(RngStream* p) {
+void RngStream_DeleteStream(RngStream* p)
+{
     if (*p == NULL)
         return;
     if ((*p)->name != NULL)
@@ -309,7 +313,8 @@ void RngStream_DeleteStream(RngStream* p) {
 
 /*-------------------------------------------------------------------------*/
 
-void RngStream_ResetStartStream(RngStream g) {
+void RngStream_ResetStartStream(RngStream g)
+{
     int i;
     for (i = 0; i < 6; ++i)
         g->Cg[i] = g->Bg[i] = g->Ig[i];
@@ -317,7 +322,8 @@ void RngStream_ResetStartStream(RngStream g) {
 
 /*-------------------------------------------------------------------------*/
 
-void RngStream_ResetNextSubstream(RngStream g) {
+void RngStream_ResetNextSubstream(RngStream g)
+{
     int i;
     MatVecModM(A1p76, g->Bg, g->Bg, m1);
     MatVecModM(A2p76, &g->Bg[3], &g->Bg[3], m2);
@@ -327,7 +333,8 @@ void RngStream_ResetNextSubstream(RngStream g) {
 
 /*-------------------------------------------------------------------------*/
 
-void RngStream_ResetStartSubstream(RngStream g) {
+void RngStream_ResetStartSubstream(RngStream g)
+{
     int i;
     for (i = 0; i < 6; ++i)
         g->Cg[i] = g->Bg[i];
@@ -335,7 +342,8 @@ void RngStream_ResetStartSubstream(RngStream g) {
 
 /*-------------------------------------------------------------------------*/
 
-int RngStream_SetPackageSeed(unsigned long seed[6]) {
+int RngStream_SetPackageSeed(unsigned long seed[6])
+{
     int i;
     if (CheckSeed(seed))
         return -1; /* FAILURE */
@@ -346,7 +354,8 @@ int RngStream_SetPackageSeed(unsigned long seed[6]) {
 
 /*-------------------------------------------------------------------------*/
 
-int RngStream_SetSeed(RngStream g, unsigned long seed[6]) {
+int RngStream_SetSeed(RngStream g, unsigned long seed[6])
+{
     int i;
     if (CheckSeed(seed))
         return -1; /* FAILURE */
@@ -357,7 +366,8 @@ int RngStream_SetSeed(RngStream g, unsigned long seed[6]) {
 
 /*-------------------------------------------------------------------------*/
 
-void RngStream_AdvanceState(RngStream g, long e, long c) {
+void RngStream_AdvanceState(RngStream g, long e, long c)
+{
     double B1[3][3], C1[3][3], B2[3][3], C2[3][3];
 
     if (e > 0) {
@@ -387,7 +397,8 @@ void RngStream_AdvanceState(RngStream g, long e, long c) {
 
 /*-------------------------------------------------------------------------*/
 
-void RngStream_GetState(RngStream g, unsigned long seed[6]) {
+void RngStream_GetState(RngStream g, unsigned long seed[6])
+{
     int i;
     for (i = 0; i < 6; ++i)
         seed[i] = g->Cg[i];
@@ -395,7 +406,8 @@ void RngStream_GetState(RngStream g, unsigned long seed[6]) {
 
 /*-------------------------------------------------------------------------*/
 
-void RngStream_WriteState(RngStream g) {
+void RngStream_WriteState(RngStream g)
+{
     int i;
     if (g == NULL)
         return;
@@ -412,7 +424,8 @@ void RngStream_WriteState(RngStream g) {
 
 /*-------------------------------------------------------------------------*/
 
-void RngStream_WriteStateFull(RngStream g) {
+void RngStream_WriteStateFull(RngStream g)
+{
     int i;
     if (g == NULL)
         return;
@@ -443,9 +456,7 @@ void RngStream_WriteStateFull(RngStream g) {
 
 /*-------------------------------------------------------------------------*/
 
-void RngStream_IncreasedPrecis(RngStream g, int incp) {
-    g->IncPrec = incp;
-}
+void RngStream_IncreasedPrecis(RngStream g, int incp) { g->IncPrec = incp; }
 
 /*-------------------------------------------------------------------------*/
 
@@ -453,7 +464,8 @@ void RngStream_SetAntithetic(RngStream g, int a) { g->Anti = a; }
 
 /*-------------------------------------------------------------------------*/
 
-double RngStream_RandU01(RngStream g) {
+double RngStream_RandU01(RngStream g)
+{
     if (g->IncPrec)
         return U01d(g);
     else
@@ -462,10 +474,12 @@ double RngStream_RandU01(RngStream g) {
 
 /*-------------------------------------------------------------------------*/
 
-int RngStream_RandInt(RngStream g, int i, int j) {
+int RngStream_RandInt(RngStream g, int i, int j)
+{
     return i + (int)((j - i + 1.0) * RngStream_RandU01(g));
 }
 
-int RngStream_RandInt1(RngStream g, int a) {
+int RngStream_RandInt1(RngStream g, int a)
+{
     return (int)(a * RngStream_RandU01(g));
 }
