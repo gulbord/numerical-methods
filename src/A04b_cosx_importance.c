@@ -29,7 +29,7 @@ int main()
     long int seed = (long int)time(NULL);
     srand48(seed);
 
-    FILE* file = fopen("out/0204b.txt", "w");
+    FILE* file = fopen("out/A04b.txt", "w");
 
     int n;
     double n_tow; // just the n to write to file

@@ -14,12 +14,12 @@ int main(int argc, const char* argv[])
     unsigned long vseed[6] = {1234, 4321, 5678, 8765, 9898, 8989};
     RngStream_SetPackageSeed(vseed);
     // start the rng and let it run for some steps
-    RngStream rngs = RngStream_CreateStream("0203aa");
+    RngStream rngs = RngStream_CreateStream("A03ab");
     int i;
     for (i = 0; i < 1000; ++i)
         RngStream_RandU01(rngs);
 
-    FILE* file = fopen("out/0203ab.txt", "w");
+    FILE* file = fopen("out/A03ab.txt", "w");
 
     int n_smp = atoi(argv[1]);
     // allocate radius and theta arrays

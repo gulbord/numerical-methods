@@ -15,7 +15,7 @@ int main(int argc, const char* argv[])
     long int seed = 123456;
     srand48(seed);
 
-    FILE* file = fopen("out/0203ca.txt", "w");
+    FILE* file = fopen("out/A03ca.txt", "w");
 
     // read # of darts from cl
     int n_smp = atoi(argv[1]);

@@ -2,7 +2,7 @@ library(data.table)
 library(ggplot2)
 theme_set(theme_bw(base_family = "Fira Sans Condensed", base_size = 16))
 
-raw_data <- readBin("../out/0204b.txt", what = "double", size = 8, n = 1e6)
+raw_data <- readBin("../out/A04b.txt", what = "double", size = 8, n = 1e6)
 df <- data.table(matrix(raw_data, ncol = 11, byrow = TRUE))
 
 # convert to errors w.r. to true integral (= 1)

@@ -13,7 +13,7 @@ int main(int argc, const char* argv[])
     long int seed = 123456;
     srand48(seed);
 
-    FILE* file = fopen("out/0203b.txt", "w");
+    FILE* file = fopen("out/A03b.txt", "w");
 
     // read from cl gaussian params and # of samples
     double mu = atof(argv[1]);

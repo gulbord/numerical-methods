@@ -17,7 +17,7 @@ int main()
     // set the seed
     RngStream_SetPackageSeed(vseed);
     // start the rng and let it run for some steps
-    RngStream rngs = RngStream_CreateStream("0201b");
+    RngStream rngs = RngStream_CreateStream("A01b");
     for (i = 0; i < 1000; ++i)
         RngStream_RandU01(rngs);
 
@@ -27,7 +27,7 @@ int main()
     int hits, throws;
     double x, y;
     double mc_pi;
-    FILE* file = fopen("out/0201b.txt", "w");
+    FILE* file = fopen("out/A01b.txt", "w");
 
     for (n = 0; n < n_plot; ++n) {
         hits = 0; // reset hit counter
