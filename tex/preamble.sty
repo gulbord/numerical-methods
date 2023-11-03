@@ -33,17 +33,17 @@
 
 % fonts
 \setmainfont[
-	Numbers={Lining, Proportional},
-    Path=fonts,
+    Numbers=Proportional,
+    Path={./fonts/},
 	UprightFont=*-Regular.otf,
 	ItalicFont=*-Italic.otf,
 	BoldFont=*-Bold.otf,
 	BoldItalicFont=*-BoldItalic.otf,
 ]{STIXTwoText}
 \setsansfont[
-    Numbers={Lining,Monospaced},
+    Numbers=Monospaced,
     Scale=MatchLowercase,
-    Path=fonts,
+    Path={./fonts/},
     UprightFont=*-Regular.otf,
     ItalicFont=*-It.otf,
     BoldFont=*-Bold.otf,
@@ -53,14 +53,14 @@
 ]{SourceSans3}
 \setmonofont[
     Scale=MatchLowercase,
-    Path=fonts,
+    Path={./fonts/},
     UprightFont=*-Regular.otf,
     ItalicFont=*-Italic.otf,
     BoldFont=*-Bold.otf,
     BoldItalicFont=*-BoldItalic.otf,
 ]{RecursiveMonoLnrSt}
 \setmathfont[
-    Path=fonts,
+    Path={./fonts/},
     SizeFeatures={
         {Size=8.5-},
         {
@@ -75,6 +75,17 @@
         },
     },
 ]{STIXTwoMath-Regular.otf}
+\newfontface{\titlefont}{SourceSans3}[
+    Numbers=Monospaced,
+    Scale=MatchLowercase,
+    Path={./fonts/},
+    UprightFont=*-Regular.otf,
+    ItalicFont=*-It.otf,
+    BoldFont=*-Bold.otf,
+    BoldItalicFont=*-BoldIt.otf,
+    LetterSpace={-1.5}
+]
+\DeclareTextFontCommand{\texttitle}{\titlefont}
 
 % colours
 \definecolor{title-color}{HTML}{002E63}
