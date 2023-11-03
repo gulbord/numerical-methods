@@ -1,0 +1,205 @@
+\ProvidesFile{gul11.clo}[2021/07/18 v1.0 a LaTeX file (size option)]
+\renewcommand\normalsize{%
+	\@setfontsize\normalsize{11}{14}
+	\abovedisplayskip 11\p@ \@plus2\p@ \@minus4\p@
+	\abovedisplayshortskip \z@ \@plus3\p@
+	\belowdisplayshortskip 7\p@ \@plus3\p@ \@minus3\p@
+	\belowdisplayskip \abovedisplayskip
+	\let\@listi\@listI%
+}
+\normalsize
+\ifx
+	\MakeRobust\@undefined
+\else
+	\MakeRobust\normalsize
+\fi
+\DeclareRobustCommand\small{%
+	\@setfontsize\small{10}{12.5}
+	\abovedisplayskip 10\p@ \@plus2.5\p@ \@minus4\p@
+	\abovedisplayshortskip \z@ \@plus2\p@
+	\belowdisplayshortskip 6\p@ \@plus2\p@ \@minus2\p@
+	\def\@listi{\leftmargin\leftmargini
+		    \topsep 6\p@ \@plus1\p@ \@minus1\p@
+		    \parsep \z@
+		    \itemsep \topsep}%
+	\belowdisplayskip \abovedisplayskip%
+}
+\DeclareRobustCommand\footnotesize{%
+	\@setfontsize\footnotesize{9}{11}
+	\abovedisplayskip 9\p@ \@plus2\p@ \@minus3.5\p@
+	\abovedisplayshortskip \z@ \@plus2\p@
+	\belowdisplayshortskip 5.5\p@ \@plus2\p@ \@minus2\p@
+	\def\@listi{\leftmargin\leftmargini
+		    \topsep 5.5\p@ \@plus1\p@ \@minus1\p@
+		    \parsep \z@
+		    \itemsep \topsep}%
+	\belowdisplayskip \abovedisplayskip%
+}
+\DeclareRobustCommand\scriptsize{\@setfontsize\scriptsize{8}{10}}
+\DeclareRobustCommand\tiny{\@setfontsize\tiny{7}{8.5}}
+
+\DeclareRobustCommand\medium{\@setfontsize\medium{12.5}{16}}
+\DeclareRobustCommand\large{\@setfontsize\large{14}{17.5}}
+\DeclareRobustCommand\Large{\@setfontsize\Large{18}{22.5}}
+\DeclareRobustCommand\LARGE{\@setfontsize\LARGE{22.5}{28}}
+\DeclareRobustCommand\huge{\@setfontsize\huge{29}{36}}
+\DeclareRobustCommand\Huge{\@setfontsize\Huge{36.5}{45}}
+\DeclareRobustCommand\HUGE{\@setfontsize\HUGE{46.5}{57.5}}
+
+\setlength\parskip\z@
+\setlength\parindent{1.2em}
+\setlength\smallskipamount{3.5\p@ \@plus1\p@ \@minus1\p@}
+\setlength\medskipamount{7\p@ \@plus2\p@ \@minus2\p@}
+\setlength\bigskipamount{14\p@ \@plus4\p@ \@minus4\p@}
+
+\setlength\headheight{14\p@}
+\setlength\headsep{14\p@}
+\setlength\topskip{11\p@}
+\setlength\maxdepth{0.5\topskip}
+\setlength\marginparsep{14\p@}
+\setlength\marginparpush{7\p@}
+
+\if@twocolumn
+	\setlength\footskip{28\p@}
+	\setlength\textheight{725\p@}
+
+	\setlength\@tempdima{\paperheight}
+	\addtolength\@tempdima{-\textheight}
+	\setlength\topmargin{.5\@tempdima}
+	\addtolength\topmargin{-1in}
+	\addtolength\topmargin{-\headsep}
+	\addtolength\topmargin{-\headheight}
+
+	\setlength\@tempdimb{\paperwidth}
+	\addtolength\@tempdimb{-\@tempdima}
+	\setlength\textwidth{\@tempdimb}
+
+	\setlength\@tempdimb{.5\@tempdima}
+	\setlength\oddsidemargin{\@tempdimb}
+	\addtolength\oddsidemargin{-1in}
+%	\addtolength\oddsidemargin{8mm} % BCOR
+	\evensidemargin=\oddsidemargin
+
+	\setlength\marginparwidth{\@tempdimb}
+	\addtolength\marginparwidth{-\marginparsep}
+	\@settopoint\marginparwidth
+\else
+	\setlength\footskip{42\p@}
+	\setlength\textwidth{405\p@}
+	\setlength\textheight{655\p@}
+
+	\setlength\@tempdimb{\paperheight}
+	\addtolength\@tempdimb{-\textheight}
+
+	\setlength\topmargin{0.33333\@tempdimb}
+	\addtolength\topmargin{-1in}
+
+    \if@twoside
+    	\setlength\@tempdima{\paperwidth}
+        \addtolength\@tempdima{-\textwidth}
+        \setlength\oddsidemargin{0.33333\@tempdima}
+        \addtolength\oddsidemargin{-1in}
+        \setlength\evensidemargin{\@tempdima}
+        \addtolength\evensidemargin{-\oddsidemargin}
+        \addtolength\evensidemargin{-2in}
+        \addtolength\@tempdima{-\oddsidemargin}
+        \addtolength\@tempdima{-1in}
+        \setlength\marginparwidth{.5\@tempdima}
+        \addtolength\marginparwidth{-\marginparsep}
+        \@settopoint\marginparwidth
+        \addtolength\oddsidemargin{5mm}     % BCOR
+        \addtolength\evensidemargin{-5mm}   % BCOR
+    \else
+    	\setlength\@tempdima{\paperwidth}
+        \addtolength\@tempdima{-\textwidth}
+        \setlength\oddsidemargin{0.5\@tempdima}
+        \addtolength\oddsidemargin{-1in}
+        \addtolength\@tempdima{-\oddsidemargin}
+        \addtolength\@tempdima{-1in}
+        \setlength\marginparwidth{.5\@tempdima}
+        \addtolength\marginparwidth{-\marginparsep}
+        \@settopoint\marginparwidth   
+    \fi
+\fi
+
+\setlength\footnotesep{7\p@}
+\setlength{\skip\footins}{11\p@ \@plus2\p@ \@minus4\p@}
+\setlength\floatsep{14\p@ \@plus3\p@ \@minus3\p@}
+\setlength\textfloatsep{18\p@ \@plus3\p@ \@minus4\p@}
+\setlength\intextsep{14\p@ \@plus3\p@ \@minus3\p@}
+\setlength\dblfloatsep{14\p@ \@plus3\p@ \@minus3\p@}
+\setlength\dbltextfloatsep{18\p@ \@plus3\p@ \@minus4\p@}
+\setlength\@fptop{0\p@ \@plus 1fil}
+\setlength\@fpsep{9\p@ \@plus 2fil}
+\setlength\@fpbot{0\p@ \@plus 1fil}
+\setlength\@dblfptop{0\p@ \@plus 1fil}
+\setlength\@dblfpsep{9\p@ \@plus 2fil}
+\setlength\@dblfpbot{0\p@ \@plus 1fil}
+
+% \leftmargin and \labelsep are defined in the .cls file
+
+\setlength\partopsep{\z@}
+\def\@listi{\leftmargin\leftmargini
+            \parsep\z@
+            \topsep 7\p@ \@plus1\p@ \@minus1\p@
+            \itemsep\topsep}
+\let\@listI\@listi
+\@listi
+\def\@listii{\leftmargin\leftmarginii
+             \labelwidth\leftmarginii
+             \advance\labelwidth-\labelsep
+             \topsep 5\p@ \@plus1\p@ \@minus1\p@
+             \parsep \z@
+             \partopsep \z@
+             \itemsep \topsep}
+\def\@listiii{\leftmargin\leftmarginiii
+              \labelwidth\leftmarginiii
+              \advance\labelwidth-\labelsep
+              \topsep 3\p@ \@plus1\p@ \@minus1\p@
+              \parsep \z@
+              \partopsep \z@
+              \itemsep \topsep}
+\def\@listiv{\leftmargin\leftmarginiv
+             \labelwidth\leftmarginiv
+             \advance\labelwidth-\labelsep}
+\def\@listv{\leftmargin\leftmarginv
+            \labelwidth\leftmarginv
+            \advance\labelwidth-\labelsep}
+\def\@listvi{\leftmargin\leftmarginvi
+             \labelwidth\leftmarginvi
+             \advance\labelwidth-\labelsep}
+
+\AtBeginDocument{%
+\makeatletter
+\def\@xipt{11}
+\def\@xivpt{14.5}
+\def\@xviipt{17.5}
+\def\@xxpt{20.5}
+\def\@xxvpt{25}
+\DeclareMathSizes{5}{5}{5}{5}
+\DeclareMathSizes{5.5}{5.5}{5}{5}
+\DeclareMathSizes{6}{6}{5.5}{5}
+\DeclareMathSizes{6.5}{6.5}{6}{5}
+\DeclareMathSizes{7}{7}{6}{5}
+\DeclareMathSizes{7.5}{7.5}{6}{5}
+\DeclareMathSizes{8}{8}{6.5}{5}
+\DeclareMathSizes{8.5}{8.5}{6.5}{5}
+\DeclareMathSizes{9}{9}{6.5}{5}
+\DeclareMathSizes{10}{10}{7}{5}
+\DeclareMathSizes{10.5}{10.5}{7.5}{5.5}
+\DeclareMathSizes{11}{11}{8}{5.5}
+\DeclareMathSizes{11.5}{11.5}{8.5}{6}
+\DeclareMathSizes{12}{12}{8}{6}
+\DeclareMathSizes{12.5}{12.5}{8.5}{6}
+\DeclareMathSizes{14}{14}{10}{7}
+\DeclareMathSizes{14.5}{14.5}{10.5}{7.5}
+\DeclareMathSizes{16}{16}{11.5}{8}
+\DeclareMathSizes{17.5}{17.5}{12.5}{9}
+\DeclareMathSizes{18}{18}{12.5}{9}
+\DeclareMathSizes{20.5}{20.5}{14.5}{10.5}
+\DeclareMathSizes{22.5}{22.5}{16}{11.5}
+\DeclareMathSizes{25}{25}{17.5}{12.5}
+\DeclareMathSizes{29}{29}{20.5}{14.5}
+\makeatother}
+
+\endinput

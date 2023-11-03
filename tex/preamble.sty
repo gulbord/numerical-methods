@@ -1,0 +1,220 @@
+\usepackage{polyglossia}
+\setmainlanguage[variant=uk]{english}
+\SetLanguageKeys{english}{
+    indentfirst=false,
+    frenchspacing=true,
+}
+
+% maths
+\usepackage{mathtools}
+\usepackage{mleftright}
+\mleftright
+
+% figures and tables
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{svg}
+
+% typography
+\usepackage[stretch=10, shrink=10]{microtype}
+\usepackage[
+    range-phrase=--,
+    range-units=single,
+    detect-all
+]{siunitx}
+\usepackage[en-GB]{datetime2}
+\usepackage{fontspec}
+\usepackage[
+    math-style=TeX,
+    bold-style=ISO,
+    partial=italic
+]{unicode-math}
+\usepackage{lualatex-math}
+
+% fonts
+\setmainfont[
+	Numbers={Lining, Proportional},
+    Path=fonts,
+	UprightFont=*-Regular.otf,
+	ItalicFont=*-Italic.otf,
+	BoldFont=*-Bold.otf,
+	BoldItalicFont=*-BoldItalic.otf,
+]{STIXTwoText}
+\setsansfont[
+    Numbers={Lining,Monospaced},
+    Scale=MatchLowercase,
+    Path=fonts,
+    UprightFont=*-Regular.otf,
+    ItalicFont=*-It.otf,
+    BoldFont=*-Bold.otf,
+    BoldItalicFont=*-BoldIt.otf,
+    WordSpace={1.2321},
+    SmallCapsFeatures={LetterSpace=2.5}%
+]{SourceSans3}
+\setmonofont[
+    Scale=MatchLowercase,
+    Path=fonts,
+    UprightFont=*-Regular.otf,
+    ItalicFont=*-Italic.otf,
+    BoldFont=*-Bold.otf,
+    BoldItalicFont=*-BoldItalic.otf,
+]{RecursiveMonoLnrSt}
+\setmathfont[
+    Path=fonts,
+    SizeFeatures={
+        {Size=8.5-},
+        {
+            Size=6.25-8.5,
+            Font=STIXTwoMath-Regular.otf,
+            Style=MathScript
+        },
+        {
+            Size=-6.25,
+            Font=STIXTwoMath-Regular.otf,
+            Style=MathScriptScript
+        },
+    },
+]{STIXTwoMath-Regular.otf}
+
+% colours
+\definecolor{title-color}{HTML}{002E63}
+\definecolor{link-color}{HTML}{9E2B25}
+\definecolor{description-color}{HTML}{798086}
+
+% layout
+\addtolength{\topmargin}{-\headsep}
+\addtolength{\topmargin}{-\headheight}
+\makeatletter
+\renewcommand{\@makecaption}[2]{%
+	\vskip\abovecaptionskip
+	\sbox\@tempboxa{\small{\sffamily\bfseries\color{title-color} #1:} #2}%
+	\ifdim\wd\@tempboxa>\hsize
+	{\small{\sffamily\bfseries\color{title-color} #1:} #2\par}
+	\else
+	\global\@minipagefalse
+	\hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
+	\fi
+	\vskip\belowcaptionskip%
+}
+\renewcommand{\@seccntformat}[1]{\llap{\csname the#1\endcsname\enskip}}
+\renewcommand{\@seccntformat}[1]{%
+    \{·\textcolor{description-color}{\csname the#1\endcsname}\}\enskip%
+}
+\newcommand{\addot}[1]{#1.}
+\renewcommand{\section}{%
+    \@startsection{section}{1}{\z@}%
+	    {-13pt plus -3pt minus -3pt}%
+	    {1pt}%
+	    {\color{title-color}\sffamily\bfseries}%
+}
+\newcounter{subfigure}
+\counterwithin{subfigure}{figure}
+\renewcommand{\thesubfigure}{(\alph{subfigure})}
+\newcommand{\subcaption}[1]{%
+    \refstepcounter{subfigure}
+    \vskip.25\abovecaptionskip
+    \sbox\@tempboxa{\small{\sffamily\bfseries\color{title-color}
+                           \thesubfigure}~#1}
+    \ifdim\wd\@tempboxa>\hsize
+        {\small{\sffamily\bfseries\color{title-color}\thesubfigure}~#1\par}
+    \else
+        \global\@minipagefalse
+        \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
+    \fi
+	\vskip\belowcaptionskip%
+}
+\def\ps@plain{%
+    \let\@mkboth\@gobbletwo
+    \renewcommand{\@oddhead}{}%
+    \renewcommand{\@oddhead}{}%
+    \renewcommand{\@evenhead}{}%
+    \renewcommand{\@evenfoot}{%
+        \reset@font\sffamily\bfseries\color{title-color}%
+        \hfil\thepage\hfil%
+    }%
+    \renewcommand{\@oddfoot}{\@evenfoot}
+}
+\def\@maketitle{%
+	\newpage
+	\null
+    \vskip -\topskip
+    \parindent=0pt
+	\let\footnote\thanks
+	{\raggedright\LARGE{\color{title-color}\bfseries\titlefont\@title}\par}%
+	\vskip .75\baselineskip%
+    \newlength{\customrowskip}
+    \setlength{\customrowskip}{.25\baselineskip}
+    {\ifnum\@ptsize=0\large\else\medium\fi
+    \begin{tabular}{@{} l l}
+        {\sffamily\bfseries\color{description-color}\textsc{author}}
+        &
+        \@author \\[\customrowskip]
+        {\sffamily\bfseries\color{description-color}%
+        \textsc{last edited}}
+        &
+        \@date
+    \end{tabular}}
+    \vskip 3\baselineskip plus 4pt minus 4pt%
+}
+\makeatother
+
+\pagestyle{plain}
+
+% macros
+\usepackage{xparse}
+\AtBeginDocument{
+%% new commands
+\newcommand{\figref}[1]{Fig.~\ref{#1}}
+%% redefinitions
+\renewcommand{\theta}{\vartheta}
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\phi}{\varphi}
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\geq}{\geqslant}
+\renewcommand{\propto}{\sim}
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+%% special objects
+\newcommand{\I}{\mathbb{I}}
+%% special sets
+\newcommand{\Cc}{\mathbb{C}}
+\newcommand{\Rr}{\mathbb{R}}
+\newcommand{\Nn}{\mathbb{N}}
+\newcommand{\Zz}{\mathbb{Z}}
+%% vectors
+\renewcommand{\vec}[1]{\bm{#1}}
+\newcommand{\uvec}[1]{\vec{\hat{#1}}}
+\newcommand{\matr}[1]{\bm{#1}}
+%% derivatives
+%% derivatives
+\newcommand{\dd}{d}
+\NewDocumentCommand{\diff}{s o m m}{%
+    \IfBooleanTF{#1}%
+        {\dd\IfValueT{#2}{^{#2}} #3 / %
+         \dd #4\IfValueT{#2}{^{#2}}}%
+        {\frac{\dd\IfValueT{#2}{^{#2}} #3}%
+              {\dd #4\IfValueT{#2}{^{#2}}}}%
+}
+\NewDocumentCommand{\pdiff}{s o m m}{%
+    \IfBooleanTF{#1}%
+        {\partial\IfValueT{#2}{^{#2}} #3 / %
+         \partial #4\IfValueT{#2}{^{#2}}}%
+        {\frac{\partial\IfValueT{#2}{^{#2}} #3}%
+              {\partial #4\IfValueT{#2}{^{#2}}}}%
+}
+%% delimiters
+\DeclarePairedDelimiter{\ABS}{\lvert}{\rvert}
+% add star when following large operators for better spacing
+\NewDocumentCommand{\abs}{s o m}{%
+    \IfBooleanTF{#1}{{}}{}%
+    \IfValueTF{#2}{\ABS[#2]{#3}}{\ABS{#3}}%
+}
+\DeclarePairedDelimiter{\expval}{\langle}{\rangle}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+}
+
+\usepackage[
+    colorlinks=true,
+    linkcolor=link-color,
+    urlcolor=link-color,
+]{hyperref}
