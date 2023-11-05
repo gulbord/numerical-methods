@@ -14,8 +14,22 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{svg}
+\svgpath{{./img/}}
 
 % typography
+\usepackage[autostyle]{csquotes}
+\usepackage{listings}
+\lstloadlanguages{C}
+\lstset{
+    basicstyle=\normalsize\ttfamily,
+    keywordstyle=\bfseries,
+    identifierstyle=,
+    commentstyle=\color{description-color}\itshape,
+    numbers=none,
+    frame=none,
+    aboveskip=14pt plus 4pt minus 4pt,
+    belowskip=14pt plus 4pt minus 4pt,
+}
 \usepackage[stretch=10, shrink=10]{microtype}
 \usepackage[
     range-phrase=--,
@@ -54,11 +68,11 @@
 \setmonofont[
     Scale=MatchLowercase,
     Path={./fonts/},
-    UprightFont=*-Regular.otf,
-    ItalicFont=*-Italic.otf,
-    BoldFont=*-Bold.otf,
-    BoldItalicFont=*-BoldItalic.otf,
-]{RecursiveMonoLnrSt}
+    UprightFont=*-Regular.ttf,
+    ItalicFont=*-Italic.ttf,
+    BoldFont=*-Bold.ttf,
+    BoldItalicFont=*-BoldItalic.ttf,
+]{JetBrainsMonoNL}
 \setmathfont[
     Path={./fonts/},
     SizeFeatures={
@@ -152,7 +166,7 @@
     \parindent=0pt
 	\let\footnote\thanks
 	{\raggedright\LARGE{\color{title-color}\bfseries\titlefont\@title}\par}%
-	\vskip .75\baselineskip%
+	\vskip \baselineskip%
     \newlength{\customrowskip}
     \setlength{\customrowskip}{.25\baselineskip}
     {\ifnum\@ptsize=0\large\else\medium\fi
