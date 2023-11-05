@@ -22,7 +22,7 @@ int main()
         RngStream_RandU01(rngs);
 
     int n;
-    int n_plot = 1000; // # of different max_iter to analyse
+    int n_plot = 300; // # of different max_iter to analyse
     int dn = 100;
     int hits, throws;
     double x, y;
