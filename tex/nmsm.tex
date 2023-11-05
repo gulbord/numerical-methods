@@ -2,10 +2,66 @@
 \documentclass{gulartcl}
 \usepackage{preamble}
 
-\title{Numerical Methods in Soft Matter}
+\title{NMSM Homework Exercises}
 \author{Guglielmo Bordin}
 \date{\today}
 
 \begin{document}
 \maketitle
+\section{Sampling random points within \emph{d}-dimensional domains by hit and
+miss}
+I skipped the integration on the rectangle, solving only the disk case.  The
+source code is in \texttt{A01b\_disk\_hit\_miss.c}; I implemented the main part
+of the algorithm like this:
+
+\lstinputlisting[firstline=32, lastline=46, language=C]{../src/A01b_disk_hit_miss.c}
+
+The error as a function of the number of throws is shown in \figref{fig:A01b}.
+It is comfortably under \qty{1}{\percent} with around \numrange{25000}{30000}
+iterations.
+
+\begin{figure}
+    \centering
+    \includesvg[inkscapelatex=false]{img/A01b.svg}
+    \caption{error in the Monte Carlo estimation of the area of a unit
+        disk, as a function of the number of \textquote{throws}.}
+    \label{fig:A01b}
+\end{figure}
+
+\section{Sampling random numbers from a given distribution}
+The idea is to sample from the probability distribution $\rho_n(x) = c x^n$ in
+$[0, 1]$.  First, using the normalization condition we can find out what $c$
+should be:
+\begin{equation}
+    1 = \int_{0}^{1} cx^n \, dx = \frac{c}{n + 1} \implies c = n + 1.
+\end{equation}
+Then, we find the expression of the associated cumulative density function:
+\begin{equation}
+    F_n(x) = (n + 1) \int_{0}^{x} y^n \, dy = x^{n + 1},
+\end{equation}
+and invert it:
+\begin{equation}
+    p = x^{n + 1} \implies x = p^{1 / (n + 1)}.
+\end{equation}
+
+So, inside the code \texttt{A02a\_inversion\_method.c} I sample a random
+\texttt{double} from a uniform distribution between $0$ and $1$ using
+\texttt{drand48()}, and I raise it to the power of $1 / (n + 1)$ to get $x$:
+
+\lstinputlisting[
+    firstline=25, lastline=27, language=C
+]{../src/A02a_inversion_method.c}
+
+A histogram of \num{100000} points sampled from $\rho$ with $n = 3$ is displayed
+in \figref{fig:A02a_3}.
+
+\begin{figure}
+    \centering
+    \includesvg[inkscapelatex=false]{img/A02a_3.svg}
+    \caption{histogram of \num{100000} points sampled from the probability
+        distribution $4 x^3$ in $[0, 1]$.}
+    \label{fig:A02a_3}
+\end{figure}
+
+
 \end{document}
