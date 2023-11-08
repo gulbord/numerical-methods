@@ -41,7 +41,8 @@
 \usepackage[
     math-style=TeX,
     bold-style=ISO,
-    partial=italic
+    partial=italic,
+    warnings-off={mathtools-colon, mathtools-overbracket},
 ]{unicode-math}
 \usepackage{lualatex-math}
 
@@ -55,7 +56,6 @@
 	BoldItalicFont=*-BoldItalic.otf,
 ]{STIXTwoText}
 \setsansfont[
-    Numbers=Monospaced,
     Scale=MatchLowercase,
     Path={./fonts/},
     UprightFont=*-Regular.otf,
@@ -90,7 +90,6 @@
     },
 ]{STIXTwoMath-Regular.otf}
 \newfontface{\titlefont}{SourceSans3}[
-    Numbers=Monospaced,
     Scale=MatchLowercase,
     Path={./fonts/},
     UprightFont=*-Regular.otf,
