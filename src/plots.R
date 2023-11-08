@@ -2,6 +2,7 @@ library(tidyverse)
 theme_set(theme_minimal(base_family = "STIX Two Text", base_size = 9))
 my_blue <- "#002E63"
 my_red <- "#9E2B25"
+my_grey <- "#798086"
 
 # A01b_disk_hit_miss
 read_tsv("../out/A01b.txt", col_names = c("throws", "error")) |>
@@ -67,4 +68,38 @@ ggplot() +
 ggsave(
     "../tex/img/A02b.svg",
     width = 10, height = 7.5, unit = "cm",
+)
+
+# A03aa_disk_naive
+smp <- readBin("../out/A03aa.txt", what = "double", size = 8, n = 2e4)
+r <- smp[1:1e4]
+t <- smp[(1e4 + 1):length(smp)]
+x <- r * cos(t)
+y <- r * sin(t)
+t_line <- seq(0, 2 * pi, length.out = 2000)
+ggplot() +
+    geom_path(aes(cos(t_line), sin(t_line)), colour = my_grey) +
+    geom_point(aes(x, y), colour = my_blue, size = 0.05) +
+    labs(x = expression(italic("x")), y = expression(italic("y")))
+
+ggsave(
+    "../tex/img/A03aa.svg",
+    width = 7, height = 7, unit = "cm"
+)
+
+# A03ab_disk_correct
+smp <- readBin("../out/A03ab.txt", what = "double", size = 8, n = 2e4)
+r <- smp[1:1e4]
+t <- smp[(1e4 + 1):length(smp)]
+x <- r * cos(t)
+y <- r * sin(t)
+t_line <- seq(0, 2 * pi, length.out = 2000)
+ggplot() +
+    geom_path(aes(cos(t_line), sin(t_line)), colour = my_grey) +
+    geom_point(aes(x, y), colour = my_blue, size = 0.05) +
+    labs(x = expression(italic("x")), y = expression(italic("y")))
+
+ggsave(
+    "../tex/img/A03ab.svg",
+    width = 7, height = 7, unit = "cm"
 )
