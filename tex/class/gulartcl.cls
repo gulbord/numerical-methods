@@ -328,11 +328,10 @@
 \setlength\fboxsep{3\p@}
 \setlength\fboxrule{.4\p@}
 \@addtoreset{equation}{section}
-\renewcommand\theequation{%
+\renewcommand\theequation{
     \ifnum \c@section >\z@ \thesection.\fi \@arabic\c@equation}
 \newcounter{figure}
-\renewcommand\thefigure{%
-    \ifnum \c@section >\z@ \thesection.\fi \@arabic\c@figure}
+\renewcommand\thefigure{\@arabic\c@figure}
 \def\fps@figure{tbp}
 \def\ftype@figure{1}
 \def\ext@figure{lof}
