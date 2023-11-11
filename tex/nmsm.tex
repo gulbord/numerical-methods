@@ -13,9 +13,9 @@ miss}
 I skipped the integration on the rectangle, solving only the disk case.  The
 source code is in \texttt{A01b\_disk\_hit\_miss.c}; I implemented the main part
 of the algorithm like this:
-
-\lstinputlisting[firstline=32, lastline=46, language=C]{../src/A01b_disk_hit_miss.c}
-
+\lstinputlisting[
+    firstline=32, lastline=46, language=C
+]{../src/A01b_disk_hit_miss.c}
 The error as a function of the number of throws is shown in \figref{fig:A01b}.
 It is comfortably under \qty{1}{\percent} with around \numrange{25000}{30000}
 iterations.
@@ -41,17 +41,15 @@ Then, we find the expression of the associated cumulative density function:
 \end{equation}
 and invert it:
 \begin{equation}
-    p = x^{n + 1} \implies x = p^{1 / (n + 1)}.
+    u = x^{n + 1} \implies x = u^{1 / (n + 1)}.
 \end{equation}
 
 So, inside the code \texttt{A02a\_inversion\_method.c} I sample a random
 \texttt{double} from a uniform distribution between $0$ and $1$ using
 \texttt{drand48()}, and I raise it to the power of $1 / (n + 1)$ to get $x$:
-
 \lstinputlisting[
     firstline=25, lastline=27, language=C
 ]{../src/A02a_inversion_method.c}
-
 A histogram of \num{100000} points sampled from $\rho$ with $n = 3$ is displayed
 in \figref{fig:A02a_3}.
 
@@ -72,7 +70,7 @@ $\rho_2(x) = cx^2$ in $[0, 2]$. $c$ is different this time, of course:
 The cumulative is then
 \begin{equation}
     F_2(x) = \frac{3}{8} \int_{0}^{x} y^2 \, dy = \frac{x^3}{8} \implies x = 2
-    p^{1/3}.
+    u^{1/3}.
 \end{equation}
 Once again, you can see the comparison between a \num{100000}-points histogram
 and the theoretical curve in \figref{fig:A02b}.
@@ -86,6 +84,12 @@ and the theoretical curve in \figref{fig:A02b}.
 \end{figure}
 
 \section{Sampling via transformation of coordinates}
+If we want to sample points uniformly distributed over the unit disk, we cannot
+simply generate $r \sim \unif{0}{1}$ and $\theta \sim \unif{0}{2\pi}$. The
+result of doing that is shown in \figref{subfig:A03aa}, and the corresponding
+source code is \texttt{A03aa\_disk\_naive.c}. While the angular distribution
+poses no problem, there is an undesired higher density of points close to the
+centre of the disk.
 
 \begin{figure}
     \centering
@@ -106,4 +110,173 @@ and the theoretical curve in \figref{fig:A02b}.
     \label{fig:A03a}
 \end{figure}
 
+The reason for this becomes clear when you consider the number of points falling
+inside a ring of given thickness $\delta r$. Consider a ring with inner radius
+$r_1$ and outer radius $r_1 + \delta r$, with $\delta r \ll r_1$, and another
+with radii $r_2$, $r_2 + \delta r$.  Despite the ratio of their areas being $r_2
+/ r_1$, the fraction of points within each ring remains the same. Thus, the
+number of points falling at a distance $r$ from the centre should be
+proportional to $r$:
+\begin{equation}
+    \rho_{r}(r) = 2r,
+\end{equation}
+with the $2$ in front to ensure normalization over $[0, 1]$. By computing the
+cumulative and inverting we get then
+\begin{equation}
+    F_r(r) = 2 \int_{0}^{x} x \, dx = x^{2} \implies u = r^{2} \implies r =
+    \sqrt{u}.
+\end{equation}
+
+So, I modified the code in \texttt{A03ab\_disk\_correct.c} to sample like this:
+\lstinputlisting[
+    firstline=25, lastline=32, language=C
+]{../src/A03ab_disk_correct.c}
+The result is the correctly uniform sampling in \figref{subfig:A03ab}.
+
+As regards the Box–Muller transform, I started from the factorization of
+$\rho_{x, y}(x, y)$:
+\begin{equation}
+    \rho_{x, y}(x, y) = \frac{1}{2\pi} \exp\left(-\frac{x^{2} + y^{2}}{2}\right)
+        = \rho_x(x) \rho_y(y), \quad \text{with }
+        \rho_x(x) = \frac{e^{-x^{2}/2}}{\sqrt{2\pi}}.
+\end{equation}
+If we switch to polar coordinates this becomes, remembering the factor $r$
+coming from the Jacobian,
+\begin{equation}
+    \rho_{r, \theta}(r, \theta) = \frac{r}{2\pi} e^{-r^{2}/2},
+\end{equation}
+with $\rho_r(r) = r e^{-r^{2}/2}$ and $\rho_\theta(\theta) = 1 / 2\pi$.
+
+Then, we can marginalize over $\theta$ to get $\rho_r(r)$:
+\begin{equation}
+    \rho_r(r) = \frac{1}{2\pi} \int_{0}^{2\pi} r e^{-r^{2}/2} \, dr
+        = r e^{-r^{2}/2}.
+\end{equation}
+As usual, we compute the cumulative and invert it to generate a random $r \sim
+\rho_r(r)$:
+\begin{equation}
+    F_r(r) = \int_{0}^{r} x e^{-x^{2}/2} \, dx = 1 - e^{-r^{2}/2}
+    \implies e^{-r^{2}/2} = 1 - u.
+\end{equation}
+Since $u$ is distributed uniformly, we can redefine it as $1 - u$ for
+simplicity:
+\begin{equation}
+    -\frac{r^{2}}{2} = \log u \implies r = \sqrt{-2\log u}.
+\end{equation}
+Then, to get the angle $\theta$ we recover the \emph{conditional} distribution
+$\rho_{\theta\given r}(\theta \given r)$:
+\begin{equation}
+    \rho_{\theta\given r}(\theta\given r)
+        = \frac{\rho_{r, \theta}(r, \theta)}{\rho_{r}(r)} = \frac{1}{2\pi}.
+\end{equation}
+Thus to get $\theta$ we have simply to sample from $\unif{0}{2\pi}$.
+
+The idea then is to sample two numbers $u_{1}, u_{2}$ from $\unif{0}{1}$ at each
+iteration; at that point we can calculate
+\begin{equation}
+    x = \sqrt{-2\log u_1} \cos(2\pi u_2),
+    \quad y = \sqrt{-2\log u_1} \sin(2\pi u_2),
+\end{equation}
+to get two numbers $x, y$ distributed according to a standard Gaussian
+$\gaus{0}{1}$. We can also get a $z \sim \gaus{\mu}{\sigma}$ afterwards by
+multiplying $x$ or $y$ by $\sigma$ and summing the mean: $z = \mu + \sigma x$.
+
+The code is in \texttt{A03b\_box\_muller.c}; the relevant section is
+\lstinputlisting[
+    firstline=24, lastline=32, language=C,
+]{../src/A03b_box_muller.c}
+You can see a histogram of \num{100000} sampled points in \figref{fig:A03b}.
+
+\begin{figure}
+    \centering
+    \includesvg[inkscapelatex=false]{img/A03b.svg}
+    \caption{histogram of \num{100000} points sampled with the Box–Muller
+        algorithm from the normal distribution with $\mu = 2$ and $\sigma = 3$.}
+    \label{fig:A03b}
+\end{figure}
+
+\section{Rejection method}
+In \texttt{A03ca\_rejection\_sampling.c} I implemented the sampling of random
+numbers from the probability distribution
+\begin{equation}
+    f(x) = \frac{2}{\sqrt{pi}} e^{-x^{2}}
+\end{equation}
+over $[0, \infty)$. I started from a function $g(x)$ that could serve as an
+upper limit to $f(x)$,
+\begin{equation}
+    g(x) =
+    \begin{dcases}
+        A & \text{for } 0 \leq x \leq p, \\
+        \frac{A}{p}x e^{p^{2} - x^{2}} & \text{for } x > p.
+    \end{dcases}
+\end{equation}
+First we normalize it to turn it into a proper probability distribution:
+\begin{equation}
+    1 = \int_{0}^{\infty} g(x) \, dx = Ap + \frac{A}{p}e^{p^{2}}
+    \int_{p}^{\infty} x e^{-x^{2}} \, dx = A \left(p + \frac{1}{2p}\right)
+    \implies A = \frac{2p}{1 + 2p^{2}}.
+\end{equation}
+Then we need a constant $c$ such that $c g(x) \geq f(x)$ everywhere. The maximum
+of $f(x)$ is in $x = 0$, where $f(0) = 2 / \sqrt{\pi}$, so we set $c A = 2 /
+\sqrt{\pi}$. Another thing to consider is that $g(x)$ can have a maximum larger
+than $A$ in $[p, \infty)$:
+\begin{equation}
+    g'(x) = 
+    \begin{dcases}
+        0 & \text{for } 0 \leq x \leq p, \\
+        \frac{A}{p}(1 - 2x^{2}) e^{p^{2} - x^{2}} & \text{for } x > p.
+    \end{dcases}
+\end{equation}
+Thus in the region $[p, \infty)$ the derivative is zero in $x = 1 / \sqrt{2}$.
+To avoid this we have to choose $p > 1 / \sqrt{2} \approx \num{0.707}$.
+
+Now, to generate numbers distributed according to $g(x)$ we compute, as usual,
+the cumulative and invert it: 
+\begin{equation}
+    G(x) =
+    \begin{dcases}
+        Ax & \text{for } 0 \leq x \leq p, \\
+        1 - \frac{A}{2p} e^{p^{2} - x^{2}} & \text{for } x > p.
+    \end{dcases}
+\end{equation}
+Since it is piecewise defined, we have to pay attention to the limits too:
+\begin{gather}
+    \begin{cases}
+        x = u / A & \text{for } u \leq Ap, \\
+        u = 1 - \frac{A}{2p} e^{p^{2} - x^{2}} & \text{for } u > Ap,
+    \end{cases} \\
+\shortintertext{which implies}
+    x = 
+    \begin{dcases}
+        u / A & \text{for } u \leq Ap, \\
+        \sqrt{p^{2} - \log\left[\frac{2p}{A}(1 - u)\right]} & \text{for } u > Ap.
+    \end{dcases}
+\end{gather}
+
+With the choice $cA = 2 / \sqrt{\pi}$ the test $c g(x) \xi < f(x)$, with $\xi
+\sim \unif{0}{1}$, becomes
+\begin{equation}
+    \cancel{\frac{2}{\sqrt{\pi}}} \xi < \cancel{\frac{2}{\sqrt{\pi}}}
+    e^{-x^{2}} \implies \xi < e^{-x^{2}},
+\end{equation}
+if we generated $x$ with the uniform part of $g(x)$, or
+\begin{equation}
+    \xi \cancel{\frac{2}{\sqrt{\pi}}} \frac{x}{p}e^{p^{2} - x^{2}} <
+    \cancel{\frac{2}{\sqrt{\pi}}} e^{-x^{2}} \implies \xi x < p e^{-p^{2}}
+\end{equation}
+otherwise. Let’s take a look at the main loop in the code to make it clear:
+\lstinputlisting[
+    firstline=30, lastline=44, language=C,
+]{../src/A03ca_rejection_sampling.c}
+As you can see from the example histogram in \figref{fig:A03ca}, the sampling is
+correct.
+
+\begin{figure}
+    \centering
+    \includesvg[inkscapelatex=false]{img/A03ca.svg}
+    \caption{histogram of \num{100000} points sampled from $f(x) = 2 e^{-x^{2}}
+        / \sqrt{\pi}$ with the rejection method implemented in
+        \texttt{A03ca\_rejection\_sampling.c}.}
+    \label{fig:A03ca}
+\end{figure}
 \end{document}
