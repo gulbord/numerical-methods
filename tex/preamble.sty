@@ -111,9 +111,11 @@
 \makeatletter
 \renewcommand{\@makecaption}[2]{%
 	\vskip\abovecaptionskip
-	\sbox\@tempboxa{\small{\sffamily\bfseries\color{title-color} #1:} #2}%
+	\sbox\@tempboxa{%
+        \small{\sffamily\bfseries\textcolor{title-color}{#1:}} #2
+    }%
 	\ifdim\wd\@tempboxa>\hsize
-	{\small{\sffamily\bfseries\color{title-color} #1:} #2\par}
+        {\small{\sffamily\bfseries\textcolor{title-color}{#1:}} #2\par}
 	\else
 	\global\@minipagefalse
 	\hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
@@ -133,14 +135,20 @@
 }
 \newcounter{subfigure}
 \counterwithin{subfigure}{figure}
-\renewcommand{\thesubfigure}{(\alph{subfigure})}
+\newcounter{figureplusone}{\thefigure+1}
+\renewcommand{\thesubfigure}{(\thefigureplusone\alph{subfigure})}
 \newcommand{\subcaption}[1]{%
     \refstepcounter{subfigure}
     \vskip.25\abovecaptionskip
-    \sbox\@tempboxa{\small{\sffamily\bfseries\color{title-color}
-                           \thesubfigure}~#1}
+    \sbox\@tempboxa{%
+        \small{%
+            \sffamily\bfseries\textcolor{title-color}{(\alph{subfigure})}%
+        }~#1%
+    }
     \ifdim\wd\@tempboxa>\hsize
-        {\small{\sffamily\bfseries\color{title-color}\thesubfigure}~#1\par}
+        {\small{%
+            \sffamily\bfseries\textcolor{title-color}{(\alph{subfigure})}%
+        }~#1\par}
     \else
         \global\@minipagefalse
         \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
@@ -200,6 +208,7 @@
 \renewcommand{\Im}{\operatorname{Im}}
 %% special objects
 \newcommand{\I}{\mathbb{I}}
+\newcommand{\unif}[2]{\mathcal{U}_{[#1, #2]}}
 %% special sets
 \newcommand{\Cc}{\mathbb{C}}
 \newcommand{\Rr}{\mathbb{R}}
