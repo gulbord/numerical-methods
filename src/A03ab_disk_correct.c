@@ -26,7 +26,6 @@ int main(int argc, const char* argv[])
     double* r = malloc(n_smp * sizeof(*r));
     double* t = malloc(n_smp * sizeof(*t));
     for (i = 0; i < n_smp; ++i) {
-        // sample uniformly (wrong way!)
         r[i] = sqrt(RngStream_RandU01(rngs));
         t[i] = 2 * M_PI * RngStream_RandU01(rngs);
     }
