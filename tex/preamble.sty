@@ -135,8 +135,9 @@
 }
 \newcounter{subfigure}
 \counterwithin{subfigure}{figure}
-\newcounter{figureplusone}{\thefigure+1}
-\renewcommand{\thesubfigure}{(\thefigureplusone\alph{subfigure})}
+\renewcommand{\thesubfigure}{%
+    (\the\numexpr\value{figure}+1\relax\alph{subfigure})%
+}
 \newcommand{\subcaption}[1]{%
     \refstepcounter{subfigure}
     \vskip.25\abovecaptionskip
