@@ -279,4 +279,19 @@ correct.
         \texttt{A03ca\_rejection\_sampling.c}.}
     \label{fig:A03ca}
 \end{figure}
+
+In \texttt{A03cb\_rejection\_analysis.c} I modified slightly the code to analyse
+the acceptance rate of the algorithm as a function of $p$ – subject to the
+condition I was mentioning earlier, $p > 1 / \sqrt{2}$. You can see the results
+in \figref{fig:A03cb}: the best performance, unsurprisingly, is obtained with $p
+= 1 / \sqrt{2}$, since for larger values $g(x)$ tends to move away from $f(x)$.
+
+\begin{figure}
+    \centering
+    \includesvg[inkscapelatex=false]{img/A03cb.svg}
+    \caption{acceptance rate of \num{100000} samples generated with the
+        rejection method algorithm in \texttt{A03cb\_rejection\_analysis.c}., as
+        a function of the breakpoint of $g(x)$.}
+    \label{fig:A03cb}
+\end{figure}
 \end{document}
