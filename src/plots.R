@@ -103,3 +103,59 @@ ggsave(
     "../tex/img/A03ab.svg",
     width = 7, height = 7, unit = "cm"
 )
+
+# A03b_box_muller
+smp <- readBin("../out/A03b.txt", what = "double", size = 8, n = 1e5)
+x <- seq(min(smp), max(smp), by = 0.001)
+fx <- dnorm(x, 2, 3)
+ggplot() +
+    geom_histogram(
+        aes(smp, after_stat(density), fill = "hist"),
+        bins = nclass.FD(smp),
+        boundary = 0,
+        alpha = 0.5,
+        linewidth = 0,
+    ) +
+    geom_line(aes(x, fx, colour = "pdf")) +
+    scale_fill_manual(values = my_blue, labels = "Simulated data") +
+    scale_colour_manual(values = my_blue, labels = "PDF") +
+    labs(
+        x = expression(italic("x")),
+        y = expression(
+            paste("Gaussian with ", italic("μ"), " = 2, ", italic("σ"), " = 3")
+        ),
+    ) +
+    theme(
+        legend.title = element_blank(),
+        legend.position = c(0.2, 0.8),
+        legend.spacing.y = unit(0, "pt"),
+    )
+
+ggsave(
+    "../tex/img/A03b.svg",
+    width = 10, height = 7.5, unit = "cm",
+)
+
+# A03ca_rejection_sampling
+smp <- readBin("../out/A03ca.txt", what = "double", size = 8, n = 1e5)
+x <- seq(0, max(smp), by = 0.0005)
+fx <- 2 * exp(-x^2) / sqrt(pi)
+ggplot() +
+    geom_histogram(
+        aes(smp, after_stat(density), fill = "hist"),
+        bins = nclass.FD(smp),
+        boundary = 0,
+        alpha = 0.5,
+    ) +
+    geom_line(aes(x, fx, colour = "pdf")) +
+    scale_fill_manual(values = my_blue, labels = "Simulated data") +
+    scale_colour_manual(values = my_blue, labels = "PDF") +
+    labs(
+        x = expression(italic("x")),
+        y = expression(paste(italic("f"), "(", italic("x"), ")")),
+    ) +
+    theme(
+        legend.title = element_blank(),
+        legend.position = c(0.8, 0.8),
+        legend.spacing.y = unit(0, "pt"),
+    )
