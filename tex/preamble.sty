@@ -36,6 +36,7 @@
     range-units=single,
     detect-all
 ]{siunitx}
+\usepackage{cancel}
 \usepackage[en-GB]{datetime2}
 \usepackage{fontspec}
 \usepackage[
@@ -198,6 +199,9 @@
 \AtBeginDocument{
 %% new commands
 \newcommand{\figref}[1]{Fig.~\ref{#1}}
+\newcommand{\unif}[2]{\mathcal{U}_{[#1, #2]}}
+\newcommand{\gaus}[2]{\mathcal{N}(#1, #2)}
+\newcommand\given[1][]{\:#1\vert\:}
 %% redefinitions
 \renewcommand{\theta}{\vartheta}
 \renewcommand{\epsilon}{\varepsilon}
@@ -209,7 +213,6 @@
 \renewcommand{\Im}{\operatorname{Im}}
 %% special objects
 \newcommand{\I}{\mathbb{I}}
-\newcommand{\unif}[2]{\mathcal{U}_{[#1, #2]}}
 %% special sets
 \newcommand{\Cc}{\mathbb{C}}
 \newcommand{\Rr}{\mathbb{R}}
