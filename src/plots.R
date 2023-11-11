@@ -159,3 +159,21 @@ ggplot() +
         legend.position = c(0.8, 0.8),
         legend.spacing.y = unit(0, "pt"),
     )
+
+ggsave(
+    "../tex/img/A03ca.svg",
+    width = 10, height = 7.5, unit = "cm",
+)
+
+# A03cb_rejection_analysis
+smp <- readBin("../out/A03cb.txt", what = "double", size = 8, n = 1e4)
+p <- smp[1:(length(smp) / 2)]
+acc <- smp[(length(smp) / 2 + 1):length(smp)]
+ggplot() +
+    geom_line(aes(p, acc), linewidth = 0.1, colour = my_blue) +
+    labs(x = expression(italic("p")), y = "Acceptance rate")
+
+ggsave(
+    "../tex/img/A03cb.svg",
+    width = 10, height = 7.5, unit = "cm",
+)
