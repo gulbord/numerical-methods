@@ -3,12 +3,13 @@
 #include <stdlib.h>
 #include <time.h>
 
-// sample for N_PTS different values of N
-// ranging from DN to N_PTS * DN, with steps of DN
-// N_SMP samplings for each N in [DN, N_PTS * DN]
-#define N_PTS 100
-#define DN 2
-#define N_SMP 10
+// sample for different values of N
+// ranging from MIN_N to MAX_N, with steps of DN
+// N_SMP samplings for each N in [MIN_N, MAX_N]
+#define MIN_N 10
+#define MAX_N 1000
+#define DN 10
+#define N_SMP 100
 
 double integral_cos(int N)
 {
@@ -31,16 +32,13 @@ int main()
 
     FILE* file = fopen("out/A04b.txt", "w");
 
-    int n;
+    int n, i;
     double n_tow; // just the n to write to file
     double int_n[N_SMP];
-    int i, j;
-    for (i = 0; i < N_PTS; ++i) {
-        // calculate the current N
-        n = (i + 1) * DN;
+    for (n = MIN_N; n <= MAX_N; n += DN) {
         // estimate the integral N_SMP times
-        for (j = 0; j < N_SMP; ++j)
-            int_n[j] = integral_cos(n);
+        for (i = 0; i < N_SMP; ++i)
+            int_n[i] = integral_cos(n);
 
         // write to file --> N int_n[1], ..., int_n[N_SMP]
         n_tow = (double)n;
