@@ -347,8 +347,7 @@
      \small}
 	{\end@dblfloat}
 \newcounter{table}
-\renewcommand\thetable{%
-    \ifnum \c@section >\z@ \thesection.\fi \@arabic\c@table}
+\renewcommand\thetable{\@arabic\c@table}
 \def\fps@table{tbp}
 \def\ftype@table{2}
 \def\ext@table{lot}
