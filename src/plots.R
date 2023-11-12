@@ -257,9 +257,7 @@ var_g <- function(t) {
     return(sqrt(exp(a * t) / (a * (2 - a)) - 1))
 }
 ggplot() +
-    geom_line(
-        aes(T, var_rho(T) / var_g(T)), colour = my_blue, linewidth = 0.1,
-    ) +
+    geom_line(aes(T, var_rho(T) / var_g(T)), colour = my_blue) +
     labs(x = expression(italic("T")), y = "Variance ratio")
 
 ggsave(
