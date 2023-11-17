@@ -25,13 +25,20 @@ static inline uint64_t rotl(const uint64_t x, int k)
 }
 
 static uint64_t s[4];
+static uint64_t sm_state;
 
-void set_seed(uint64_t* seed)
+static uint64_t splitmix64(uint64_t* state) {
+	uint64_t z = (*state += 0x9e3779b97f4a7c15);
+	z = (z ^ (z >> 30)) * 0xbf58476d1ce4e5b9;
+	z = (z ^ (z >> 27)) * 0x94d049bb133111eb;
+	return z ^ (z >> 31);
+}
+
+void set_seed(uint64_t seed)
 {
-    s[0] = seed[0];
-    s[1] = seed[1];
-    s[2] = seed[2];
-    s[3] = seed[3];
+    sm_state = seed;
+    for (int i = 0; i < 4; ++i)
+        s[i] = splitmix64(&sm_state);
 }
 
 uint64_t next(void)
