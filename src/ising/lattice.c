@@ -1,4 +1,4 @@
-#include "lib/xoshiro256plusplus.h"
+#include "lib/mt19937ar.h"
 
 void init_lattice(Lattice* lat, int l_siz)
 {
@@ -12,7 +12,7 @@ void init_lattice(Lattice* lat, int l_siz)
     for (i = 0; i < l_siz; ++i) {
         for (j = 0; j < l_siz; ++j) {
             // random +1/-1 initialization
-            lat.spins[k] = (next() % 2) * 2 - 1;
+            lat.spins[k] = (genrand_int32() % 2) * 2 - 1;
 
             // find the four nearest neighbours with pbc
             row_first = l_siz * (k / l_siz);
