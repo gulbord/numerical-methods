@@ -3,12 +3,13 @@
 static double comp_energy(Lattice* lat)
 {
     int e = 0;
+    int nn_sum;
     int i, j, k;
     for (i = 0; i < lat->side; ++i) {
         for (j = 0; j < lat->side; ++j) {
             // sum the up and right nearest neighbours
-            e += spins[k] * (spins[nbrs[k][0]] + spins[nbrs[k][1]]);
-            ++k;
+            nn_sum = lat.spins[lat.nbrs[k]] + lat.spins[lat.nbrs[k + 1]]
+            e += lat.spins[k++] * nn_sum;
         }
     }
 

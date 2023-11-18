@@ -5,7 +5,7 @@ void init_lattice(Lattice* lat, int l_siz)
     lat->side = l_siz;
     int n_spins = l_siz * l_siz;
     lat.spins = malloc(n_spins * sizeof(int));
-    lat.nbrs = malloc(n_spins * sizeof(int*));
+    lat.nbrs = malloc(4 * n_spins * sizeof(int));
 
     int row_first; // first index in the current row
     int i, j, k;
@@ -16,10 +16,10 @@ void init_lattice(Lattice* lat, int l_siz)
 
             // find the four nearest neighbours with pbc
             row_first = l_siz * (k / l_siz);
-            lat.nbrs[k][0] = (k + l_siz) % n_spins;                   // up
-            lat.nbrs[k][1] = row_first + (k - row_first + 1) % l_siz; // right
-            lat.nbrs[k][2] = row_first + (k - row_first - 1) % l_siz; // left
-            lat.nbrs[k][3] = (n_spins + k - l_siz) % n_spins;         // down
+            lat.nbrs[k] = (k + l_siz) % n_spins;                       // up
+            lat.nbrs[k + 1] = row_first + (k - row_first + 1) % l_siz; // right
+            lat.nbrs[k + 2] = row_first + (k - row_first - 1) % l_siz; // left
+            lat.nbrs[k + 3] = (n_spins + k - l_siz) % n_spins;         // down
             ++k;
         }
     }

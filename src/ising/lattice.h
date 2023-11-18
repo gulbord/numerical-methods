@@ -4,7 +4,7 @@
 typedef struct {
     int side;
     int* spins;
-    int* nbrs[4]; // nearest neighbours of each spin
+    int* nbrs; // nearest neighbours of each spin
 } Lattice;
 
 void init_lattice(Lattice* lat, int l_siz);
