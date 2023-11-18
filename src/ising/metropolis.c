@@ -31,11 +31,9 @@ static double comp_magnet(Lattice* lat)
     return (double)m / (lat->side * lat->side);
 }
 
-void evolve(Lattice* lat, int n_steps, double beta, FILE* out_file)
+void evolve(Lattice* lat, int n_steps, double beta, double* energy,
+            double* magnet)
 {
-    double* energy = malloc(n_steps * sizeof(double));
-    double* magnet = malloc(n_steps * sizeof(double));
-
     // compute energy and magnetization at initialization
     energy[0] = comp_energy(lat);
     magnet[0] = comp_magnet(lat);
@@ -62,10 +60,4 @@ void evolve(Lattice* lat, int n_steps, double beta, FILE* out_file)
             magnet[t] = magnet[t - 1];
         }
     }
-
-    fwrite(energy, n_steps * sizeof(double), n_steps, out_file);
-    fwrite(magnet, n_steps * sizeof(double), n_steps, out_file);
-
-    free(energy);
-    free(magnet);
 }
