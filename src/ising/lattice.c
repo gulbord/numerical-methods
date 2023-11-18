@@ -8,18 +8,19 @@ void init_lattice(Lattice* lat, int l_siz)
     lat.nbrs = malloc(4 * n_spins * sizeof(int));
 
     int row_first; // first index in the current row
-    int i, j, k;
+    int i, j, k, n;
     for (i = 0; i < l_siz; ++i) {
         for (j = 0; j < l_siz; ++j) {
             // random +1/-1 initialization
             lat.spins[k] = (genrand_int32() % 2) * 2 - 1;
 
             // find the four nearest neighbours with pbc
+            n = 4 * k;
             row_first = l_siz * (k / l_siz);
-            lat.nbrs[k] = (k + l_siz) % n_spins;                       // up
-            lat.nbrs[k + 1] = row_first + (k - row_first + 1) % l_siz; // right
-            lat.nbrs[k + 2] = row_first + (k - row_first - 1) % l_siz; // left
-            lat.nbrs[k + 3] = (n_spins + k - l_siz) % n_spins;         // down
+            lat.nbrs[n] = (k + l_siz) % n_spins;                       // up
+            lat.nbrs[n + 1] = row_first + (k - row_first + 1) % l_siz; // right
+            lat.nbrs[n + 2] = row_first + (k - row_first - 1) % l_siz; // left
+            lat.nbrs[n + 3] = (n_spins + k - l_siz) % n_spins;         // down
             ++k;
         }
     }
