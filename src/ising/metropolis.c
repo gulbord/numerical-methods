@@ -5,11 +5,12 @@ static double comp_energy(Lattice* lat)
 {
     int e = 0;
     int nn_sum;
-    int i, j, k;
+    int i, j, k, n;
     for (i = 0; i < lat->side; ++i) {
         for (j = 0; j < lat->side; ++j) {
             // sum the up and right nearest neighbours
-            nn_sum = lat.spins[lat.nbrs[4 * k]] + lat.spins[lat.nbrs[4 * k + 1]]
+            n = 4 * k;
+            nn_sum = lat.spins[lat.nbrs[n]] + lat.spins[lat.nbrs[n + 1]];
             e += lat.spins[k++] * nn_sum;
         }
     }
@@ -24,12 +25,11 @@ static double comp_magnet(Lattice* lat)
     int i, j, k;
     for (i = 0; i < lat->side; ++i)
         for (j = 0; j < lat->side; ++j)
-            m += lat.spins[k++]; 
+            m += lat.spins[k++];
 
     // divide by N = L^2 to get average per spin
     return (double)m / (lat->side * lat->side);
 }
-
 
 void evolve(Lattice* lat, int n_steps, double beta, FILE* out_file)
 {
