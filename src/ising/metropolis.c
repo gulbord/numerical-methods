@@ -44,7 +44,7 @@ void evolve(Lattice* lat, int n_steps, double beta,
 
             // compute the delta in energy from the spin flip
             nn_sum = 0;
-            for (j = 0; j < 4; ++i)
+            for (j = 0; j < 4; ++j)
                 nn_sum += lat->spins[lat->nbrs[4 * pick + j]];
             delta_e = 2 * lat->spins[pick] * nn_sum;
 
