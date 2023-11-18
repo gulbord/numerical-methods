@@ -6,7 +6,7 @@ LIBDIR := lib
 EXEDIR := exe
 
 SRCS := $(wildcard $(SRCDIR)/*.c)
-LIBS := $(wildcard $(LIBDIR)/*.c) -lm
+LIBS := $(wildcard $(LIBDIR)/*.c)
 
 all: $(SRCS:$(SRCDIR)/%.c=$(EXEDIR)/%)
 

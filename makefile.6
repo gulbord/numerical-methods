@@ -1,0 +1,19 @@
+CC := gcc
+CFLAGS := -O3 -Wall -Wextra
+
+SRCDIR := src
+LIBDIR := src/ising
+EXEDIR := exe
+
+SRCS := $(wildcard $(SRCDIR)/A06*.c)
+LIBS := $(shell find $(LIBDIR) -name "*.c") -lm
+
+all: $(SRCS:$(SRCDIR)/A06%.c=$(EXEDIR)/A06%)
+
+clean:
+	rm -f $(EXEDIR)/A06*
+
+$(EXEDIR)/A06%: $(SRCDIR)/A06%.c
+	$(CC) $(CFLAGS) $< $(LIBS) -o $@
+
+.PHONY: all clean
