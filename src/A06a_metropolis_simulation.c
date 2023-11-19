@@ -14,22 +14,23 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    // seed the prng
-    // alternative: unsigned long seed[4] = {0x123, 0x345, 0x789, 0x583};
+    // alternative to time() seed:
+    // unsigned long seed[4] = {0x123, 0x345, 0x789, 0x583};
+    // init_by_array(seed, 4);
     init_genrand((unsigned long)time(NULL));
 
     // compose file name
     char fname[100];
-    snprintf(fname, sizeof(fname), "out/A06a_L%s_T%s_Nt%s.txt",
-             argv[1], argv[2], argv[3]);
+    snprintf(fname, sizeof(fname), "out/A06a_L%s_T%s_Nt%s.txt", argv[1],
+             argv[2], argv[3]);
     FILE* file = fopen(fname, "w");
     if (file == NULL) {
         perror("fopen() failed");
         return 1;
     }
 
-    // read parameters from command line 
-    int lat_size = atoi(argv[1]); 
+    // read parameters from command line
+    int lat_size = atoi(argv[1]);
     double temp = atof(argv[2]);
     int n_steps = atoi(argv[3]);
 
