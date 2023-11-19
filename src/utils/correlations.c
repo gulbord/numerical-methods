@@ -19,8 +19,6 @@ double stat_ineff(double* a, int len_a, int t0, int min_lag)
 {
     // length of shortened data
     int len_a0 = len_a - t0;
-    if (len_a0 < 3)
-        return 1.0; // skip trivial cases
 
     // compute the mean of the shortened version of a, a0 = a[t0:len_a]
     double mean_a0 = 0.0;
