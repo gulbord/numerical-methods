@@ -36,6 +36,8 @@ double stat_ineff(double* a, int len_a, int t0, int min_lag)
         da0[i] = a[i + t0] - mean_a0;
         var0 += da0[i] * da0[i];
     }
+    if (var0 == 0.0)
+        return -1.0; // perfectly stationary time series
     var0 /= len_a0;
 
     double tau = 0.0;
@@ -46,7 +48,7 @@ double stat_ineff(double* a, int len_a, int t0, int min_lag)
         c = 0.0;
         for (i = 0; i < len_a0 - t; ++i)
             c += da0[i] * da0[i + t];
-        c /= (len_a0 - t) * var;
+        c /= (len_a0 - t) * var0;
 
         // terminate if c has crossed zero
         // and we've computed it at least out to lag = min_lag
@@ -67,7 +69,7 @@ double stat_ineff(double* a, int len_a, int t0, int min_lag)
     return 1 + 2 * tau;
 }
 
-double eq_time(double* a, int len_a, int n_skip)
+int eq_time(double* a, int len_a, int n_skip)
 {
     double g, n_eff, max_n_eff = 0.0;
     int t0, best_t0 = 0;
@@ -80,6 +82,11 @@ double eq_time(double* a, int len_a, int n_skip)
         if (n_eff > max_n_eff) {
             max_n_eff = n_eff;
             best_t0 = t0;
+        } else if (n_eff < 0) {
+            // stat_ineff() returns -1 when it encounters a stationary time
+            // series. In that case, there's no reason to continue sampling
+            // since all subsequent subsets a[t0:] will be stationary too
+            break;
         }
     }
 
