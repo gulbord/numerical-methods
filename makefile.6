@@ -6,7 +6,7 @@ LIBDIR := src/ising
 EXEDIR := exe
 
 SRCS := $(wildcard $(SRCDIR)/A06*.c)
-LIBS := $(shell find $(LIBDIR) -name "*.c") -lm
+LIBS := $(shell find $(LIBDIR) -name "*.c") src/utils/correlations.c -lm
 
 all: $(SRCS:$(SRCDIR)/A06%.c=$(EXEDIR)/A06%)
 
