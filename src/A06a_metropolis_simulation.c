@@ -1,6 +1,7 @@
 #include "ising/lattice.h"
 #include "ising/lib/mt19937ar.h"
 #include "ising/metropolis.h"
+#include "utils/correlations.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -41,15 +42,23 @@ int main(int argc, char** argv)
     Lattice* system = malloc(sizeof(Lattice));
     init_lattice(system, lat_size);
     evolve(system, n_steps, 1 / temp, energy, magnet);
+    free_lattice(system);
 
     // write results to file
     fwrite(energy, sizeof(*energy), n_steps, file);
     fwrite(magnet, sizeof(*magnet), n_steps, file);
+    fclose(file);
+    printf("Results written to file. Computing equilibration times... ");
+    fflush(stdout);
 
-    free_lattice(system);
+    // detect equilibration times
+    int teq_e = eq_time(energy, n_steps, 10);
+    int teq_m = eq_time(magnet, n_steps, 10);
+
+    printf("Finished!\nt0[E] = %d\nt0[M] = %d\n", teq_e, teq_m);
+
     free(energy);
     free(magnet);
-    fclose(file);
 
     return 0;
 }
