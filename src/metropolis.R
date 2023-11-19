@@ -42,37 +42,3 @@ for (L in c(25, 50, 100)) {
                width = 10, height = 15, unit = "cm")
     }
 }
-
-stat_ineff <- function(a, min_t = 3) {
-    # Reference: J. D. Chodera, W. C. Swope, J. W. Pitera, C. Seok, and K. A.
-    # Dill. Use of the weighted histogram analysis method for the analysis of
-    # simulated and parallel tempering simulations. JCTC 3(1):26-41, 2007.
-
-    # fluctuations from the mean
-    da <- a - mean(a)
-
-    t_run <- length(a)
-    var_a <- var(a)
-    g <- 0
-    t <- 1
-    while (t < t_run - 1) {
-        # compute normalized acf at lag t
-        c <- sum(da[1:(t_run - t)] * da[(t + 1):t_run]) / ((t_run - t) * var_a)
-
-        # terminate if c has crossed zero and we've at least lag = min_t
-        if (c < 0 && t > min_t)
-            break
-
-        # accumulate contribution to statistical inefficiency g
-        g <- g + (1 - t / t_run) * c
-        t <- t + 1
-    }
- 
-    return(1 + 2 * g)
-}
-
-n_eff <- function(a, t) {
-    n <- length(a)
-    return((n - t + 1) / stat_ineff(a[t:n]))
-}
-
