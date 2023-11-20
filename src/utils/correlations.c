@@ -15,6 +15,8 @@
 
 #include <stdlib.h>
 
+#define C_THR 0.005
+
 double stat_ineff(double* a, int len_a, int t0, int min_lag)
 {
     // length of shortened data
@@ -48,9 +50,9 @@ double stat_ineff(double* a, int len_a, int t0, int min_lag)
             c += da0[i] * da0[i + t];
         c /= (len_a0 - t) * var0;
 
-        // terminate if c has crossed zero
+        // terminate if c has crossed the threshold C_THR
         // and we've computed it at least out to lag = min_lag
-        if (c < 0.0 && t > min_lag)
+        if (c < C_THR && t > min_lag)
             break;
 
         // accumulate contribution to the correlation time
@@ -59,10 +61,6 @@ double stat_ineff(double* a, int len_a, int t0, int min_lag)
     }
 
     free(da0);
-
-    // tau must be at least 0.0
-    if (tau <= 0.0)
-        return 1.0;
 
     return 1 + 2 * tau;
 }
