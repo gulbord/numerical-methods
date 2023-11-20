@@ -31,28 +31,31 @@ void evolve(Lattice* lat, int n_steps, double beta,
     comp_em(lat, 0, energy, magnet);
 
     int n_spins = lat->side * lat->side;
-    int pick, nn_sum, delta_e;
-    double diff_e, diff_m; // to keep track of e & m between samplings
-    int t, i, j;
+    int nn_sum, delta_e;
+    double diff_e, diff_m; // to keep track of e and m between samplings
+    int t, i, j, k, n;
     for (t = 1; t < n_steps; ++t) {
+        n = 0;
         diff_e = 0.0;
         diff_m = 0.0;
-        // sample n_spins times for each iteration
-        for (i = 0; i < n_spins; ++i) {
-            // pick a spin at random
-            pick = (int)(genrand_real2() * n_spins);
+        // visit all spins sequentially
+        for (i = 0; i < lat->side; ++i) {
+            for (j = 0; j < lat->side; ++j) {
+                // compute the delta in energy from the spin flip
+                nn_sum = 0;
+                for (k = 0; k < 4; ++k)
+                    nn_sum += lat->spins[lat->nbrs[4 * n + k]];
+                delta_e = 2 * lat->spins[n] * nn_sum;
 
-            // compute the delta in energy from the spin flip
-            nn_sum = 0;
-            for (j = 0; j < 4; ++j)
-                nn_sum += lat->spins[lat->nbrs[4 * pick + j]];
-            delta_e = 2 * lat->spins[pick] * nn_sum;
-
-            // metropolis acceptance condition
-            if (delta_e < 0 || genrand_real1() < exp(-beta * delta_e)) {
-                lat->spins[pick] = -lat->spins[pick]; // flip spin
-                diff_e += (double)delta_e / n_spins;
-                diff_m += 2.0 * lat->spins[pick] / n_spins;
+                // metropolis acceptance condition
+                if (delta_e < 0 || genrand_real1() < exp(-beta * delta_e)) {
+                    lat->spins[n] *= -1;
+                    diff_e += (double)delta_e / n_spins;
+                    diff_m += 2.0 * lat->spins[n] / n_spins;
+                }
+                
+                // update counter and move to the next spin
+                ++n;
             }
         }
 
