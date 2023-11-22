@@ -13,6 +13,35 @@ Tc <- 2 / log(1 + sqrt(2))
 Nt <- 1e5
 iter <- seq_len(Nt)
 
+plot_em <- function(L, T, Nt, max_ind = -1, teq_e = 0, teq_m = 0) {
+    fname <- sprintf("A06a_L%d_T%.4f_Nt%d", L, T, Nt)
+    data <- readBin(sprintf("out/%s.txt", fname),
+                    what = "double", size = 8, n = 2 * Nt)
+    energy <- data[1:Nt]
+    magnet <- data[(Nt + 1):(2 * Nt)]
+
+    if (max_ind > 1) {
+        energy <- energy[1:max_ind]
+        magnet <- magnet[1:max_ind]
+    }
+
+    plot_title <- substitute(paste(italic(L), " = ", Lval, ", ",
+                                   italic(T), " = ", Tval),
+                             list(Lval = L, Tval = format(T, digits = 4)))
+    par(mfrow = c(2, 1))
+    plot(energy, type = "l",
+         xlab = "Time (MC steps per spin)",
+         ylab = "Energy per spin")
+    if (teq_e > 0)
+        abline(v = teq_e, col = "red")
+    plot(magnet, type = "l",
+         xlab = "Time (MC steps per spin)",
+         ylab = "Magnetization per spin")
+    if (teq_m > 0)
+        abline(v = teq_m, col = "red")
+    title(plot_title, outer = TRUE, line = -2)
+}
+
 for (L in c(25, 50, 100)) {
     for (T in c(Tc / 2, Tc + 0.01, 2 * Tc)) {
         message(sprintf("L = %d, T = %.4f", L, T))
