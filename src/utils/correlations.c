@@ -42,7 +42,7 @@ double stat_ineff(double* a, int len_a, int t0, int min_lag)
 
     double tau = 0.0;
     double c;
-    int t = 1;
+    int t = 1, dt = 1;
     while (t < len_a0 - 1) {
         // compute normalized fluctuation correlation function at lag t
         c = 0.0;
@@ -57,7 +57,7 @@ double stat_ineff(double* a, int len_a, int t0, int min_lag)
 
         // accumulate contribution to the correlation time
         tau += (1 - (double)t / len_a0) * c;
-        ++t;
+        t += dt++; // increment the spacing as you move towards smaller c
     }
 
     free(da0);
