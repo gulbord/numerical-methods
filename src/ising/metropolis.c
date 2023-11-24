@@ -2,7 +2,7 @@
 #include "metropolis.h"
 #include <math.h>
 
-static void comp_em(Lattice* lat, int t, double* energy, double* magnet)
+static void comp_em(Lattice *lat, int t, double* energy, double* magnet)
 {
     int e = 0, m = 0;
     int nn_sum;
@@ -24,8 +24,8 @@ static void comp_em(Lattice* lat, int t, double* energy, double* magnet)
     magnet[t] = m / n_spins; 
 }
 
-void evolve(Lattice* lat, int n_steps, double beta,
-            double* energy, double* magnet)
+void evolve(Lattice *lat, int n_steps, double beta,
+            double *energy, double *magnet)
 {
     // compute energy and magnetization at initialization
     comp_em(lat, 0, energy, magnet);

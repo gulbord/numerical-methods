@@ -3,11 +3,11 @@
 
 typedef struct {
     int side;
-    int* spins;
-    int* nbrs; // nearest neighbours of each spin
+    int *spins;
+    int *nbrs; // nearest neighbours of each spin
 } Lattice;
 
-void init_lattice(Lattice* lat, int l_siz);
-void free_lattice(Lattice* lat);
+void init_lattice(Lattice *lat, int l_siz);
+void free_lattice(Lattice *lat);
 
 #endif

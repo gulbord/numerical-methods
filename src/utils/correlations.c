@@ -17,7 +17,7 @@
 
 #define C_THR 0.005
 
-double stat_ineff(double* a, int len_a, int t0, int min_lag)
+double stat_ineff(double *a, int len_a, int t0, int min_lag)
 {
     // length of shortened data
     int len_a0 = len_a - t0;
@@ -30,7 +30,7 @@ double stat_ineff(double* a, int len_a, int t0, int min_lag)
     mean_a0 /= len_a0;
 
     // compute variance and shifted data
-    double* da0 = malloc(len_a0 * sizeof(double));
+    double *da0 = malloc(len_a0 * sizeof(double));
     double var0 = 0.0;
     for (i = 0; i < len_a0; ++i) {
         da0[i] = a[i + t0] - mean_a0;
@@ -65,7 +65,7 @@ double stat_ineff(double* a, int len_a, int t0, int min_lag)
     return 1 + 2 * tau;
 }
 
-int eq_time(double* a, int len_a, int n_skip)
+int eq_time(double *a, int len_a, int n_skip)
 {
     double g, n_eff, max_n_eff = 0.0;
     int t0, best_t0 = 0;

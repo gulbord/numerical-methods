@@ -8,7 +8,7 @@
 
 #define N_ARGS 4
 
-int main(int argc, char** argv)
+int main(int argc, char *argv[])
 {
     if (argc != N_ARGS) {
         printf("Wrong number of arguments! (Should be %d)\n", N_ARGS);
@@ -29,17 +29,17 @@ int main(int argc, char** argv)
     char fname[100];
     snprintf(fname, sizeof(fname), "out/A06a_L%s_T%.4f_Nt%s.txt",
              argv[1], temp, argv[3]);
-    FILE* file = fopen(fname, "w");
+    FILE *file = fopen(fname, "w");
     if (file == NULL) {
         perror("fopen() failed");
         return 1;
     }
 
-    double* energy = malloc(n_steps * sizeof(double));
-    double* magnet = malloc(n_steps * sizeof(double));
+    double *energy = malloc(n_steps * sizeof(double));
+    double *magnet = malloc(n_steps * sizeof(double));
 
     // build the lattice and perform metropolis for n_steps timesteps
-    Lattice* system = malloc(sizeof(Lattice));
+    Lattice *system = malloc(sizeof(Lattice));
     init_lattice(system, lat_size);
     evolve(system, n_steps, 1 / temp, energy, magnet);
     free_lattice(system);
