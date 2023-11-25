@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 
     // compose file name
     char fname[100];
-    snprintf(fname, sizeof(fname), "out/A06a_L%s_T%.4f_Nt%s.txt",
+    snprintf(fname, sizeof(fname), "out/06a_L%s_T%.4f_Nt%s.txt",
              argv[1], temp, argv[3]);
     FILE *file = fopen(fname, "w");
     if (file == NULL) {
