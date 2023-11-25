@@ -1,8 +1,8 @@
 #include "lattice.h"
-#include "lib/mt19937ar.h"
+#include "../../lib/mt19937ar.h"
 #include <stdlib.h>
 
-void init_lattice(Lattice *lat, int l_siz)
+void init_lattice(struct lattice *lat, int l_siz)
 {
     lat->side = l_siz;
     int n_spins = l_siz * l_siz;
@@ -26,7 +26,7 @@ void init_lattice(Lattice *lat, int l_siz)
     }
 }
 
-void free_lattice(Lattice *lat)
+void free_lattice(struct lattice *lat)
 {
     free(lat->spins);
     free(lat->nbrs);

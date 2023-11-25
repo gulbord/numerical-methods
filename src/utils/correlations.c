@@ -2,7 +2,7 @@
  * References
  * ----------
  *
- * [1]J. D. Chodera, W. C. Swope, J. W. Pitera, C. Seok, and K. A. Dill, “Use of
+ * [1] J. D. Chodera, W. C. Swope, J. W. Pitera, C. Seok, and K. A. Dill, “Use of
  * the Weighted Histogram Analysis Method for the Analysis of Simulated and
  * Parallel Tempering Simulations,” Journal of Chemical Theory and Computation,
  * vol. 3, no. 1, pp. 26–41, 2007, doi: 10.1021/ct0502864. 

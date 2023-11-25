@@ -1,8 +1,8 @@
-#include "lib/mt19937ar.h"
 #include "metropolis.h"
+#include "../../lib/mt19937ar.h"
 #include <math.h>
 
-static void comp_em(Lattice *lat, int t, double* energy, double* magnet)
+static void comp_em(struct lattice *lat, int t, double *energy, double *magnet)
 {
     int e = 0, m = 0;
     int nn_sum;
@@ -21,10 +21,10 @@ static void comp_em(Lattice *lat, int t, double* energy, double* magnet)
     // divide by N = L^2 to get average per spin
     double n_spins = lat->side * lat->side;
     energy[t] = e / n_spins;
-    magnet[t] = m / n_spins; 
+    magnet[t] = m / n_spins;
 }
 
-void evolve(Lattice *lat, int n_steps, double beta,
+void evolve(struct lattice *lat, int n_steps, double beta,
             double *energy, double *magnet)
 {
     // compute energy and magnetization at initialization
@@ -53,7 +53,7 @@ void evolve(Lattice *lat, int n_steps, double beta,
                     diff_e += (double)delta_e / n_spins;
                     diff_m += 2.0 * lat->spins[n] / n_spins;
                 }
-                
+
                 // update counter and move to the next spin
                 ++n;
             }

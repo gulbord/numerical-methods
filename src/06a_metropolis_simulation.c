@@ -1,5 +1,5 @@
+#include "../lib/mt19937ar.h"
 #include "ising/lattice.h"
-#include "ising/lib/mt19937ar.h"
 #include "ising/metropolis.h"
 #include "utils/correlations.h"
 #include <stdio.h>
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     double *magnet = malloc(n_steps * sizeof(double));
 
     // build the lattice and perform metropolis for n_steps timesteps
-    Lattice *system = malloc(sizeof(Lattice));
+    struct lattice *system = malloc(sizeof(struct lattice));
     init_lattice(system, lat_size);
     evolve(system, n_steps, 1 / temp, energy, magnet);
     free_lattice(system);
