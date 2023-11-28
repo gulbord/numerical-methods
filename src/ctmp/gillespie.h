@@ -15,7 +15,7 @@ struct state {
 };
 
 // initialize the linked list by filling the head node
-void init_state_list(struct state **head, int *pops, size_t p_size);
+void init_state_list(struct state *head, int *pops, size_t p_size);
 // insert a state at the beginning of the linked list
 void update_state_list(struct state **head, int *pops, double time);
 // print the whole list (in reverse order) to file

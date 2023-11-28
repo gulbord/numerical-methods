@@ -68,10 +68,10 @@ int main()
     reac_ptr reac_fns[3]
         = {&prey_birth_update, &predation_update, &pred_death_update};
 
-    struct state *init;
+    struct state *init = malloc(sizeof(struct state));
     // insert the initial state
     int init_state[2] = {INIT_PREY, INIT_PRED};
-    init_state_list(&init, init_state, 2);
+    init_state_list(init, init_state, 2);
 
     gillespie(&init, rate_fns, reac_fns, 3, MAX_TIME);
 

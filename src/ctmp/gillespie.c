@@ -3,19 +3,17 @@
 #include <math.h>
 #include <stdlib.h>
 
-void init_state_list(struct state **head, int *pops, size_t p_size)
+void init_state_list(struct state *head, int *pops, size_t p_size)
 {
-    *head = malloc(sizeof(struct state));
-
     // fill `head` values
-    (*head)->p_size = p_size;
-    (*head)->pops = malloc(p_size * sizeof(int));
+    head->p_size = p_size;
+    head->pops = malloc(p_size * sizeof(int));
     for (size_t i = 0; i < p_size; ++i)
-        (*head)->pops[i] = pops[i];
-    (*head)->time = 0.0;
+        head->pops[i] = pops[i];
+    head->time = 0.0;
 
     // set pointer to non-existent (yet) next item to NULL
-    (*head)->next = NULL;
+    head->next = NULL;
 }
 
 void update_state_list(struct state **head, int *pops, double time)
