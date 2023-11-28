@@ -68,18 +68,17 @@ int main()
     reac_ptr reac_fns[3]
         = {&prey_birth_update, &predation_update, &pred_death_update};
 
-    struct state_array *s = malloc(sizeof(struct state_array));
-    init_state_array(s, 2, 1000);
-    // insert the initial state and initial time (0.0)
+    struct state *init;
+    // insert the initial state
     int init_state[2] = {INIT_PREY, INIT_PRED};
-    update_state_array(s, init_state, 0.0);
+    init_state_list(&init, init_state, 2);
 
-    gillespie(s, rate_fns, reac_fns, 3, MAX_TIME);
+    gillespie(&init, rate_fns, reac_fns, 3, MAX_TIME);
 
-    write_state_array(s, file);
+    write_state_list(init, file);
 
     fclose(file);
-    free_state_array(s);
+    free_state_list(init);
 
     return 0;
 }

@@ -3,72 +3,86 @@
 #include <math.h>
 #include <stdlib.h>
 
-void init_state_array(struct state_array *s, size_t n_spec, size_t init_size)
+void init_state_list(struct state **head, int *pops, size_t p_size)
 {
-    s->i_size = n_spec;
-    s->o_size = init_size;
-    s->used = 0;
+    *head = malloc(sizeof(struct state));
 
-    s->states = malloc(s->o_size * sizeof(int *));
-    for (size_t i = 0; i < s->o_size; ++i)
-        s->states[i] = malloc(s->i_size * sizeof(int));
-    s->times = malloc(s->o_size * sizeof(double));
+    // fill `head` values
+    (*head)->p_size = p_size;
+    (*head)->pops = malloc(p_size * sizeof(int));
+    for (size_t i = 0; i < p_size; ++i)
+        (*head)->pops[i] = pops[i];
+    (*head)->time = 0.0;
+
+    // set pointer to non-existent (yet) next item to NULL
+    (*head)->next = NULL;
 }
 
-void update_state_array(struct state_array *s, int *new_state, double new_time)
+void update_state_list(struct state **head, int *pops, double time)
 {
-    size_t i;
-    // if running out of space, double the allocation
-    if (s->used == s->o_size) {
-        s->o_size *= 2;
-        s->states = realloc(s->states, s->o_size * sizeof(int *));
-        // allocate only the additional locations (i.e. start from 'used')
-        for (i = s->used; i < s->o_size; ++i)
-            s->states[i] = malloc(s->i_size * sizeof(int));
-        s->times = realloc(s->times, s->o_size * sizeof(double));
+    struct state *tmp = malloc(sizeof(struct state));
+
+    // fill the new state values
+    tmp->p_size = (*head)->p_size;
+    tmp->pops = malloc(tmp->p_size * sizeof(int));
+    for (size_t i = 0; i < tmp->p_size; ++i)
+        tmp->pops[i] = pops[i];
+    tmp->time = time;
+
+    // make `tmp` the new head pointer
+    tmp->next = *head;
+    *head = tmp;
+}
+
+void write_state_list(struct state *head, FILE *file)
+{
+    // base case
+    if (head == NULL)
+        return;
+
+    // print the list after `head`
+    write_state_list(head->next, file);
+
+    // now print `head`
+    fprintf(file, "%.10f,", head->time);
+    for (size_t i = 0; i < head->p_size - 1; ++i)
+        fprintf(file, "%i,", head->pops[i]);
+    fprintf(file, "%i\n", head->pops[head->p_size - 1]);
+}
+
+void free_state_list(struct state *head)
+{
+    struct state *tmp = head;
+
+    // if head == NULL the list is already empty
+    while (head != NULL) {
+        tmp = head;
+        head = head->next; // move to next with `head`
+        free(tmp->pops);   // `tmp` points to prev, so we can free
+        free(tmp);
     }
-
-    // copy new state and time and advance 'used' counter
-    for (i = 0; i < s->i_size; ++i)
-        s->states[s->used][i] = new_state[i];
-    s->times[s->used++] = new_time;
 }
 
-void write_state_array(struct state_array *s, FILE *file)
-{
-    size_t i, j;
-    for (i = 0; i < s->used; ++i) {
-        fprintf(file, "%.10f,", s->times[i]);
-        for (j = 0; j < s->i_size - 1; ++j)
-            fprintf(file, "%i,", s->states[i][j]);
-        fprintf(file, "%i\n", s->states[i][s->i_size - 1]);
-    }
-}
-
-void free_state_array(struct state_array *s)
-{
-    for (size_t i = 0; i < s->o_size; ++i)
-        free(s->states[i]);
-    free(s->states);
-    free(s->times);
-}
-
-void gillespie(struct state_array *s, rate_ptr *rate_fns, reac_ptr *reac_fns,
+void gillespie(struct state **head, rate_ptr *rate_fns, reac_ptr *reac_fns,
                int n_react, double max_time)
 {
     // initialize a rate array to be updated at every iteration
     double *rates = malloc(n_react * sizeof(double));
     // int array to momentarily hold the updated state
-    int *new_state = malloc(s->i_size * sizeof(int));
+    int *new_pops = malloc((*head)->p_size * sizeof(int));
+    int *cur_pops;
 
     double esc_rate, tau, thr, sum, tot_time = 0.0;
-    int i, pick, t = 0;
+    int i, pick;
 
     while (tot_time < max_time) {
+        // update current populations
+        cur_pops = (*head)->pops;
+
         // calculate the escape rate by looping over rate functions
         esc_rate = 0.0;
         for (i = 0; i < n_react; ++i) {
-            rates[i] = rate_fns[i](s->states[t]);
+            rates[i] = rate_fns[i](cur_pops);
             esc_rate += rates[i];
         }
 
@@ -93,10 +107,10 @@ void gillespie(struct state_array *s, rate_ptr *rate_fns, reac_ptr *reac_fns,
         tot_time += tau;
 
         // update the state according to the chosen reaction
-        reac_fns[pick](s->states[t++], new_state);
-        update_state_array(s, new_state, tot_time);
+        reac_fns[pick](cur_pops, new_pops);
+        update_state_list(head, new_pops, tot_time);
     }
 
     free(rates);
-    free(new_state);
+    free(new_pops);
 }

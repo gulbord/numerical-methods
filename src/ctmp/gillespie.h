@@ -7,25 +7,23 @@
 typedef double (*rate_ptr)(int *);
 typedef void (*reac_ptr)(int *, int *);
 
-struct state_array {
-    int **states;
-    double *times;
-    size_t o_size; // outer size = number of stored states/times
-    size_t i_size; // inner size = number of species/populations in states[i]
-    size_t used;   // number of stored elements
+struct state {
+    size_t p_size; // size of `pops`
+    int *pops;     // occupation numbers or populations
+    double time;
+    struct state *next; // next element in the list
 };
 
-// set the sizes and allocate the states and times arrays
-void init_state_array(struct state_array *s, size_t n_spec, size_t init_size);
-// insert a new state and time in the corresponding arrays
-// and expand o_size if needed
-void update_state_array(struct state_array *s, int *new_state, double new_time);
-// write times and states to file in one go
-void write_state_array(struct state_array *s, FILE *file);
-// deallocate everything
-void free_state_array(struct state_array *s);
+// initialize the linked list by filling the head node
+void init_state_list(struct state **head, int *pops, size_t p_size);
+// insert a state at the beginning of the linked list
+void update_state_list(struct state **head, int *pops, double time);
+// print the whole list (in reverse order) to file
+void write_state_list(struct state *head, FILE *file);
+// deallocate correctly
+void free_state_list(struct state *head);
 
-void gillespie(struct state_array *s, rate_ptr *rate_fns, reac_ptr *reac_fns,
+void gillespie(struct state **head, rate_ptr *rate_fns, reac_ptr *reac_fns,
                int n_react, double max_time);
 
 #endif
