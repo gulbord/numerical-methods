@@ -34,18 +34,16 @@ void update_state_list(struct state **head, int *pops, double time)
 
 void write_state_list(struct state *head, FILE *file)
 {
-    // base case
-    if (head == NULL)
-        return;
+    struct state *tmp = head;
 
-    // print the list after `head`
-    write_state_list(head->next, file);
-
-    // now print `head`
-    fprintf(file, "%.10f,", head->time);
-    for (size_t i = 0; i < head->p_size - 1; ++i)
-        fprintf(file, "%i,", head->pops[i]);
-    fprintf(file, "%i\n", head->pops[head->p_size - 1]);
+    size_t i, ps = head->p_size - 1;
+    while (tmp != NULL) {
+        fprintf(file, "%.10f,", tmp->time);
+        for (i = 0; i < ps; ++i)
+            fprintf(file, "%d,", tmp->pops[i]);
+        fprintf(file, "%d\n", tmp->pops[ps]);
+        tmp = tmp->next;
+    }
 }
 
 void free_state_list(struct state *head)
