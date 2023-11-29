@@ -10,8 +10,10 @@ k_birth <- 3
 k_pred <- 0.01
 k_death <- 5
 init_prey <- 500
-init_pred <- 400
+init_pred <- 300
 max_time <- 8
+system(sprintf("exe/08a_lotka_volterra %g %g %g %d %d %g",
+               k_birth, k_pred, k_death, init_prey, init_pred, max_time))
 
 fname <- sprintf("out/08a_Ka%g_Kb%g_Kc%g_X%d_Y%d_T%g.txt",
                  k_birth, k_pred, k_death, init_prey, init_pred, max_time)
@@ -66,9 +68,9 @@ system("rm -f out/08b*")
 
 a <- 2
 b <- 5
-omega <- 300
-init_x <- 600
-init_y <- 400
+omega <- 1000
+init_x <- 2000
+init_y <- 3000
 max_time <- 20
 system(sprintf("exe/08b_brusselator %g %g %g %d %d %g",
                a, b, omega, init_x, init_y, max_time))
