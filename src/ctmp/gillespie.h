@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdio.h>
 
-typedef double (*rate_ptr)(int *);
+typedef double (*rate_ptr)(double *, int *);
 typedef void (*reac_ptr)(int *, int *);
 
 struct state {
@@ -23,7 +23,7 @@ void write_state_list(struct state *head, FILE *file);
 // deallocate correctly
 void free_state_list(struct state *head);
 
-void gillespie(struct state **head, rate_ptr *rate_fns, reac_ptr *reac_fns,
-               int n_react, double max_time);
+void gillespie(struct state **head, rate_ptr *rate_fns, double *rate_con,
+               reac_ptr *reac_fns, int n_react, double max_time);
 
 #endif

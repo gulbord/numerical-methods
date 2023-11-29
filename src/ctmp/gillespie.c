@@ -61,8 +61,8 @@ void free_state_list(struct state *head)
     }
 }
 
-void gillespie(struct state **head, rate_ptr *rate_fns, reac_ptr *reac_fns,
-               int n_react, double max_time)
+void gillespie(struct state **head, rate_ptr *rate_fns, double *rate_con,
+               reac_ptr *reac_fns, int n_react, double max_time)
 {
     // initialize a rate array to be updated at every iteration
     double *rates = malloc(n_react * sizeof(double));
@@ -80,7 +80,7 @@ void gillespie(struct state **head, rate_ptr *rate_fns, reac_ptr *reac_fns,
         // calculate the escape rate by looping over rate functions
         esc_rate = 0.0;
         for (i = 0; i < n_react; ++i) {
-            rates[i] = rate_fns[i](cur_pops);
+            rates[i] = rate_fns[i](rate_con, cur_pops);
             esc_rate += rates[i];
         }
 
