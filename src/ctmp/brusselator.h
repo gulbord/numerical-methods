@@ -11,11 +11,11 @@ static inline double x_creat_r(double *k, int *pops)
 static inline double x_destr_r(double *k, int *pops)
 {
     (void)k;
-    return pops[0];
+    return (double)(pops[0]);
 }
 static inline double y_to_x_r(double *k, int *pops)
 {
-    return pops[0] * (pops[0] - 1) * pops[1] / (k[2] * k[2]);
+    return pops[0] * (pops[0] - 1.0) * pops[1] / (k[2] * k[2]);
 }
 static inline double x_to_y_r(double *k, int *pops)
 {
