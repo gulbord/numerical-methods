@@ -5,7 +5,6 @@ setwd("~/PoD/Y2.1/NMSM/exercises")
 my_pal <- c("#0072B2", "#E69F00")
 
 system("rm -f out/08a*")
-system("exe/08a_lotka_volterra")
 
 k_birth <- 3
 k_pred <- 0.01
@@ -64,14 +63,15 @@ ggsave("tex/img/08a.svg", width = 13, height = 7.5, unit = "cm")
 ###############
 
 system("rm -f out/08b*")
-system("exe/08b_brusselator")
 
 a <- 2
 b <- 5
-omega <- 1000
-init_x <- 1
-init_y <- 1
+omega <- 300
+init_x <- 600
+init_y <- 400
 max_time <- 20
+system(sprintf("exe/08b_brusselator %g %g %g %d %d %g",
+               a, b, omega, init_x, init_y, max_time))
 
 fname <- sprintf("out/08b_a%g_b%g_O%g_X%d_Y%d_T%g.txt",
                  a, b, omega, init_x, init_y, max_time)
