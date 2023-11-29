@@ -21,13 +21,11 @@ static inline void prey_birth_u(int *old_pops, int *new_pops)
     new_pops[0] = old_pops[0] + 1;
     new_pops[1] = old_pops[1];
 }
-
 static inline void predation_u(int *old_pops, int *new_pops)
 {
     new_pops[0] = old_pops[0] - 1;
     new_pops[1] = old_pops[1] + 1;
 }
-
 static inline void pred_death_u(int *old_pops, int *new_pops)
 {
     new_pops[0] = old_pops[0];

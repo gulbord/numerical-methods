@@ -92,7 +92,7 @@ void gillespie(struct state **head, rate_ptr *rate_fns, double *rate_con,
         // pick a reaction with probability ~ rate_i / esc_rate
         thr = genrand_real1() * esc_rate;
         sum = 0.0;
-        pick = 0;
+        pick = n_react - 1;
         for (i = 0; i < n_react; ++i) {
             sum += rates[i];
             if (sum > thr) {
