@@ -1,9 +1,8 @@
 library(tidyverse)
 library(deSolve)
 theme_set(theme_bw(base_family = "Latin Modern Roman", base_size = 9))
-my_pal <- c("#0072B2", "#E69F00")
-
 setwd("~/PoD/Y2.1/NMSM/exercises")
+my_pal <- c("#0072B2", "#E69F00")
 
 system("rm -f out/08a*")
 system("exe/08a_lotka_volterra")
@@ -59,3 +58,29 @@ ggplot(data) +
          colour = "Species", linetype = "Solution")
 
 ggsave("tex/img/08a.svg", width = 13, height = 7.5, unit = "cm")
+
+###############
+# BRUSSELATOR #
+###############
+
+system("rm -f out/08b*")
+system("exe/08b_brusselator")
+
+a <- 2
+b <- 5
+omega <- 1000
+init_x <- 1
+init_y <- 1
+max_time <- 20
+
+fname <- sprintf("out/08b_a%g_b%g_O%g_X%d_Y%d_T%g.txt",
+                 a, b, omega, init_x, init_y, max_time)
+data <- read_csv(fname, show_col_types = FALSE,
+                 col_names = c("time", "x", "y"))
+
+data |>
+    pivot_longer(-time, names_to = "species", values_to = "population") |>
+    ggplot() +
+        geom_line(aes(time, population, colour = species), linewidth = 0.3) +
+        scale_colour_manual(values = my_pal, labels = c("X", "Y")) +
+        labs(x = "Time (s)", y = "Number of molecules", colour = "Species")
