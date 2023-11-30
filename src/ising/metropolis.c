@@ -19,8 +19,8 @@ void evolve(struct lattice *lat, int n_steps, double beta,
     }
 
     // divide by N = L^2 to get average per spin
-    energy[0] = e / (double)n_spins;
-    magnet[0] = m / (double)n_spins;
+    energy[0] = (double)e / n_spins;
+    magnet[0] = (double)m / n_spins;
 
     double delta_e;        // for the metropolis test
     double diff_e, diff_m; // to keep track of e and m between samplings
