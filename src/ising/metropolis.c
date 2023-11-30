@@ -38,12 +38,12 @@ void evolve(struct lattice *lat, int n_steps, double beta,
             // metropolis acceptance condition
             if (delta_e < 0 || genrand_real1() < exp(-beta * delta_e)) {
                 lat->spins[i] *= -1;
-                diff_e += delta_e / n_spins;
-                diff_m += 2.0 * lat->spins[i] / n_spins;
+                diff_e += delta_e;
+                diff_m += 2.0 * lat->spins[i];
             }
         }
 
-        energy[t] = energy[t - 1] + diff_e;
-        magnet[t] = magnet[t - 1] + diff_m;
+        energy[t] = energy[t - 1] + diff_e / n_spins;
+        magnet[t] = magnet[t - 1] + diff_m / n_spins;
     }
 }
