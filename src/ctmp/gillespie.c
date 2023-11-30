@@ -62,11 +62,11 @@ void free_state_list(struct state *head)
 void gillespie(struct state **head, rate_ptr *rate_fns, double *rate_con,
                reac_ptr *reac_fns, int n_react, double max_time)
 {
-    // initialize a rate array to be updated at every iteration
-    double *rates = malloc(n_react * sizeof(double));
+    // rate array to be updated at every iteration
+    double rates[n_react];
     // int array to momentarily hold the updated state
-    int *new_pops = malloc((*head)->p_size * sizeof(int));
-    int *cur_pops;
+    int new_pops[(*head)->p_size];
+    int *cur_pops; // just for clarity
 
     double esc_rate, tau, thr, sum, tot_time = 0.0;
     int i, pick;
@@ -106,7 +106,4 @@ void gillespie(struct state **head, rate_ptr *rate_fns, double *rate_con,
         reac_fns[pick](cur_pops, new_pops);
         update_state_list(head, new_pops, tot_time);
     }
-
-    free(rates);
-    free(new_pops);
 }
