@@ -2,10 +2,10 @@
  * References
  * ----------
  *
- * [1] J. D. Chodera, W. C. Swope, J. W. Pitera, C. Seok, and K. A. Dill, “Use of
- * the Weighted Histogram Analysis Method for the Analysis of Simulated and
+ * [1] J. D. Chodera, W. C. Swope, J. W. Pitera, C. Seok, and K. A. Dill, “Use
+ * of the Weighted Histogram Analysis Method for the Analysis of Simulated and
  * Parallel Tempering Simulations,” Journal of Chemical Theory and Computation,
- * vol. 3, no. 1, pp. 26–41, 2007, doi: 10.1021/ct0502864. 
+ * vol. 3, no. 1, pp. 26–41, 2007, doi: 10.1021/ct0502864.
  *
  * [2] J. D. Chodera, “A Simple Method for Automated Equilibration Detection in
  * Molecular Simulations,” Journal of Chemical Theory and Computation, vol. 12,
@@ -13,66 +13,62 @@
  *
  */
 
+#include <math.h>
 #include <stdlib.h>
 
 #define C_THR 0.005
 
-double stat_ineff(double *a, int len_a, int t0, int min_lag)
+double stat_ineff(double *a, int n, int t0)
 {
-    // length of shortened data
-    int len_a0 = len_a - t0;
-
-    // compute the mean of the shortened version of a, a0 = a[t0:len_a]
-    double mean_a0 = 0.0;
-    int i;
-    for (i = t0; i < len_a; ++i)
-        mean_a0 += a[i];
-    mean_a0 /= len_a0;
-
-    // compute variance and shifted data
-    double *da0 = malloc(len_a0 * sizeof(double));
-    double var0 = 0.0;
-    for (i = 0; i < len_a0; ++i) {
-        da0[i] = a[i + t0] - mean_a0;
-        var0 += da0[i] * da0[i];
+    // compute mean and standard deviation of shortened data
+    // [using Welford's algorithm]
+    double mean_s = 0.0;
+    double delta, delta2, m2 = 0.0;
+    int i, ns = 1;
+    for (i = t0; i < n; ++i) {
+        delta = a[i] - mean_s;
+        mean_s += delta / ns++;
+        delta2 = a[i] - mean_s;
+        m2 += delta * delta2;
     }
-    if (var0 == 0.0)
-        return -1.0; // perfectly stationary time series
-    var0 /= len_a0;
 
-    double tau = 0.0;
-    double c;
+    if (ns < 2)
+        return NAN; // shouldn't happen anyway
+    else if (m2 == 0.0)
+        return -1.0; // perfectly stationary time series
+
+    // finalize variance
+    double var_s = m2 / ns;
+
+    double c, tau = 0.0;
     int t = 1, dt = 1;
-    while (t < len_a0 - 1) {
+    while (t < ns - 1) {
         // compute normalized fluctuation correlation function at lag t
         c = 0.0;
-        for (i = 0; i < len_a0 - t; ++i)
-            c += da0[i] * da0[i + t];
-        c /= (len_a0 - t) * var0;
+        for (i = t0; i < n - t; ++i)
+            c += (a[i] - mean_s) * (a[i + t] - mean_s);
+        c /= (ns - t) * var_s;
 
         // terminate if c has crossed the threshold C_THR
-        // and we've computed it at least out to lag = min_lag
-        if (c < C_THR && t > min_lag)
+        if (c < C_THR)
             break;
 
         // accumulate contribution to the correlation time
-        tau += (1 - (double)t / len_a0) * c;
+        tau += (1 - (double)t / ns) * c;
         t += dt++; // increment the spacing as you move towards smaller c
     }
-
-    free(da0);
 
     return 1 + 2 * tau;
 }
 
-int eq_time(double *a, int len_a, int n_skip)
+int eq_time(double *a, int n, int n_skip)
 {
     double g, n_eff, max_n_eff = 0.0;
     int t0, best_t0 = 0;
-    for (t0 = 0; t0 < len_a - 1; t0 += n_skip) {
+    for (t0 = 0; t0 < n - 1; t0 += n_skip) {
         // compute stat. ineff. and # of uncorrelated samples
-        g = stat_ineff(a, len_a, t0, 3);
-        n_eff = (len_a - t0 + 1) / g;
+        g = stat_ineff(a, n, t0);
+        n_eff = (n - t0 + 1) / g;
 
         // search for t0 such that n_eff is maximized
         if (n_eff > max_n_eff) {
