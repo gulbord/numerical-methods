@@ -6,15 +6,15 @@ my_red <- "#9E2B25"
 my_grey <- "#798086"
 
 setwd("~/PoD/Y2.1/NMSM/exercises")
-system("rm -f out/A06a*")
+system("rm -f out/06a*")
 
-script <- "exe/A06a_metropolis_simulation"
+script <- "exe/06a_metropolis_simulation"
 Tc <- 2 / log(1 + sqrt(2))
 Nt <- 1e5
 iter <- seq_len(Nt)
 
-plot_em <- function(L, T, Nt, max_ind = -1, teq_e = 0, teq_m = 0) {
-    fname <- sprintf("A06a_L%d_T%.4f_Nt%d", L, T, Nt)
+plot_em <- function(L, T, Nt, max_ind = 0, teq_e = 0, teq_m = 0) {
+    fname <- sprintf("06a_L%d_T%.4f_Nt%d", L, T, Nt)
     data <- readBin(sprintf("out/%s.txt", fname),
                     what = "double", size = 8, n = 2 * Nt)
     energy <- data[1:Nt]
