@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     // build the lattice and perform metropolis for n_steps timesteps
     struct lattice *lat = malloc(sizeof(struct lattice));
     init_lattice(lat, lat_size);
-    evolve(lat, n_steps, 1 / temp, energy, magnet);
+    metropolis(lat, n_steps, 1 / temp, energy, magnet);
     free_lattice(lat);
 
     // write results to file

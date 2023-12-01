@@ -2,8 +2,8 @@
 #include "../../lib/mt19937ar.h"
 #include <math.h>
 
-void evolve(struct lattice *lat, int n_steps, double beta,
-            double *energy, double *magnet)
+void metropolis(struct lattice *lat, int n_steps, double beta,
+                double *energy, double *magnet)
 {
     int n_spins = lat->side * lat->side;
     int e = 0, m = 0;

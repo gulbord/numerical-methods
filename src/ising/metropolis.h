@@ -3,7 +3,7 @@
 
 #include "lattice.h"
 
-void evolve(struct lattice *lat, int n_steps, double beta,
-            double *energy, double *magnet);
+void metropolis(struct lattice *lat, int n_steps, double beta,
+                double *energy, double *magnet);
 
 #endif
