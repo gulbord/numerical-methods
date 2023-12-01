@@ -1,5 +1,4 @@
 #include "../lib/mt19937ar.h"
-#include "ising/lattice.h"
 #include "ising/metropolis.h"
 #include "utils/correlations.h"
 #include <stdio.h>
@@ -8,10 +7,11 @@
 
 #define N_ARGS 4
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
     if (argc != N_ARGS) {
-        printf("Wrong number of arguments! (Should be %d)\n", N_ARGS);
+        fprintf(stderr, "E: wrong number of arguments! (Should be %d)\n",
+                N_ARGS);
         return 1;
     }
 
@@ -26,12 +26,12 @@ int main(int argc, char *argv[])
     int n_steps = atoi(argv[3]);
 
     // compose file name
-    char fname[100];
+    char fname[128];
     snprintf(fname, sizeof(fname), "out/06a_L%s_T%.4f_Nt%s.txt",
              argv[1], temp, argv[3]);
     FILE *file = fopen(fname, "w");
     if (file == NULL) {
-        perror("fopen() failed");
+        perror("E: fopen() failed");
         return 1;
     }
 
@@ -39,10 +39,10 @@ int main(int argc, char *argv[])
     double *magnet = malloc(n_steps * sizeof(double));
 
     // build the lattice and perform metropolis for n_steps timesteps
-    struct lattice *system = malloc(sizeof(struct lattice));
-    init_lattice(system, lat_size);
-    evolve(system, n_steps, 1 / temp, energy, magnet);
-    free_lattice(system);
+    struct lattice *lat = malloc(sizeof(struct lattice));
+    init_lattice(lat, lat_size);
+    evolve(lat, n_steps, 1 / temp, energy, magnet);
+    free_lattice(lat);
 
     // write results to file
     fwrite(energy, sizeof(*energy), n_steps, file);
