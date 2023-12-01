@@ -13,7 +13,6 @@
  *
  */
 
-#include <math.h>
 #include <stdlib.h>
 
 #define C_THR 0.005
@@ -21,7 +20,7 @@
 double stat_ineff(double *a, int n, int t0)
 {
     // compute mean and standard deviation of shortened data
-    // [using Welford's algorithm]
+    // (using Welford's algorithm)
     double mean_s = 0.0;
     double delta, delta2, m2 = 0.0;
     int i, ns = 1;
@@ -32,10 +31,9 @@ double stat_ineff(double *a, int n, int t0)
         m2 += delta * delta2;
     }
 
-    if (ns < 2)
-        return NAN; // shouldn't happen anyway
-    else if (m2 == 0.0)
-        return -1.0; // perfectly stationary time series
+    // test for stationary or pathologically short series
+    if (m2 == 0.0 || ns < 2)
+        return -1.0;
 
     // finalize variance
     double var_s = m2 / ns;
@@ -49,7 +47,7 @@ double stat_ineff(double *a, int n, int t0)
             c += (a[i] - mean_s) * (a[i + t] - mean_s);
         c /= (ns - t) * var_s;
 
-        // terminate if c has crossed the threshold C_THR
+        // terminate if c has crossed the threshold
         if (c < C_THR)
             break;
 
