@@ -1,4 +1,4 @@
-CC := gcc
+CC := clang
 CFLAGS := -O3 -Wall -Wextra
 
 SRC := src
@@ -7,7 +7,7 @@ LIB := lib
 
 PRNG := $(LIB)/mt19937ar.c
 
-all: 6a 7a
+all: 6a 7a 8a 8b
 
 clean:
 	rm -f $(EXE)/*
@@ -16,7 +16,7 @@ clean:
 		$(SRC)/utils/correlations.c
 	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/06a_metropolis
 
-7a: $(SRC)/07a_wolff.c $(SRC)/ising/wolff.c
+7a: $(SRC)/07a_wolff.c $(SRC)/ising/lattice.c $(SRC)/ising/wolff.c
 	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/07a_wolff
 
 8a: $(SRC)/08a_lotka_volterra.c $(SRC)/ctmp/gillespie.c
