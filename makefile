@@ -1,4 +1,4 @@
-CC := clang
+CC := gcc
 CFLAGS := -O3 -Wall -Wextra
 
 SRC := src
