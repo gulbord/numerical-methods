@@ -46,7 +46,7 @@ void wolff(struct lattice *lat, int n_steps, double beta,
         unvisited[rear++] = seed;
 
         cs = 1; // cluster size
-        while (front < rear) {
+        while (front != rear) {
             // get an unvisited site from the front
             i = unvisited[front++];
             // loop over neighbours
@@ -70,7 +70,7 @@ void wolff(struct lattice *lat, int n_steps, double beta,
         delta_e = 0;
         front = 0; rear = 0;
         unvisited[rear++] = seed;
-        while (front < rear) {
+        while (front != rear) {
             // get an unvisited cluster site from the front
             i = unvisited[front++];
             // loop over neighbours
