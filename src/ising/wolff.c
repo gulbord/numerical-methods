@@ -2,6 +2,9 @@
 #include "../../lib/mt19937ar.h"
 #include <math.h>
 #include <string.h>
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 void wolff(struct lattice *lat, int n_steps, double beta,
            double *energy, double *magnet, int *clus_sz)
@@ -64,7 +67,13 @@ void wolff(struct lattice *lat, int n_steps, double beta,
         }
 
         clus_sz[t - 1] = cs; // clus_sz should have (n_steps - 1) elements!
-        magnet[t] = magnet[t - 1] - 2.0 * s0 * cs / n_spins;
+
+        // check if we are flipping the whole cluster
+        if (cs == n_spins) {
+            magnet[t] = -magnet[t - 1];
+            energy[t] = energy[t - 1];
+            continue;
+        }
 
         // compute the energy difference
         delta_e = 0;
@@ -95,5 +104,6 @@ void wolff(struct lattice *lat, int n_steps, double beta,
         }
 
         energy[t] = energy[t - 1] + 2.0 * delta_e / n_spins;
+        magnet[t] = magnet[t - 1] - 2.0 * s0 * cs / n_spins;
     }
 }
