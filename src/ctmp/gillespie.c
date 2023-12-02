@@ -36,12 +36,11 @@ void write_state_list(struct state *head, FILE *file)
 {
     struct state *tmp = head;
 
-    size_t i, ps = head->p_size - 1;
+    size_t i, ps = head->p_size;
     while (tmp != NULL) {
         fprintf(file, "%.10f,", tmp->time);
         for (i = 0; i < ps; ++i)
-            fprintf(file, "%d,", tmp->pops[i]);
-        fprintf(file, "%d\n", tmp->pops[ps]);
+            fprintf(file, "%d%c", tmp->pops[i], i == ps - 1 ? '\n' : ',');
         tmp = tmp->next;
     }
 }
