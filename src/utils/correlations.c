@@ -13,6 +13,7 @@
  *
  */
 
+#include "correlations.h"
 #include <stdlib.h>
 
 #define C_THR 0.005
