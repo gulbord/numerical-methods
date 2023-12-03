@@ -2,9 +2,6 @@
 #include "../../lib/mt19937ar.h"
 #include <math.h>
 #include <string.h>
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 void wolff(struct lattice *lat, int n_steps, double beta,
            double *energy, double *magnet, int *clus_sz)
@@ -94,7 +91,7 @@ void wolff(struct lattice *lat, int n_steps, double beta,
                         delta_e += s0 * lat->spins[nbr];
                         break;
                     case 1: // cluster spin
-                        is_cluster[nbr] += 1;
+                        is_cluster[nbr] = 2;
                         unvisited[rear++] = nbr;
                         break;
                     default: // cluster spin, but already considered
