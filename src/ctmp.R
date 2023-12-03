@@ -4,13 +4,17 @@ theme_set(theme_bw(base_family = "Latin Modern Roman", base_size = 9))
 setwd("~/PoD/Y2.1/NMSM/exercises")
 my_pal <- c("#0072B2", "#E69F00")
 
+##################
+# LOTKA-VOLTERRA #
+##################
+
 system("rm -f out/08a*")
 
 k_birth <- 3
 k_pred <- 0.01
 k_death <- 5
 init_prey <- 500
-init_pred <- 300
+init_pred <- 75
 max_time <- 8
 system(sprintf("exe/08a_lotka_volterra %g %g %g %d %d %g",
                k_birth, k_pred, k_death, init_prey, init_pred, max_time))
@@ -19,6 +23,7 @@ fname <- sprintf("out/08a_Ka%g_Kb%g_Kc%g_X%d_Y%d_T%g.txt",
                  k_birth, k_pred, k_death, init_prey, init_pred, max_time)
 data <- read_csv(fname, show_col_types = FALSE,
                  col_names = c("time", "prey", "predator"))
+data <- data[nrow(data):1, ]
 
 lv_mod <- function(time, state, pars) {
     with(as.list(c(state, pars)), {
@@ -49,14 +54,12 @@ data <- data |>
            solution = fct_relevel(solution, "stochastic", "deterministic"))
 
 ggplot(data) +
-    geom_line(aes(time, population, colour = species, linetype = solution),
-              linewidth = 0.3) +
-    scale_linetype_manual(values = c("solid", "11"),
-                          labels = c("Stochastic", "Deterministic")) +
-    scale_colour_manual(values = my_pal,
-                        labels = c("Prey", "Predator")) +
-    labs(x = "Time (s)", y = "Population",
-         colour = "Species", linetype = "Solution")
+    geom_line(aes(time, population, colour = species), linewidth = 0.3) +
+    scale_colour_manual(values = my_pal, labels = c("Prey", "Predator")) +
+    labs(x = "Time (s)", y = "Population", colour = "Species") +
+    facet_grid(rows = vars(solution),
+               labeller = as_labeller(c(stochastic = "Stochastic",
+                                        deterministic = "Deterministic")))
 
 ggsave("tex/img/08a.svg", width = 13, height = 7.5, unit = "cm")
 
@@ -69,8 +72,8 @@ system("rm -f out/08b*")
 a <- 2
 b <- 5
 omega <- 1000
-init_x <- 2000
-init_y <- 3000
+init_x <- 500
+init_y <- 75
 max_time <- 20
 system(sprintf("exe/08b_brusselator %g %g %g %d %d %g",
                a, b, omega, init_x, init_y, max_time))
@@ -79,6 +82,7 @@ fname <- sprintf("out/08b_a%g_b%g_O%g_X%d_Y%d_T%g.txt",
                  a, b, omega, init_x, init_y, max_time)
 data <- read_csv(fname, show_col_types = FALSE,
                  col_names = c("time", "x", "y"))
+data <- data[nrow(data):1, ]
 
 data |>
     pivot_longer(-time, names_to = "species", values_to = "population") |>
