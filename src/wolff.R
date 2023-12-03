@@ -39,7 +39,7 @@ plot_emc <- function(L, T, Nt, min_ind = 1, max_ind = 0, teq_e = 0, teq_m = 0) {
          ylab = "Magnetization per spin")
     if (teq_m > 0)
         abline(v = teq_m, col = "red")
-    hist(cl_siz[cl_siz > 0.1], breaks = "FD", freq = TRUE,
+    hist(cl_siz, breaks = "FD", freq = TRUE,
          main = NULL,
          xlab = "Cluster size as fraction of N",
          ylab = "Probability density")
