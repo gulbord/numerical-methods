@@ -1,6 +1,7 @@
 #include "wolff.h"
 #include "../../lib/mt19937ar.h"
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
 
 void wolff(struct lattice *lat, int n_steps, double beta,
@@ -27,13 +28,13 @@ void wolff(struct lattice *lat, int n_steps, double beta,
     int t, cs, front, rear; // counters
     int seed, s0, nbr, delta_e;
     // save unvisited spins in a queue
-    int unvisited[n_spins];
+    int *unvisited = malloc(n_spins * sizeof(int));
     // array of bools for cluster membership
-    int is_cluster[n_spins];
+    int *is_cluster = malloc(n_spins * sizeof(int));
 
     for (t = 1; t < n_steps; ++t) {
         // reset cluster membership
-        memset(is_cluster, 0, sizeof(is_cluster));
+        memset(is_cluster, 0, n_spins * sizeof(int));
 
         // pick a starting spin at random
         seed = (int)(genrand_real2() * n_spins);
@@ -103,4 +104,7 @@ void wolff(struct lattice *lat, int n_steps, double beta,
         energy[t] = energy[t - 1] + 2.0 * delta_e / n_spins;
         magnet[t] = magnet[t - 1] - 2.0 * s0 * cs / n_spins;
     }
+
+    free(unvisited);
+    free(is_cluster);
 }
