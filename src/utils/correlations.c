@@ -65,7 +65,7 @@ int eq_time(double *a, int n, int n_skip)
     double g, n_eff, max_n_eff = 0.0;
     int t0, best_t0 = 0;
     for (t0 = 0; t0 < n - 1; t0 += n_skip) {
-        // compute stat. ineff. and # of uncorrelated samples
+        // compute stat. ineff. and number of uncorrelated samples
         g = stat_ineff(a, n, t0);
         n_eff = (n - t0 + 1) / g;
 
