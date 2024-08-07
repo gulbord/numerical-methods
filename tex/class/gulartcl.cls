@@ -328,7 +328,7 @@
 \setlength\fboxsep{3\p@}
 \setlength\fboxrule{.4\p@}
 \@addtoreset{equation}{section}
-\renewcommand\theequation{
+\renewcommand\theequation{%
     \ifnum \c@section >\z@ \thesection.\fi \@arabic\c@equation}
 \newcounter{figure}
 \renewcommand\thefigure{\@arabic\c@figure}

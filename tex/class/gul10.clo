@@ -72,8 +72,6 @@
 
 	\setlength\topmargin{0.33333\@tempdimb}
 	\addtolength\topmargin{-1in}
-	\addtolength\topmargin{-\headheight}
-	\addtolength\topmargin{-\headsep}
 
     \if@twoside
     	\setlength\@tempdima{\paperwidth}

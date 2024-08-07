@@ -177,8 +177,7 @@
 \def\@xxpt{20.5}
 \def\@xxvpt{25}
 \DeclareMathSizes{5}{5}{5}{5}
-\DeclareMathSizes{5.5}{5.5}{5}{5}
-\DeclareMathSizes{6}{6}{5.5}{5}
+\DeclareMathSizes{6}{6}{5}{5}
 \DeclareMathSizes{6.5}{6.5}{6}{5}
 \DeclareMathSizes{7}{7}{6}{5}
 \DeclareMathSizes{7.5}{7.5}{6}{5}
@@ -186,8 +185,8 @@
 \DeclareMathSizes{8.5}{8.5}{6.5}{5}
 \DeclareMathSizes{9}{9}{6.5}{5}
 \DeclareMathSizes{10}{10}{7}{5}
-\DeclareMathSizes{10.5}{10.5}{7.5}{5.5}
-\DeclareMathSizes{11}{11}{8}{5.5}
+\DeclareMathSizes{10.5}{10.5}{7.5}{6}
+\DeclareMathSizes{11}{11}{8}{6}
 \DeclareMathSizes{11.5}{11.5}{8.5}{6}
 \DeclareMathSizes{12}{12}{8}{6}
 \DeclareMathSizes{12.5}{12.5}{8.5}{6}
