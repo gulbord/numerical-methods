@@ -7,10 +7,18 @@ LIB := lib
 
 PRNG := $(LIB)/mt19937ar.c
 
-all: 6a 7a 8a 8b
+all: 1 6a 7a 8a 8b
 
 clean:
 	rm -f $(EXE)/*
+
+1: 11a 11b
+
+11a: $(SRC)/011a_rect_hit_miss.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/011a_rect_hit_miss
+
+11b: $(SRC)/011b_disk_hit_miss.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/011b_disk_hit_miss
 
 6a: $(SRC)/06a_metropolis.c $(SRC)/ising/lattice.c $(SRC)/ising/metropolis.c \
 		$(SRC)/utils/correlations.c
