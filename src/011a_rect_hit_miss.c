@@ -24,24 +24,24 @@ int main(int argc, const char **argv)
     int dn = atoi(argv[2]);     // Step in max_iter
     int rep = atoi(argv[3]);    // Replicas for each value of max_iter
     int hits, throws;
-    double x, y, mc_pi;
-    FILE *file = fopen("out/011b.txt", "w");
+    double x, y, mc_area;
+    FILE *file = fopen("out/011a.txt", "w");
 
     for (n = 0; n < n_plot; ++n) {
         throws = (1 + n) * dn;
         fprintf(file, "%d,", throws);
-
+        
         for (i = 0; i < rep; ++i) {
             hits = 0; // Reset hit counter
             for (j = 0; j < throws; ++j) {
                 x = genrand_real1();
                 y = genrand_real1();
-                if (x * x + y * y < 1)
+                if (x < 0.5 && y < 0.5)
                     ++hits;
             }
-            mc_pi = 4 * (double)hits / throws;
+            mc_area = (double)hits / throws;
 
-            fprintf(file, "%g%c", fabs(1 - mc_pi * M_1_PI),
+            fprintf(file, "%g%c", fabs(1 - 4 * mc_area),
                     i == rep - 1 ? '\n' : ',');
         }
     }
