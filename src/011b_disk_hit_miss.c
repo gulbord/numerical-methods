@@ -1,7 +1,7 @@
 #include "../lib/mt19937ar.h"
 #include <math.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
 #define N_ARGS 4
@@ -10,7 +10,7 @@ int main(int argc, const char **argv)
 {
     if (argc != N_ARGS) {
         printf("Wrong number of arguments! (Should be %d)\n", N_ARGS);
-        printf("[executable] [n. of points to plot] [step] [replicas]\n");
+        printf("[executable] [# points to plot] [step] [# replicas]\n");
         return 1;
     }
 
@@ -26,10 +26,10 @@ int main(int argc, const char **argv)
     int hits, throws;
     double x, y, mc_pi;
     FILE *file = fopen("out/011b.txt", "w");
+    fprintf(file, "throws,error\n");
 
     for (n = 0; n < n_plot; ++n) {
         throws = (1 + n) * dn;
-        fprintf(file, "%d,", throws);
 
         for (i = 0; i < rep; ++i) {
             hits = 0; // Reset hit counter
@@ -41,8 +41,7 @@ int main(int argc, const char **argv)
             }
             mc_pi = 4 * (double)hits / throws;
 
-            fprintf(file, "%g%c", fabs(1 - mc_pi * M_1_PI),
-                    i == rep - 1 ? '\n' : ',');
+            fprintf(file, "%d,%g\n", throws, fabs(1 - mc_pi * M_1_PI));
         }
     }
 
