@@ -12,13 +12,21 @@ all: 1 6a 7a 8a 8b
 clean:
 	rm -f $(EXE)/*
 
-1: 11a 11b
+1: 11 12 13
+
+11: 11a 11b
 
 11a: $(SRC)/011a_rect_hit_miss.c
 	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/011a_rect_hit_miss
 
 11b: $(SRC)/011b_disk_hit_miss.c
 	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/011b_disk_hit_miss
+
+12: $(SRC)/012_inversion_method.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/012_inversion_method
+
+13: $(SRC)/013_inversion_method.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/013_inversion_method
 
 6a: $(SRC)/06a_metropolis.c $(SRC)/ising/lattice.c $(SRC)/ising/metropolis.c \
 		$(SRC)/utils/correlations.c
