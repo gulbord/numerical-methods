@@ -3,7 +3,7 @@ library(ggplot2)
 setwd("~/PoD/Y2.1/NMSM/exercises/")
 
 plt <- lapply(
-  c("out/011a.txt", "out/011b.txt"),
+  c("out/011a.csv", "out/011b.csv"),
   function(file) {
     fread(file) |>
       _[, error := 100 * error] |>

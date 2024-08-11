@@ -25,7 +25,7 @@ int main(int argc, const char **argv)
     int rep = atoi(argv[3]);    // Replicas for each value of max_iter
     int hits, throws;
     double x, y, mc_pi;
-    FILE *file = fopen("out/011b.txt", "w");
+    FILE *file = fopen("out/011b.csv", "w");
     fprintf(file, "throws,error\n");
 
     for (n = 0; n < n_plot; ++n) {
