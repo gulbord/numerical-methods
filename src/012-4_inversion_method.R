@@ -15,8 +15,7 @@ ggplot(data_012) +
   geom_histogram(
     aes(value, after_stat(density)),
     alpha = 0.5,
-    bins = 100,
-    boundary = 0,
+    breaks = seq(0, 1, 0.01), 
     position = "identity",
   ) +
   geom_line(aes(x, y), data = curves_012) +
@@ -32,3 +31,31 @@ ggplot(data_012) +
     strip.text = ggtext::element_markdown(),
     axis.title.x = ggtext::element_markdown(),
   )
+
+plts <- purrr::map2(
+  c(
+    "out/013.csv",
+    "out/014a_mu2.csv",
+    "out/014b.csv",
+    "out/014c_a0.5_b0.1_n4.csv"
+  ),
+  c(
+    \(x) 3 * x^2 / 8,
+    \(x) 2 * exp(-2 * x),
+    \(x) 2 * x * exp(-x^2),
+    \(x) 0.0375 / (0.5 + 0.1 * x)^4
+  ),
+  function(file, fun) {
+    fread(file, col.names = "x") |>
+      _[x < 20] |>
+      ggplot() +
+        geom_histogram(
+          aes(x, after_stat(density)),
+          boundary = 0,
+          binwidth = \(x) 2 * IQR(x) / length(x)^(1 / 3),
+        ) +
+        geom_function(fun = fun) +
+        labs(x = "<i>x</i>", y = "Density") +
+        theme(axis.title.x = ggtext::element_markdown())
+  }
+)

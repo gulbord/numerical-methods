@@ -12,7 +12,7 @@ all: 1 6a 7a 8a 8b
 clean:
 	rm -f $(EXE)/*
 
-1: 11 12 13
+1: 11 12 13 14
 
 11: 11a 11b
 
@@ -22,11 +22,22 @@ clean:
 11b: $(SRC)/011b_disk_hit_miss.c
 	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/011b_disk_hit_miss
 
-12: $(SRC)/012_inversion_method.c
-	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/012_inversion_method
+12: $(SRC)/012_inversion_power34.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/012_inversion_power34
 
-13: $(SRC)/013_inversion_method.c
-	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/013_inversion_method
+13: $(SRC)/013_inversion_power2.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/013_inversion_power2
+
+14: 14a 14b 14c
+
+14a: $(SRC)/014a_inversion_exp.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/014a_inversion_exp
+
+14b: $(SRC)/014b_inversion_exp2.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/014b_inversion_exp2
+
+14c: $(SRC)/014c_inversion_powerinv.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/014c_inversion_powerinv
 
 6a: $(SRC)/06a_metropolis.c $(SRC)/ising/lattice.c $(SRC)/ising/metropolis.c \
 		$(SRC)/utils/correlations.c
