@@ -10,7 +10,8 @@ int main(int argc, const char **argv)
 {
     if (argc != N_ARGS) {
         fprintf(stderr, "Wrong number of arguments! (Should be %d)\n", N_ARGS);
-        fprintf(stderr, "[executable] [# points to plot] [step] [# replicas]\n");
+        fprintf(stderr, "[executable] [# points to plot] ");
+        fprintf(stderr, "[step] [# replicas]\n");
         return 1;
     }
 

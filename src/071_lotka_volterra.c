@@ -10,8 +10,8 @@ int main(int argc, char **argv)
     if (argc != N_ARGS) {
         fprintf(stderr, "Wrong number of arguments! (Should be %d)\n", N_ARGS);
         fprintf(stderr, "[executable] [prey birth rate] \\\n");
-        fprintf(stderr, "\t[predation rate] [predator death rate] \\\n");
-        fprintf(stderr, "\t[init. preys] [init. predators] [max. time] \\\n");
+        fprintf(stderr, "  [predation rate] [predator death rate] \\\n");
+        fprintf(stderr, "  [init. preys] [init. predators] [max. time] \\\n");
         return 1;
     }
 
