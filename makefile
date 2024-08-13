@@ -39,10 +39,13 @@ clean:
 14c: $(SRC)/014c_inversion_powerinv.c
 	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/014c_inversion_powerinv
 
-2: 21
+2: 21 22
 
 21: $(SRC)/021_disk_sampling.c
 	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/021_disk_sampling
+
+22: $(SRC)/022_box_muller.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/022_box_muller
 
 6a: $(SRC)/06a_metropolis.c $(SRC)/ising/lattice.c $(SRC)/ising/metropolis.c \
 		$(SRC)/utils/correlations.c
