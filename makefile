@@ -7,7 +7,7 @@ LIB := lib
 
 PRNG := $(LIB)/mt19937ar.c
 
-all: 1 6a 7a 8a 8b
+all: 1 2 7
 
 clean:
 	rm -f $(EXE)/*
@@ -47,17 +47,12 @@ clean:
 22: $(SRC)/022_box_muller.c
 	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/022_box_muller
 
-6a: $(SRC)/06a_metropolis.c $(SRC)/ising/lattice.c $(SRC)/ising/metropolis.c \
-		$(SRC)/utils/correlations.c
-	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/06a_metropolis
+7: 71 72
 
-7a: $(SRC)/07a_wolff.c $(SRC)/ising/lattice.c $(SRC)/ising/wolff.c
-	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/07a_wolff
+71: $(SRC)/071_lotka_volterra.c $(SRC)/ctmp/gillespie.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/071_lotka_volterra
 
-8a: $(SRC)/08a_lotka_volterra.c $(SRC)/ctmp/gillespie.c
-	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/08a_lotka_volterra
+72: $(SRC)/072_brusselator.c $(SRC)/ctmp/gillespie.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/072_brusselator
 
-8b: $(SRC)/08b_brusselator.c $(SRC)/ctmp/gillespie.c
-	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/08b_brusselator
-		
 .PHONY: all clean
