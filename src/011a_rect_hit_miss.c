@@ -9,14 +9,11 @@
 int main(int argc, const char **argv)
 {
     if (argc != N_ARGS) {
-        printf("Wrong number of arguments! (Should be %d)\n", N_ARGS);
-        printf("[executable] [# points to plot] [step] [# replicas]\n");
+        fprintf(stderr, "Wrong number of arguments! (Should be %d)\n", N_ARGS);
+        fprintf(stderr, "[executable] [# points to plot] [step] [# replicas]\n");
         return 1;
     }
 
-    // Alternative to time() seed:
-    // unsigned long seed[4] = {0x123, 0x345, 0x789, 0x583};
-    // init_by_array(seed, 4);
     init_genrand((unsigned long)time(NULL));
 
     int n, i, j;

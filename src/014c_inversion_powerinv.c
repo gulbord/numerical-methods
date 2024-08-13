@@ -9,8 +9,8 @@
 int main(int argc, const char **argv)
 {
     if (argc != N_ARGS) {
-        printf("Wrong number of arguments! (Should be %d)\n", N_ARGS);
-        printf("[executable] [a] [b] [n] [# samples]\n");
+        fprintf(stderr, "Wrong number of arguments! (Should be %d)\n", N_ARGS);
+        fprintf(stderr, "[executable] [a] [b] [n] [# samples]\n");
         return 1;
     }
 
