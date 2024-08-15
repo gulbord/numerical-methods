@@ -21,7 +21,7 @@ int main(int argc, const char **argv)
     double n = atof(argv[3]);
 
     char fname[100];
-    snprintf(fname, 100, "out/014c_a%g_b%g_n%g.csv", a, b, n);
+    snprintf(fname, sizeof(fname), "out/014c_a%g_b%g_n%g.csv", a, b, n);
     FILE *file = fopen(fname, "w");
 
     // rho(x) = b * (n - 1) * a^(n - 1) / (a + b * x)^n
