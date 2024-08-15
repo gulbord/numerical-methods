@@ -2,6 +2,7 @@ library(data.table)
 library(ggplot2)
 setwd("~/PoD/Y2.1/NMSM/exercises/")
 
+# system("exe/012_inversion_power34 50000")
 data_012 <- melt(
   fread("out/012.csv"),
   measure.vars = measure(exponent = as.integer, pattern = "n(\\d)"),
@@ -32,6 +33,10 @@ ggplot(data_012) +
     axis.title.x = ggtext::element_markdown(),
   )
 
+# system("exe/013_inversion_power2 50000")
+# system("exe/014a_inversion_exp 2 50000")
+# system("exe/014b_inversion_exp2 50000")
+# system("exe/014c_inversion_powerlaw 0.5 0.1 4 50000")
 plts <- purrr::map2(
   c(
     "out/013.csv",
@@ -51,6 +56,7 @@ plts <- purrr::map2(
       ggplot() +
         geom_histogram(
           aes(x, after_stat(density)),
+          alpha = 0.5,
           boundary = 0,
           binwidth = \(x) 2 * IQR(x) / length(x)^(1 / 3),
         ) +

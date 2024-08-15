@@ -2,6 +2,7 @@ library(data.table)
 library(ggplot2)
 setwd("~/PoD/Y2.1/NMSM/exercises/")
 
+# system("exe/022_box_muller 1 2 50000")
 fread("out/022_mu1_sigma2.csv") |>
   melt(measure.vars = 1:2) |>
   ggplot() +
