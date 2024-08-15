@@ -17,14 +17,15 @@ int main(int argc, const char **argv)
 
     init_genrand((unsigned long)time(NULL));
 
+    FILE *file = fopen("out/011a.csv", "w");
+    fprintf(file, "throws,error\n");
+
     int n, i, j;
     int n_plot = atoi(argv[1]); // Number of different max_iter to analyse
     int dn = atoi(argv[2]);     // Step in max_iter
     int rep = atoi(argv[3]);    // Replicas for each value of max_iter
     int hits, throws;
     double x, y, mc_area;
-    FILE *file = fopen("out/011a.csv", "w");
-    fprintf(file, "throws,error\n");
 
     for (n = 0; n < n_plot; ++n) {
         throws = (1 + n) * dn;
