@@ -36,16 +36,24 @@ clean:
 14b: $(SRC)/014b_inversion_exp2.c
 	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/014b_inversion_exp2
 
-14c: $(SRC)/014c_inversion_powerinv.c
-	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/014c_inversion_powerinv
+14c: $(SRC)/014c_inversion_powerlaw.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/014c_inversion_powerlaw
 
-2: 21 22
+2: 21 22 23
 
 21: $(SRC)/021_disk_sampling.c
 	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/021_disk_sampling
 
 22: $(SRC)/022_box_muller.c
 	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/022_box_muller
+
+23: 23a 23b
+
+23a: $(SRC)/023a_rejection_sampling.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/023a_rejection_sampling
+
+23b: $(SRC)/023b_rejection_accratio.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/023b_rejection_accratio
 
 7: 71 72
 
