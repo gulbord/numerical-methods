@@ -20,7 +20,7 @@ int main(int argc, const char *argv[])
     double sigma = atof(argv[2]);
 
     char fname[100];
-    snprintf(fname, 100, "out/022_mu%g_sigma%g.csv", mu, sigma);
+    snprintf(fname, sizeof(fname), "out/022_mu%g_sigma%g.csv", mu, sigma);
     FILE *file = fopen(fname, "w");
     fprintf(file, "x,y\n");
 

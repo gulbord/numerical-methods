@@ -19,7 +19,7 @@ int main(int argc, const char **argv)
     double mu = atof(argv[1]);
 
     char fname[100];
-    snprintf(fname, 100, "out/014a_mu%g.csv", mu);
+    snprintf(fname, sizeof(fname), "out/014a_mu%g.csv", mu);
     FILE *file = fopen(fname, "w");
 
     // rho(x) = μ * e^(-μ * x) --> sample with F^(-1)(p) = -log(p) / μ

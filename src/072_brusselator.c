@@ -9,7 +9,8 @@ int main(int argc, char **argv)
 {
     if (argc != N_ARGS) {
         fprintf(stderr, "Wrong number of arguments! (Should be %d)\n", N_ARGS);
-        fprintf(stderr, "[a] [b] [Ω] [init. X] [init. Y] [max. time]\n");
+        fprintf(stderr, "[executable] [a] [b] [Ω] ");
+        fprintf(stderr, "[init. X] [init. Y] [max. time]\n");
         return 1;
     }
 
@@ -23,7 +24,7 @@ int main(int argc, char **argv)
     double max_time = atof(argv[6]);
 
     char fname[100];
-    snprintf(fname, sizeof(fname), "out/072_a%g_b%g_omega%g_X%d_Y%d_T%g.txt",
+    snprintf(fname, sizeof(fname), "out/072_a%g_b%g_omega%g_X%d_Y%d_T%g.csv",
              a, b, omega, init_x, init_y, max_time);
     FILE *file = fopen(fname, "w");
 
