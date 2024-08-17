@@ -7,7 +7,7 @@ LIB := lib
 
 PRNG := $(LIB)/mt19937ar.c
 
-all: 1 2 7
+all: 1 2 7 8
 
 clean:
 	rm -f $(EXE)/*
@@ -62,5 +62,11 @@ clean:
 
 72: $(SRC)/072_brusselator.c $(SRC)/ctmp/gillespie.c
 	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/072_brusselator
+
+8: 82
+
+82: $(SRC)/082_off_lattice_mc.c $(SRC)/off-lattice/monte_carlo.c \
+	$(SRC)/off-lattice/parameters.c $(SRC)/off-lattice/particles.c
+	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/082_off_lattice_mc
 
 .PHONY: all clean
