@@ -18,7 +18,7 @@ double calc_energy(double *particles, const struct parameters *params)
             for (k = 0; k < 3; ++k) {
                 dr = particles[3 * i + k] - particles[3 * j + k];
                 // Periodic boundary conditions
-                dr -= params->box_size * floor(dr / params->box_size);
+                dr -= params->box_size * round(dr / params->box_size);
                 r2 += dr * dr;
             }
             energy += 1.0 / sqrt(r2);
