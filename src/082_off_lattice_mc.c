@@ -1,6 +1,7 @@
 #include "../lib/mt19937ar.h"
 #include "off-lattice/monte_carlo.h"
 #include "off-lattice/particles.h"
+#include "utils/progress.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -21,25 +22,30 @@ int main(int argc, const char **argv)
     if (parse_config(argv[1], &params))
         return 1;
 
-    char fname[100];
+    char fname[255];
     snprintf(fname, sizeof(fname), "out/082_N%d_L%g_d%g_T%g_s%d.csv",
              params.num_particles, params.box_size, params.disp_max,
              params.temperature, params.mc_steps);
     FILE *file = fopen(fname, "w");
+    if (file == NULL) {
+        perror("fopen() failed");
+        return 1;
+    }
 
     double *particles = malloc(3 * params.num_particles * sizeof(*particles));
 
     init_particles(particles, &params);
-    printf("%g\n", calc_energy(particles, &params) / params.num_particles);
 
     for (int i = 0; i < params.mc_steps; ++i) {
+        print_progress((double)(i + 1) / params.mc_steps);
         double energy = monte_carlo_sweep(particles, &params);
-        printf("%g\n", energy / params.num_particles);
-        fprintf(file, "%g\n", energy / params.num_particles);
+        fprintf(file, "%g\n", energy);
     }
 
-    free(particles);
+    printf("\n"); // After progress bar
+
     fclose(file);
+    free(particles);
 
     return 0;
 }

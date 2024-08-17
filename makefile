@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -O2 -Wall -Wextra
+CFLAGS := -O3 -Wall -Wextra
 
 SRC := src
 EXE := exe
@@ -66,7 +66,9 @@ clean:
 8: 82
 
 82: $(SRC)/082_off_lattice_mc.c $(SRC)/off-lattice/monte_carlo.c \
-	$(SRC)/off-lattice/parameters.c $(SRC)/off-lattice/particles.c
-	$(CC) $(CFLAGS) $^ $(PRNG) -lm -o $(EXE)/082_off_lattice_mc
+	$(SRC)/off-lattice/parameters.c $(SRC)/off-lattice/particles.c \
+	$(SRC)/utils/progress.c
+	$(CC) $(CFLAGS) -Wno-maybe-uninitialized $^ $(PRNG) -lm \
+		-o $(EXE)/082_off_lattice_mc
 
 .PHONY: all clean
