@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -O3 -Wall -Wextra
+CFLAGS := -O2 -Wall -Wextra
 
 SRC := src
 EXE := exe

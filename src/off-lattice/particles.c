@@ -1,5 +1,5 @@
-#include "../../lib/mt19937ar.h"
 #include "particles.h"
+#include "../../lib/mt19937ar.h"
 #include <math.h>
 
 void init_particles(double *particles, const struct parameters *params)
@@ -21,7 +21,7 @@ double calc_energy(double *particles, const struct parameters *params)
                 dr -= params->box_size * round(dr / params->box_size);
                 r2 += dr * dr;
             }
-            energy += 1.0 / sqrt(r2);
+            energy += 1.0 / r2;
         }
     }
 

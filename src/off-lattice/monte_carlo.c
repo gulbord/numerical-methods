@@ -1,9 +1,9 @@
-#include "../../lib/mt19937ar.h"
 #include "monte_carlo.h"
+#include "../../lib/mt19937ar.h"
 #include "particles.h"
 #include <math.h>
 
-#define GENRAND_MAX 0xffffffff 
+#define GENRAND_MAX 0xffffffff
 
 double monte_carlo_sweep(double *particles, const struct parameters *params)
 {

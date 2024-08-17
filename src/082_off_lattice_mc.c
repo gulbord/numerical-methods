@@ -23,18 +23,19 @@ int main(int argc, const char **argv)
 
     char fname[100];
     snprintf(fname, sizeof(fname), "out/082_N%d_L%g_d%g_T%g_s%d.csv",
-             params.num_particles, params.box_size, params.disp_max, params.temperature,
-             params.mc_steps);
+             params.num_particles, params.box_size, params.disp_max,
+             params.temperature, params.mc_steps);
     FILE *file = fopen(fname, "w");
 
-    double *particles = malloc(3 * params.num_particles * sizeof(*particles)); 
+    double *particles = malloc(3 * params.num_particles * sizeof(*particles));
 
     init_particles(particles, &params);
-    printf("ok\n");
+    printf("%g\n", calc_energy(particles, &params) / params.num_particles);
+
     for (int i = 0; i < params.mc_steps; ++i) {
         double energy = monte_carlo_sweep(particles, &params);
-        printf("%g\n", energy);
-        fprintf(file, "%g\n", energy);
+        printf("%g\n", energy / params.num_particles);
+        fprintf(file, "%g\n", energy / params.num_particles);
     }
 
     free(particles);
