@@ -63,18 +63,35 @@ uint32_t rng_int(void)
 }
 
 // Generate a random int (32 bit unsigned) on [0, n - 1]
+//
+// Original source:
+// D. Lemire, ‘Fast random integer generation in an interval’, ACM
+// Trans. Model. Comput. Simul., vol. 29, no. 1, pp. 1–12, Jan. 2019.
+//
+// With modifications taken from:
+// M. E. O’Neill, “Efficiently generating a number in a range,” PCG, A Better
+// Random Number Generator, https://www.pcg-random.org/posts/bounded-rands.html
+// (accessed Aug. 2024).
 uint32_t rng_int_n(uint32_t n)
 {
-    uint32_t mask = -1;
-    --n;
-    // Shift mask right by the number of leading zeros in range
-    mask >>= __builtin_clz(n | 1);
-    uint32_t x;
-    do {
-        x = rng_int() & mask;
-    } while (x > n);
+    uint32_t x = rng_int();
+    uint64_t m = (uint64_t)x * (uint64_t)n;
+    uint32_t l = (uint32_t)m;
+    if (l < n) {
+        uint32_t t = -n;
+        if (t >= n) {
+            t -= n;
+            if (t >= n)
+                t %= n;
+        }
+        while (l < t) {
+            x = rng_int();
+            m = (uint64_t)x * (uint64_t)n;
+            l = (uint32_t)m;
+        }
+    }
 
-    return x;
+    return m >> 32;
 }
 
 // Generate an integer (32 bit signed) on [min, max]
