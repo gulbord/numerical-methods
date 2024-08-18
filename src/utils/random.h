@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void rng_set_seed(uint32_t s);
+void rng_set_seed(uint32_t seed);
 // Generate a random 32 bit unsigned int on [0, 0xffffffff]
 uint32_t rng_int(void);
 // Generate a random int (32 bit unsigned) on [0, n - 1]

@@ -1,65 +1,44 @@
 #include "random.h"
 
-// Period parameters
-#define N 624
-#define M 397
-#define MATRIX_A 0x9908b0dfU   // Constant vector a
-#define UPPER_MASK 0x80000000U // most significant w-r bits
-#define LOWER_MASK 0x7fffffffU // least significant r bits
+// The rng_set_seed() and rng_int() functions form the xoshiro128++ PRNG by
+// David Blackman and Sebastiano Vigna [1]. It is very fast and statistically
+// robust, and it or others of its family are currently the default PRNGs of
+// Javascript, .NET, GNU FORTRAN, Julia and Lua [2].
+//
+// [1] David Blackman and Sebastiano Vigna. Scrambled linear pseudorandom number
+// generators. ACM Trans. Math. Softw., 47:1−32, 2021.
+// [2] Sebastiano Vigna. xoshiro / xoroshiro generators and the PRNG shootout.
+// Retrieved August 2024 from https://prng.di.unimi.it/.
 
-#define TEMPERING_MASK_B 0x9d2c5680U
-#define TEMPERING_MASK_C 0xefc60000U
+// Rotate left operation
+#define ROTL(x, k) (((x) << (k)) | ((x) >> (32 - (k))))
 
-static uint32_t mt[N];  // Array for the state vector
-static int mti = N + 1; // mti == N + 1 means mt[N] is not initialized
+static uint32_t s[4];
 
-void rng_set_seed(uint32_t s)
+void rng_set_seed(uint32_t seed)
 {
-    mt[0] = s;
-    for (mti = 1; mti < N; mti++)
-        mt[mti] = (1812433253U * (mt[mti - 1] ^ (mt[mti - 1] >> 30)) + mti);
+    s[0] = seed;
+    s[1] = seed ^ 0x9E3779B9;
+    s[2] = seed + 0x6A09E667;
+    s[3] = seed + 0xBB67AE85;
+    for (int i = 0; i < 10; ++i)
+        rng_int();
 }
 
-// Generate a random 32 bit unsigned int on [0, 0xffffffff]
-// Source: MT19937 by Takuji Nishimura and Makoto Matsumoto
-// Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
-// All rights reserved.
-// Copyright (C) 2005, Mutsuo Saito, All rights reserved.
 uint32_t rng_int(void)
 {
-    uint32_t y;
-    static uint32_t mag01[2] = {0x0U, MATRIX_A};
+    const uint32_t x = ROTL(s[0] + s[3], 7) + s[0];
+    const uint32_t t = s[1] << 9;
 
-    // Generate N words at one time
-    if (mti >= N) {
-        int kk;
+    s[2] ^= s[0];
+    s[3] ^= s[1];
+    s[1] ^= s[2];
+    s[0] ^= s[3];
 
-        if (mti == N + 1)
-            rng_set_seed(5489U); // Default initial seed
+    s[2] ^= t;
+    s[3] = ROTL(s[3], 11);
 
-        for (kk = 0; kk < N - M; ++kk) {
-            y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-            mt[kk] = mt[kk + M] ^ (y >> 1) ^ mag01[y & 0x1U];
-        }
-        for (; kk < N - 1; ++kk) {
-            y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-            mt[kk] = mt[kk + (M - N)] ^ (y >> 1) ^ mag01[y & 0x1U];
-        }
-        y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-        mt[N - 1] = mt[M - 1] ^ (y >> 1) ^ mag01[y & 0x1U];
-
-        mti = 0;
-    }
-
-    y = mt[mti++];
-
-    // Tempering
-    y ^= (y >> 11);
-    y ^= (y << 7) & TEMPERING_MASK_B;
-    y ^= (y << 15) & TEMPERING_MASK_C;
-    y ^= (y >> 18);
-
-    return y;
+    return x;
 }
 
 // Generate a random int (32 bit unsigned) on [0, n - 1]
