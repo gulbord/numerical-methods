@@ -1,4 +1,4 @@
-#include "../lib/mt19937ar.h"
+#include "utils/random.h"
 #include "off-lattice/monte_carlo.h"
 #include "off-lattice/particles.h"
 #include "utils/progress.h"
@@ -16,7 +16,7 @@ int main(int argc, const char **argv)
         return 1;
     }
 
-    init_genrand((unsigned long)time(NULL));
+    rng_set_seed(time(NULL));
 
     struct parameters params;
     if (parse_config(argv[1], &params))

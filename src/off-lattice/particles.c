@@ -1,11 +1,11 @@
 #include "particles.h"
-#include "../../lib/mt19937ar.h"
+#include "../utils/random.h"
 #include <math.h>
 
 void init_particles(double *particles, const struct parameters *params)
 {
     for (int i = 0; i < 3 * params->num_particles; ++i)
-        particles[i] = genrand_real1() * params->box_size;
+        particles[i] = rng_uniform_01() * params->box_size;
 }
 
 double calc_energy(double *particles, const struct parameters *params)

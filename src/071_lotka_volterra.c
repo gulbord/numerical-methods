@@ -1,4 +1,4 @@
-#include "../lib/mt19937ar.h"
+#include "utils/random.h"
 #include "ctmp/lotka_volterra.h"
 #include <stdlib.h>
 #include <time.h>
@@ -15,7 +15,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    init_genrand((unsigned long)time(NULL));
+    rng_set_seed(time(NULL));
 
     double prey_birth_k = atof(argv[1]);
     double predation_k = atof(argv[2]);

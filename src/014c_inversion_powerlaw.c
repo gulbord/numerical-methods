@@ -1,4 +1,4 @@
-#include "../lib/mt19937ar.h"
+#include "utils/random.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +14,7 @@ int main(int argc, const char **argv)
         return 1;
     }
 
-    init_genrand((unsigned long)time(NULL));
+    rng_set_seed(time(NULL));
 
     double a = atof(argv[1]);
     double b = atof(argv[2]);
@@ -30,7 +30,7 @@ int main(int argc, const char **argv)
     double ab = a / b;
     double iimn = 1.0 / (1.0 - n);
     for (int i = 0; i < n_smp; ++i)
-        fprintf(file, "%g\n", ab * (pow(genrand_real1(), iimn) - 1.0));
+        fprintf(file, "%g\n", ab * (pow(rng_uniform_01(), iimn) - 1.0));
 
     fclose(file);
 

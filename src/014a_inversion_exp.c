@@ -1,4 +1,4 @@
-#include "../lib/mt19937ar.h"
+#include "utils/random.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +14,7 @@ int main(int argc, const char **argv)
         return 1;
     }
 
-    init_genrand((unsigned long)time(NULL));
+    rng_set_seed(time(NULL));
 
     double mu = atof(argv[1]);
 
@@ -25,8 +25,7 @@ int main(int argc, const char **argv)
     // rho(x) = μ * e^(-μ * x) --> sample with F^(-1)(p) = -log(p) / μ
     int n_smp = atoi(argv[2]);
     for (int i = 0; i < n_smp; ++i)
-        // genrand_real2() generates on [0, 1), so log(1 - p) is safe
-        fprintf(file, "%g\n", -log(1 - genrand_real2()) / mu);
+        fprintf(file, "%g\n", -log(rng_uniform_exc_01()) / mu);
 
     fclose(file);
 

@@ -1,4 +1,4 @@
-#include "../lib/mt19937ar.h"
+#include "utils/random.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +14,7 @@ int main(int argc, const char *argv[])
         return 1;
     }
 
-    init_genrand((unsigned long)time(NULL));
+    rng_set_seed(time(NULL));
 
     double mu = atof(argv[1]);
     double sigma = atof(argv[2]);
@@ -27,8 +27,8 @@ int main(int argc, const char *argv[])
     double r, t;
     int n_smp = atoi(argv[3]);
     for (int i = 0; i < n_smp; ++i) {
-        r = sigma * sqrt(-2 * log(1 - genrand_real2()));
-        t = 2 * M_PI * genrand_real1();
+        r = sigma * sqrt(-2 * log(rng_uniform_exc_01()));
+        t = 2 * M_PI * rng_uniform_01();
         fprintf(file, "%g,%g\n", mu + r * cos(t), mu + r * sin(t));
     }
 

@@ -1,4 +1,4 @@
-#include "../lib/mt19937ar.h"
+#include "utils/random.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +14,7 @@ int main(int argc, const char **argv)
         return 1;
     }
 
-    init_genrand((unsigned long)time(NULL));
+    rng_set_seed(time(NULL));
 
     FILE *file = fopen("out/012.csv", "w");
     fprintf(file, "n3,n4\n");
@@ -22,8 +22,8 @@ int main(int argc, const char **argv)
     // rho(x) = (n + 1) * x^n --> sample with F^(-1)(p) = p^(1/(n+1))
     int n_smp = atoi(argv[1]);
     for (int i = 0; i < n_smp; ++i)
-        fprintf(file, "%g,%g\n", pow(genrand_real1(), 0.25), // n = 3
-                pow(genrand_real1(), 0.2));                  // n = 4
+        fprintf(file, "%g,%g\n", pow(rng_uniform_01(), 0.25), // n = 3
+                pow(rng_uniform_01(), 0.2));                  // n = 4
 
     fclose(file);
 

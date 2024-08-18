@@ -1,4 +1,4 @@
-#include "../lib/mt19937ar.h"
+#include "utils/random.h"
 #include "ctmp/brusselator.h"
 #include <stdlib.h>
 #include <time.h>
@@ -14,7 +14,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    init_genrand((unsigned long)time(NULL));
+    rng_set_seed(time(NULL));
 
     double a = atof(argv[1]);
     double b = atof(argv[2]);

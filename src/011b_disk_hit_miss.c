@@ -1,4 +1,4 @@
-#include "../lib/mt19937ar.h"
+#include "utils/random.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +15,7 @@ int main(int argc, const char **argv)
         return 1;
     }
 
-    init_genrand((unsigned long)time(NULL));
+    rng_set_seed(time(NULL));
 
     FILE *file = fopen("out/011b.csv", "w");
     fprintf(file, "throws,error\n");
@@ -33,8 +33,8 @@ int main(int argc, const char **argv)
         for (i = 0; i < rep; ++i) {
             hits = 0; // Reset hit counter
             for (j = 0; j < throws; ++j) {
-                x = genrand_real1();
-                y = genrand_real1();
+                x = rng_uniform_01();
+                y = rng_uniform_01();
                 if (x * x + y * y < 1)
                     ++hits;
             }

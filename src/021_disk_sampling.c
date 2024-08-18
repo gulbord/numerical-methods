@@ -1,4 +1,4 @@
-#include "../lib/mt19937ar.h"
+#include "utils/random.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,15 +14,15 @@ int main(int argc, const char *argv[])
         return 1;
     }
 
-    init_genrand((unsigned long)time(NULL));
+    rng_set_seed(time(NULL));
 
     FILE *file = fopen("out/021.csv", "w");
     fprintf(file, "r_naive,r_correct,theta\n");
 
     int n_smp = atoi(argv[1]);
     for (int i = 0; i < n_smp; ++i)
-        fprintf(file, "%g,%g,%g\n", genrand_real1(), sqrt(genrand_real1()),
-                2 * M_PI * genrand_real1());
+        fprintf(file, "%g,%g,%g\n", rng_uniform_01(), sqrt(rng_uniform_01()),
+                2 * M_PI * rng_uniform_01());
 
     fclose(file);
 
