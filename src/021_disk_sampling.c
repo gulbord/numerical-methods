@@ -21,8 +21,8 @@ int main(int argc, const char *argv[])
 
     int n_smp = atoi(argv[1]);
     for (int i = 0; i < n_smp; ++i)
-        fprintf(file, "%g,%g,%g\n", rng_uniform_01(), sqrt(rng_uniform_01()),
-                2 * M_PI * rng_uniform_01());
+        fprintf(file, "%g,%g,%g\n", rng_real(), sqrt(rng_real()),
+                2 * M_PI * rng_real());
 
     fclose(file);
 

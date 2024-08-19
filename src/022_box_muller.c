@@ -27,8 +27,8 @@ int main(int argc, const char *argv[])
     double r, t;
     int n_smp = atoi(argv[3]);
     for (int i = 0; i < n_smp; ++i) {
-        r = sigma * sqrt(-2 * log(rng_uniform_exc_01()));
-        t = 2 * M_PI * rng_uniform_01();
+        r = sigma * sqrt(-2 * log(1 - rng_real()));
+        t = 2 * M_PI * rng_real();
         fprintf(file, "%g,%g\n", mu + r * cos(t), mu + r * sin(t));
     }
 

@@ -41,16 +41,16 @@ int main(int argc, const char *argv[])
 
         acc = 0;
         for (j = 0; j < n_darts; ++j) {
-            u = rng_uniform_01();
+            u = rng_real();
             if (u < A * p) {
                 // Sample from uniform g(x) = A
                 x = u / A;
-                if (rng_uniform_01() < exp(-x * x))
+                if (rng_real() < exp(-x * x))
                     ++acc;
             } else {
                 // Sample from exp g(x) = (A / p) * x * e^(p^2 - x^2)
                 x = sqrt(p2 - log_2pA - log(1 - u));
-                if (rng_uniform_01() * x < p * exp(-p2))
+                if (rng_real() * x < p * exp(-p2))
                     ++acc;
             }
         }

@@ -82,12 +82,12 @@ void gillespie(struct state **head, rate_ptr *rate_fns, double *rate_con,
         }
 
         // Calculate the residence time and check if we are past the maximum
-        tau = -log(rng_uniform_exc_01()) / esc_rate;
+        tau = -log(1 - rng_real()) / esc_rate;
         if (tot_time + tau > max_time)
             break;
 
         // Pick a reaction with probability ~ rate_i / esc_rate
-        thr = rng_uniform_01() * esc_rate;
+        thr = rng_real() * esc_rate;
         sum = 0.0;
         pick = n_react - 1; // If you never reach thr, pick the last
         for (i = 0; i < n_react; ++i) {

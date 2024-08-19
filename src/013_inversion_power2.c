@@ -21,7 +21,7 @@ int main(int argc, const char **argv)
     // rho(x) = (3/8) * x^2 --> sample with F^(-1)(p) = 2 * p^(1/3)
     int n_smp = atoi(argv[1]);
     for (int i = 0; i < n_smp; ++i)
-        fprintf(file, "%g\n", 2 * pow(rng_uniform_01(), 1.0 / 3));
+        fprintf(file, "%g\n", 2 * pow(rng_real(), 1.0 / 3));
 
     fclose(file);
 

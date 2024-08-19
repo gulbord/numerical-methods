@@ -11,24 +11,31 @@
 // Retrieved August 2024 from https://prng.di.unimi.it/.
 
 // Rotate left operation
-#define ROTL(x, k) (((x) << (k)) | ((x) >> (32 - (k))))
+#define ROTL(X, K) (((X) << (K)) | ((X) >> (64 - (K))))
 
-static uint32_t s[4];
+static uint64_t s[4];
 
-void rng_set_seed(uint32_t seed)
+static uint64_t rng_next_seed(uint64_t seed)
 {
-    s[0] = seed;
-    s[1] = seed ^ 0x9E3779B9;
-    s[2] = seed + 0x6A09E667;
-    s[3] = seed + 0xBB67AE85;
-    for (int i = 0; i < 10; ++i)
-        rng_int();
+    uint64_t x = (seed += 0x9e3779b97f4a7c15);
+    x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+    x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+    return x ^ (x >> 31);
 }
 
-uint32_t rng_int(void)
+void rng_set_seed(uint64_t seed)
 {
-    const uint32_t x = ROTL(s[0] + s[3], 7) + s[0];
-    const uint32_t t = s[1] << 9;
+    s[0] = seed;
+    s[1] = rng_next_seed(s[0]);
+    s[2] = rng_next_seed(s[1]);
+    s[3] = rng_next_seed(s[2]);
+}
+
+// Generate a random 64 bit unsigned int
+uint64_t rng(void)
+{
+    const uint64_t x = ROTL(s[0] + s[3], 23) + s[0];
+    const uint64_t t = s[1] << 17;
 
     s[2] ^= s[0];
     s[3] ^= s[1];
@@ -36,41 +43,28 @@ uint32_t rng_int(void)
     s[0] ^= s[3];
 
     s[2] ^= t;
-    s[3] = ROTL(s[3], 11);
+    s[3] = ROTL(s[3], 45);
 
     return x;
 }
 
 // Generate a random int (32 bit unsigned) on [0, n - 1]
 //
-// Original source:
-// D. Lemire, ‘Fast random integer generation in an interval’, ACM
-// Trans. Model. Comput. Simul., vol. 29, no. 1, pp. 1–12, Jan. 2019.
-//
-// With modifications taken from:
-// M. E. O’Neill, “Efficiently generating a number in a range,” PCG, A Better
-// Random Number Generator, https://www.pcg-random.org/posts/bounded-rands.html
-// (accessed Aug. 2024).
+// M.E. O'Neill. 2018. Efficiently generating a number in a range. PCG, a Better
+// Random Number Generator. Retrieved August 2024 from
+// https://www.pcg-random.org/posts/bounded-rands.html.
 uint32_t rng_int_n(uint32_t n)
 {
-    uint32_t x = rng_int();
-    uint64_t m = (uint64_t)x * (uint64_t)n;
-    uint32_t l = (uint32_t)m;
-    if (l < n) {
-        uint32_t t = -n;
-        if (t >= n) {
-            t -= n;
-            if (t >= n)
-                t %= n;
-        }
-        while (l < t) {
-            x = rng_int();
-            m = (uint64_t)x * (uint64_t)n;
-            l = (uint32_t)m;
-        }
-    }
+    uint32_t mask = -1;
+    --n;
+    // Restrict mask to the closest [0, 2^k) range fitting [0, --n]
+    mask >>= __builtin_clz(n | 1);
+    uint32_t x;
+    do {
+        x = (rng() >> 32) & mask;
+    } while (x > n);
 
-    return m >> 32;
+    return x;
 }
 
 // Generate an integer (32 bit signed) on [min, max]
@@ -80,14 +74,5 @@ int32_t rng_int_range(int32_t min, int32_t max)
     return min + rng_int_n(range);
 }
 
-// Generate a random double on [0, 1]
-double rng_uniform_01(void) { return rng_int() * (1.0 / 4294967295.0); }
-
 // Generate a random double on [0, 1)
-double rng_uniform_01_exc(void) { return rng_int() * (1.0 / 4294967296.0); }
-
-// Generate a random double on (0, 1]
-double rng_uniform_exc_01(void)
-{
-    return 1.0 - rng_int() * (1.0 / 4294967296.0);
-}
+double rng_real(void) { return (rng() >> 11) * 0x1.0p-53; }

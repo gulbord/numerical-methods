@@ -16,7 +16,7 @@ double monte_carlo_sweep(double *particles, const struct parameters *params)
         for (j = 0; j < 3; ++j) {
             old_position[j] = particles[pick + j];
             particles[pick + j]
-                += (2.0 * rng_uniform_01() - 1.0) * params->disp_max;
+                += (2.0 * rng_real() - 1.0) * params->disp_max;
             // Periodic boundary conditions
             particles[pick + j]
                 -= params->box_size
@@ -26,7 +26,7 @@ double monte_carlo_sweep(double *particles, const struct parameters *params)
         new_energy = calc_energy(particles, params);
         delta = new_energy - old_energy;
 
-        if (delta > 0 && rng_uniform_01() < exp(-delta / params->temperature)) {
+        if (delta > 0 && rng_real() < exp(-delta / params->temperature)) {
             for (j = 0; j < 3; ++j)
                 particles[pick + j] = old_position[j];
             new_energy = old_energy;

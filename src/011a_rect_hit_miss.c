@@ -33,8 +33,8 @@ int main(int argc, const char **argv)
         for (i = 0; i < rep; ++i) {
             hits = 0; // Reset hit counter
             for (j = 0; j < throws; ++j) {
-                x = rng_uniform_01();
-                y = rng_uniform_01();
+                x = rng_real();
+                y = rng_real();
                 if (x < 0.5 && y < 0.5)
                     ++hits;
             }
