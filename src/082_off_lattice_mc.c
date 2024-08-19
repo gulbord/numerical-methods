@@ -8,7 +8,7 @@
 
 #define N_ARGS 2
 
-double energy_delta(const int pick, const double *old_position,
+double energy_delta(int pick, const double *old_position,
                     const double *particles, const struct parameters *params)
 {
     int i, j;
@@ -24,7 +24,7 @@ double energy_delta(const int pick, const double *old_position,
             old_r2 += old_dr * old_dr;
 
             new_dr = particles[pick + j] - particles[i + j];
-            new_dr -= params->box_size * round(old_dr / params->box_size);
+            new_dr -= params->box_size * round(new_dr / params->box_size);
             new_r2 += new_dr * new_dr;
         }
 
@@ -43,7 +43,6 @@ double energy_total(const double *particles, const struct parameters *params)
             r2 = 0.0;
             for (k = 0; k < 3; ++k) {
                 dr = particles[i + k] - particles[j + k];
-                // Periodic boundary conditions
                 dr -= params->box_size * round(dr / params->box_size);
                 r2 += dr * dr;
             }

@@ -3,7 +3,7 @@
 #include <math.h>
 
 double monte_carlo_sweep(double *particles, const struct parameters *params,
-                         energy_delta_ptr energy_delta)
+                         const energy_delta_ptr energy_delta)
 {
     int i, j, pick;
     double old_position[3];
