@@ -12,10 +12,14 @@ int parse_config(const char *filename, struct parameters *params)
     }
 
     // Read line by line and split key-value pairs by whitespace
-    char line[255];
+    char line[LINE_BUFSIZ], tmp[LINE_BUFSIZ];
     while (fgets(line, sizeof(line), file)) {
         char key[50], value[50];
-        if (sscanf(line, "%s %s", key, value) == 2) {
+        if (sscanf(line, "%s", tmp) == EOF)
+            continue; // Blank line
+        else if (sscanf(line, "%[#]", tmp) == 1)
+            continue; // Comment
+        else if (sscanf(line, "%s %s", key, value) == 2) {
             if (strcmp(key, "num_particles") == 0)
                 params->num_particles = atoi(value);
             else if (strcmp(key, "box_size") == 0)
@@ -26,6 +30,8 @@ int parse_config(const char *filename, struct parameters *params)
                 params->temperature = atof(value);
             else if (strcmp(key, "mc_steps") == 0)
                 params->mc_steps = atoi(value);
+            else if (strcmp(key, "init_type") == 0)
+                strcpy(params->init_type, value); // Same buffer size
         }
     }
 

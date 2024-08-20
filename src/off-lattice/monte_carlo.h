@@ -6,6 +6,7 @@
 typedef double (*energy_delta_ptr)(int, const double *, const double *,
                                    const struct parameters *);
 
+void init_particles(double **particles, const struct parameters *params);
 // Perform N (number of particles) Monte Carlo moves and return the difference
 // between the final and initial total energy
 double monte_carlo_sweep(double *particles, const struct parameters *params,

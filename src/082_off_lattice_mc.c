@@ -8,8 +8,8 @@
 
 #define N_ARGS 2
 
-double energy_delta(int pick, const double *old_position,
-                    const double *particles, const struct parameters *params)
+double energy_delta(int pick, const double *trial, const double *particles,
+                    const struct parameters *params)
 {
     int i, j;
     double old_dr, new_dr, old_r2, new_r2, delta = 0.0;
@@ -19,11 +19,11 @@ double energy_delta(int pick, const double *old_position,
 
         old_r2 = 0.0, new_r2 = 0.0;
         for (j = 0; j < 3; ++j) {
-            old_dr = old_position[j] - particles[i + j];
+            old_dr = particles[pick + j] - particles[i + j];
             old_dr -= params->box_size * round(old_dr / params->box_size);
             old_r2 += old_dr * old_dr;
 
-            new_dr = particles[pick + j] - particles[i + j];
+            new_dr = trial[j] - particles[i + j];
             new_dr -= params->box_size * round(new_dr / params->box_size);
             new_r2 += new_dr * new_dr;
         }
@@ -77,10 +77,9 @@ int main(int argc, const char **argv)
         return 1;
     }
 
-    // Initialize the particle array with random positions
-    double *particles = malloc(3 * params.num_particles * sizeof(*particles));
-    for (int i = 0; i < 3 * params.num_particles; ++i)
-        particles[i] = rng_real() * params.box_size;
+    // Initialize the particle array
+    double *particles;
+    init_particles(&particles, &params);
 
     // Perform mc_steps Monte Carlo sweeps
     double energy = energy_total(particles, &params);
