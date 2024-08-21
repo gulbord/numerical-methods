@@ -5,13 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-void init_particles(double **particles, const struct parameters *params)
+void init_particles(double *particles, const struct parameters *params)
 {
-    *particles = malloc(3 * params->num_particles * sizeof(**particles));
-
     if (strcmp(params->init_type, "random") == 0) {
         for (int i = 0; i < 3 * params->num_particles; ++i)
-            (*particles)[i] = rng_real() * params->box_size;
+            particles[i] = rng_real() * params->box_size;
     } else
         fprintf(stderr, "Unknown initialization string: %s\n",
                 params->init_type);
@@ -35,7 +33,7 @@ double monte_carlo_sweep(double *particles, const struct parameters *params,
 
         delta = energy_delta(pick, trial, particles, params);
 
-        if (delta < 0 || rng_real() > exp(-delta / params->temperature)) {
+        if (delta < 0 || rng_real() < exp(-delta / params->temperature)) {
             energy += delta;
             for (j = 0; j < 3; ++j)
                 particles[pick + j] = trial[j];
