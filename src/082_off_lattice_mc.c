@@ -82,12 +82,12 @@ int main(int argc, const char **argv)
     init_particles(particles, &params);
 
     // Perform mc_steps Monte Carlo sweeps
-    double energy = energy_total(particles, &params);
-    fprintf(file, "%g\n", energy);
+    struct observables obs = {0, energy_total(particles, &params)};
+    fprintf(file, "%g\n", obs.energy);
     for (int t = 1; t < params.mc_steps; ++t) {
         print_progress(t, params.mc_steps);
-        energy += monte_carlo_sweep(particles, &params, &energy_delta);
-        fprintf(file, "%g\n", energy);
+        monte_carlo_sweep(particles, &obs, &params, &energy_delta);
+        fprintf(file, "%g\n", obs.energy);
     }
 
     printf("\n"); // After progress bar

@@ -7,7 +7,7 @@
 #include <time.h>
 
 #define N_ARGS 2
-#define EPS 1e6
+#define EPS 1000
 
 double energy_delta(int pick, const double *trial, const double *particles,
                     const struct parameters *params)
@@ -82,29 +82,26 @@ int main(int argc, const char **argv)
         perror("fopen() failed");
         return 1;
     }
+    fprintf(file, "realization,acc_ratio,energy\n");
 
     double *particles = malloc(3 * params.num_particles * sizeof(*particles));
 
-    int r, t;
-    double energy;
-    for (r = 1; r <= params.realizations; ++r) {
+    for (int r = 1; r <= params.realizations; ++r) {
         printf("\rRealization %d/%d\n", r, params.realizations);
 
         // Initialize particles according to config
         init_particles(particles, &params);
 
         // Perform mc_steps Monte Carlo sweeps
-        energy = energy_total(particles, &params);
-        fprintf(file, "%g,", energy);
-
-        for (t = 1; t <= params.mc_steps; ++t) {
+        struct observables obs;
+        obs.energy = energy_total(particles, &params);
+        for (int t = 1; t <= params.mc_steps; ++t) {
             print_progress(t, params.mc_steps);
-            energy += monte_carlo_sweep(particles, &params, &energy_delta);
-            fprintf(file, "%g,", energy);
+            monte_carlo_sweep(particles, &obs, &params, &energy_delta);
+            fprintf(file, "%d,%g,%g\n", r, obs.acc_ratio, obs.energy);
         }
 
         printf("\r\033[K\033[F"); // After progress bar
-        fprintf(file, "\n");      // Separate different realizations
     }
 
     free(particles);

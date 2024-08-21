@@ -16,9 +16,7 @@ writeLines(
   "src/083.cfg"
 )
 
-disp_max <- 10^seq(log10(0.01), log10(1), length.out = 10)
-density <- c(0.05, 0.3, 0.5, 1)
-
+system("rm out/083_*.csv")
 for (rho in c(0.05, 0.3, 0.5, 1)) {
   for (dmax in 10^seq(log10(0.01), log10(1), length.out = 10)) {
     message(sprintf("Processing density = %g, disp_max = %g", rho, dmax))
