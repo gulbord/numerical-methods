@@ -4,8 +4,9 @@
 #define PBAR_STR "============================================================"
 #define PBAR_WIDTH 60
 
-void print_progress(double percentage)
+void print_progress(int iter, int total)
 {
+    double percentage = (double)iter / total;
     int val = (int)(percentage * 100);
     int lpad = (int)(percentage * PBAR_WIDTH);
     int rpad = PBAR_WIDTH - lpad - 1;
