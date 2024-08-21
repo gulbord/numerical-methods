@@ -62,10 +62,14 @@ clean:
 72: $(SRC)/072_brusselator.c $(SRC)/ctmp/gillespie.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/072_brusselator
 
-8: 82
+8: 82 83
 
 82: $(SRC)/082_off_lattice_mc.c $(SRC)/off-lattice/monte_carlo.c \
 	$(SRC)/off-lattice/parameters.c $(SRC)/utils/progress.c $(RNG)
-	$(CC) $(CFLAGS) -Wno-maybe-uninitialized $^ -lm -o $(EXE)/082_off_lattice_mc
+	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/082_off_lattice_mc
+
+83: $(SRC)/083_hard_spheres_mc.c $(SRC)/off-lattice/monte_carlo.c \
+	$(SRC)/off-lattice/parameters.c $(SRC)/utils/progress.c $(RNG)
+	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/083_hard_spheres_mc
 
 .PHONY: all clean
