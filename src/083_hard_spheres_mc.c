@@ -73,9 +73,10 @@ int main(int argc, const char **argv)
         return 1;
 
     char fname[255];
-    snprintf(fname, sizeof(fname), "out/083_N%d_L%g_d%g_T%g_s%d_r%d.csv",
+    snprintf(fname, sizeof(fname), "out/083_N%d_L%g_d%g_T%g_i%s_s%d_r%d.csv",
              params.num_particles, params.box_size, params.disp_max,
-             params.temperature, params.mc_steps, params.realizations);
+             params.temperature, params.init_type, params.mc_steps,
+             params.realizations);
 
     FILE *file = fopen(fname, "w");
     if (file == NULL) {
