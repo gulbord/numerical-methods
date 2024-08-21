@@ -78,7 +78,7 @@ int parse_config(const char *filename, struct parameters *params)
         params->num_particles = round(params->density * volume);
     } else if (params->box_size < 0.0) { // Calculate box_size
         volume = params->num_particles / params->density;
-        params->box_size = pow(volume, 1.0 / 3.0);
+        params->box_size = cbrt(volume);
     } else { // Calculate density
         volume = pow(params->box_size, 3);
         params->density = params->num_particles / volume;

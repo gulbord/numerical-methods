@@ -10,6 +10,24 @@ void init_particles(double *particles, const struct parameters *params)
     if (strcmp(params->init_type, "random") == 0) {
         for (int i = 0; i < 3 * params->num_particles; ++i)
             particles[i] = rng_real() * params->box_size;
+    } else if (strcmp(params->init_type, "cubic") == 0) {
+        // Number of particles in each direction
+        int n = ceil(cbrt(params->num_particles));
+        int spacing = params->box_size / n;
+        int assigned = 0;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                for (int k = 0; k < n; ++k) {
+                    if (assigned < params->num_particles) {
+                        particles[3 * assigned] = (i + 0.5) * spacing;
+                        particles[3 * assigned + 1] = (j + 0.5) * spacing;
+                        particles[3 * assigned + 2] = (k + 0.5) * spacing;
+                        ++assigned;
+                    } else
+                        break;
+                }
+            }
+        }
     } else
         fprintf(stderr, "Unknown initialization string: %s\n",
                 params->init_type);
