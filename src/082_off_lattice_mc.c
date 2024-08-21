@@ -78,14 +78,14 @@ int main(int argc, const char **argv)
     }
 
     // Initialize the particle array
-    double *particles;
-    init_particles(&particles, &params);
+    double *particles = malloc(3 * params.num_particles * sizeof(*particles));
+    init_particles(particles, &params);
 
     // Perform mc_steps Monte Carlo sweeps
     double energy = energy_total(particles, &params);
     fprintf(file, "%g\n", energy);
-    for (int i = 0; i < params.mc_steps; ++i) {
-        print_progress((double)(i + 1) / params.mc_steps);
+    for (int t = 1; t < params.mc_steps; ++t) {
+        print_progress(t, params.mc_steps);
         energy += monte_carlo_sweep(particles, &params, &energy_delta);
         fprintf(file, "%g\n", energy);
     }
