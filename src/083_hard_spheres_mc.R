@@ -18,7 +18,7 @@ writeLines(
 
 system("rm out/083_*.csv")
 for (rho in c(0.05, 0.3, 0.5, 1)) {
-  for (dmax in 10^seq(log10(0.01), log10(1), length.out = 10)) {
+  for (dmax in 10^seq(log10(0.01), log10(1), length.out = 7)) {
     message(sprintf("Processing density = %g, disp_max = %g", rho, dmax))
     system(sprintf("sed -i 's/density .*/density %g/' src/083.cfg", rho))
     system(sprintf("sed -i 's/disp_max .*/disp_max %g/' src/083.cfg", dmax))
