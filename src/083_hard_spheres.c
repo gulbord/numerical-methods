@@ -7,7 +7,7 @@
 #include <time.h>
 
 #define N_ARGS 2
-#define EPS 1000
+#define EPS 1e6
 
 double energy_delta(int pick, const double *trial, const double *particles,
                     const struct parameters *params)
@@ -73,10 +73,9 @@ int main(int argc, const char **argv)
         return 1;
 
     char fname[255];
-    snprintf(fname, sizeof(fname), "out/083_N%d_L%g_d%g_T%g_i%s_s%d_r%d.csv",
-             params.num_particles, params.box_size, params.disp_max,
-             params.temperature, params.init_type, params.mc_steps,
-             params.realizations);
+    snprintf(fname, sizeof(fname), "out/083_N%d_r%g_d%g_T%g_i%s_s%d.csv",
+             params.num_particles, params.density, params.disp_max,
+             params.temperature, params.init_type, params.mc_steps);
 
     FILE *file = fopen(fname, "w");
     if (file == NULL) {
