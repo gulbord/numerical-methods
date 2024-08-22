@@ -68,8 +68,8 @@ clean:
 	$(SRC)/off-lattice/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/082_off_lattice_mc
 
-83: $(SRC)/083_hard_spheres_mc.c $(SRC)/off-lattice/monte_carlo.c \
+83: $(SRC)/083_hard_spheres.c $(SRC)/off-lattice/monte_carlo.c \
 	$(SRC)/off-lattice/parameters.c $(SRC)/utils/progress.c $(RNG)
-	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/083_hard_spheres_mc
+	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/083_hard_spheres
 
 .PHONY: all clean
