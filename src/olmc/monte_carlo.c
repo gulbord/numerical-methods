@@ -7,10 +7,10 @@
 
 void init_particles(double *particles, const struct parameters *params)
 {
-    if (strcmp(params->init_type, "random") == 0) {
+    if (strcmp(params->init_conf, "random") == 0) {
         for (int i = 0; i < 3 * params->num_particles; ++i)
             particles[i] = rng_real() * params->box_size;
-    } else if (strcmp(params->init_type, "cubic") == 0) {
+    } else if (strcmp(params->init_conf, "cubic") == 0) {
         // Number of particles in each direction
         int n = ceil(cbrt(params->num_particles));
         int spacing = params->box_size / n;
@@ -30,7 +30,7 @@ void init_particles(double *particles, const struct parameters *params)
         }
     } else
         fprintf(stderr, "Unknown initialization string: %s\n",
-                params->init_type);
+                params->init_conf);
 }
 
 void monte_carlo_sweep(double *particles, struct observables *obs,

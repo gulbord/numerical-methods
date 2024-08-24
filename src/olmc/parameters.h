@@ -12,7 +12,7 @@ struct parameters {
     double max_disp;
     int num_steps;
     int num_realizations;
-    char init_type[TOKEN_BUFSIZ];
+    char init_conf[TOKEN_BUFSIZ];
 };
 
 int parse_config(const char *filename, struct parameters *params);

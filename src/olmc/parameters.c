@@ -20,7 +20,7 @@ int parse_config(const char *filename, struct parameters *params)
     params->max_disp = -1;
     params->num_steps = 1000;
     params->num_realizations = 1;
-    strcpy(params->init_type, "random");
+    strcpy(params->init_conf, "random");
 
     // Read line by line and split key-value pairs by whitespace
     char line[LINE_BUFSIZ];
@@ -44,8 +44,8 @@ int parse_config(const char *filename, struct parameters *params)
             params->num_steps = atoi(value);
         else if (strcmp(key, "num_realizations") == 0)
             params->num_realizations = atoi(value);
-        else if (strcmp(key, "init_type") == 0)
-            strcpy(params->init_type, value); // Same buffer size
+        else if (strcmp(key, "init_conf") == 0)
+            strcpy(params->init_conf, value); // Same buffer size
     }
 
     if (params->temperature < 0) {
