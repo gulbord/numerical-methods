@@ -1,5 +1,5 @@
-#include "utils/random.h"
 #include "ctmp/brusselator.h"
+#include "utils/random.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -24,8 +24,8 @@ int main(int argc, char **argv)
     double max_time = atof(argv[6]);
 
     char fname[100];
-    snprintf(fname, sizeof(fname), "out/072_a%g_b%g_omega%g_X%d_Y%d_T%g.csv",
-             a, b, omega, init_x, init_y, max_time);
+    snprintf(fname, sizeof(fname), "out/072_a%g_b%g_omega%g_X%d_Y%d_T%g.csv", a,
+             b, omega, init_x, init_y, max_time);
     FILE *file = fopen(fname, "w");
 
     // Parameters arrays

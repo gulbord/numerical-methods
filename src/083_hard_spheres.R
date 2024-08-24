@@ -32,7 +32,7 @@ for (rho in c(0.05, 0.3, 0.5, 1)) {
 plot_obs <- function(fname) {
   df <- fread(fname) |>
     _[, iter := 1:.N, by = realization] |>
-    _[, energy := energy / 1000] |>
+    _[, energy := energy / 100] |>
     _[, c(mean = lapply(.SD, mean), sd = lapply(.SD, sd))
       , keyby = iter, .SDcols = !"realization"] |>
     setnames(
@@ -54,7 +54,7 @@ plot_obs <- function(fname) {
     geom_ribbon(
       aes(iter, ymin = mean - sd, ymax = mean + sd),
       alpha = 0.5,
-      ) +
+    ) +
     geom_line(aes(iter, mean)) +
     facet_wrap(
       vars(variable),

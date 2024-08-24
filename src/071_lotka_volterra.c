@@ -1,5 +1,5 @@
-#include "utils/random.h"
 #include "ctmp/lotka_volterra.h"
+#include "utils/random.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -26,8 +26,8 @@ int main(int argc, char **argv)
 
     char fname[100];
     snprintf(fname, sizeof(fname), "out/071_Ka%g_Kb%g_Kc%g_X%d_Y%d_T%g.csv",
-             prey_birth_k, predation_k, pred_death_k,
-             init_prey, init_pred, max_time);
+             prey_birth_k, predation_k, pred_death_k, init_prey, init_pred,
+             max_time);
     FILE *file = fopen(fname, "w");
 
     // Parameters arrays

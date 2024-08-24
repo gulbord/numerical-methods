@@ -64,8 +64,8 @@ int parse_config(const char *filename, struct parameters *params)
 
     // Complete num_particles, box_size and density
     double volume;
-    int provided = (params->num_particles > 0) + (params->box_size > 0.0)
-                   + (params->density > 0.0);
+    int provided = (params->num_particles > 0) + (params->box_size > 0.0) +
+                   (params->density > 0.0);
     if (provided < 2) {
         fprintf(stderr, "Two values between num_particles, box_size, and "
                         "density need to be provided!\n");

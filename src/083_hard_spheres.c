@@ -85,6 +85,7 @@ int main(int argc, const char **argv)
     fprintf(file, "realization,acc_ratio,energy\n");
 
     double *particles = malloc(3 * params.num_particles * sizeof(*particles));
+    struct observables obs;
 
     for (int r = 1; r <= params.realizations; ++r) {
         printf("\rRealization %d/%d\n", r, params.realizations);
@@ -93,7 +94,6 @@ int main(int argc, const char **argv)
         init_particles(particles, &params);
 
         // Perform mc_steps Monte Carlo sweeps
-        struct observables obs;
         obs.energy = energy_total(particles, &params);
         for (int t = 1; t <= params.mc_steps; ++t) {
             print_progress(t, params.mc_steps);
