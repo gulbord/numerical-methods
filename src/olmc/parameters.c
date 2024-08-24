@@ -26,24 +26,26 @@ int parse_config(const char *filename, struct parameters *params)
     char line[LINE_BUFSIZ];
     while (fgets(line, sizeof(line), file)) {
         char key[TOKEN_BUFSIZ], value[TOKEN_BUFSIZ];
-        if (sscanf(line, "%s %s", key, value) == 2) {
-            if (strcmp(key, "num_particles") == 0)
-                params->num_particles = atoi(value);
-            else if (strcmp(key, "box_size") == 0)
-                params->box_size = atof(value);
-            else if (strcmp(key, "density") == 0)
-                params->density = atof(value);
-            else if (strcmp(key, "disp_max") == 0)
-                params->disp_max = atof(value);
-            else if (strcmp(key, "temperature") == 0)
-                params->temperature = atof(value);
-            else if (strcmp(key, "num_steps") == 0)
-                params->num_steps = atoi(value);
-            else if (strcmp(key, "num_realizations") == 0)
-                params->num_realizations = atoi(value);
-            else if (strcmp(key, "init_type") == 0)
-                strcpy(params->init_type, value); // Same buffer size
-        }
+
+        if (sscanf(line, "%s %s", key, value) != 2)
+            continue;
+
+        if (strcmp(key, "num_particles") == 0)
+            params->num_particles = atoi(value);
+        else if (strcmp(key, "box_size") == 0)
+            params->box_size = atof(value);
+        else if (strcmp(key, "density") == 0)
+            params->density = atof(value);
+        else if (strcmp(key, "disp_max") == 0)
+            params->disp_max = atof(value);
+        else if (strcmp(key, "temperature") == 0)
+            params->temperature = atof(value);
+        else if (strcmp(key, "num_steps") == 0)
+            params->num_steps = atoi(value);
+        else if (strcmp(key, "num_realizations") == 0)
+            params->num_realizations = atoi(value);
+        else if (strcmp(key, "init_type") == 0)
+            strcpy(params->init_type, value); // Same buffer size
     }
 
     if (params->disp_max < 0) {
