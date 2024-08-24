@@ -70,7 +70,7 @@ int main(int argc, const char **argv)
     char fname[255];
     snprintf(fname, sizeof(fname), "out/082_N%d_L%g_d%g_T%g_s%d.csv",
              params.num_particles, params.box_size, params.disp_max,
-             params.temperature, params.mc_steps);
+             params.temperature, params.num_steps);
     FILE *file = fopen(fname, "w");
     if (file == NULL) {
         perror("fopen() failed");
@@ -84,8 +84,8 @@ int main(int argc, const char **argv)
     // Perform mc_steps Monte Carlo sweeps
     struct observables obs = {0, energy_total(particles, &params)};
     fprintf(file, "%g\n", obs.energy);
-    for (int t = 1; t < params.mc_steps; ++t) {
-        print_progress(t, params.mc_steps);
+    for (int t = 1; t < params.num_steps; ++t) {
+        print_progress(t, params.num_steps);
         monte_carlo_sweep(particles, &obs, &params, &energy_delta);
         fprintf(file, "%g\n", obs.energy);
     }

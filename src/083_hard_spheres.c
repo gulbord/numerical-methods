@@ -75,7 +75,7 @@ int main(int argc, const char **argv)
     char fname[255];
     snprintf(fname, sizeof(fname), "out/083_N%d_r%g_d%g_T%g_i%s_s%d.csv",
              params.num_particles, params.density, params.disp_max,
-             params.temperature, params.init_type, params.mc_steps);
+             params.temperature, params.init_type, params.num_steps);
 
     FILE *file = fopen(fname, "w");
     if (file == NULL) {
@@ -87,16 +87,16 @@ int main(int argc, const char **argv)
     double *particles = malloc(3 * params.num_particles * sizeof(*particles));
     struct observables obs;
 
-    for (int r = 1; r <= params.realizations; ++r) {
-        printf("\rRealization %d/%d\n", r, params.realizations);
+    for (int r = 1; r <= params.num_realizations; ++r) {
+        printf("\rRealization %d/%d\n", r, params.num_realizations);
 
         // Initialize particles according to config
         init_particles(particles, &params);
 
         // Perform mc_steps Monte Carlo sweeps
         obs.energy = energy_total(particles, &params);
-        for (int t = 1; t <= params.mc_steps; ++t) {
-            print_progress(t, params.mc_steps);
+        for (int t = 1; t <= params.num_steps; ++t) {
+            print_progress(t, params.num_steps);
             monte_carlo_sweep(particles, &obs, &params, &energy_delta);
             fprintf(file, "%d,%g,%g\n", r, obs.acc_ratio, obs.energy);
         }

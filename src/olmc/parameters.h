@@ -10,8 +10,8 @@ struct parameters {
     double density;
     double disp_max;
     double temperature;
-    int mc_steps;
-    int realizations;
+    int num_steps;
+    int num_realizations;
     char init_type[TOKEN_BUFSIZ];
 };
 
