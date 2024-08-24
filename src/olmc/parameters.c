@@ -23,14 +23,10 @@ int parse_config(const char *filename, struct parameters *params)
     strcpy(params->init_type, "random");
 
     // Read line by line and split key-value pairs by whitespace
-    char line[LINE_BUFSIZ], tmp[LINE_BUFSIZ];
+    char line[LINE_BUFSIZ];
     while (fgets(line, sizeof(line), file)) {
         char key[TOKEN_BUFSIZ], value[TOKEN_BUFSIZ];
-        if (sscanf(line, "%s", tmp) == EOF)
-            continue; // Blank line
-        else if (sscanf(line, "%[#]", tmp) == 1)
-            continue; // Comment
-        else if (sscanf(line, "%s %s", key, value) == 2) {
+        if (sscanf(line, "%s %s", key, value) == 2) {
             if (strcmp(key, "num_particles") == 0)
                 params->num_particles = atoi(value);
             else if (strcmp(key, "box_size") == 0)
