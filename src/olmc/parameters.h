@@ -8,8 +8,8 @@ struct parameters {
     int num_particles;
     double box_size;
     double density;
-    double max_disp;
     double temperature;
+    double max_disp;
     int num_steps;
     int num_realizations;
     char init_type[TOKEN_BUFSIZ];
