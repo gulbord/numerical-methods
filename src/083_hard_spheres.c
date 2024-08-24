@@ -1,4 +1,4 @@
-#include "off-lattice/monte_carlo.h"
+#include "olmc/monte_carlo.h"
 #include "utils/progress.h"
 #include "utils/random.h"
 #include <math.h>
