@@ -74,7 +74,7 @@ int main(int argc, const char **argv)
 
     char fname[255];
     snprintf(fname, sizeof(fname), "out/083_N%d_r%g_d%g_T%g_i%s_s%d.csv",
-             params.num_particles, params.density, params.disp_max,
+             params.num_particles, params.density, params.max_disp,
              params.temperature, params.init_type, params.num_steps);
 
     FILE *file = fopen(fname, "w");

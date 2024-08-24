@@ -69,7 +69,7 @@ int main(int argc, const char **argv)
 
     char fname[255];
     snprintf(fname, sizeof(fname), "out/082_N%d_L%g_d%g_T%g_s%d.csv",
-             params.num_particles, params.box_size, params.disp_max,
+             params.num_particles, params.box_size, params.max_disp,
              params.temperature, params.num_steps);
     FILE *file = fopen(fname, "w");
     if (file == NULL) {

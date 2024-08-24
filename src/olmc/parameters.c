@@ -16,7 +16,7 @@ int parse_config(const char *filename, struct parameters *params)
     params->num_particles = -1;
     params->box_size = -1;
     params->density = -1;
-    params->disp_max = -1;
+    params->max_disp = -1;
     params->temperature = -1;
     params->num_steps = 1000;
     params->num_realizations = 1;
@@ -36,8 +36,8 @@ int parse_config(const char *filename, struct parameters *params)
             params->box_size = atof(value);
         else if (strcmp(key, "density") == 0)
             params->density = atof(value);
-        else if (strcmp(key, "disp_max") == 0)
-            params->disp_max = atof(value);
+        else if (strcmp(key, "max_disp") == 0)
+            params->max_disp = atof(value);
         else if (strcmp(key, "temperature") == 0)
             params->temperature = atof(value);
         else if (strcmp(key, "num_steps") == 0)
@@ -48,8 +48,8 @@ int parse_config(const char *filename, struct parameters *params)
             strcpy(params->init_type, value); // Same buffer size
     }
 
-    if (params->disp_max < 0) {
-        fprintf(stderr, "Provide a valid disp_max value.\n");
+    if (params->max_disp < 0) {
+        fprintf(stderr, "Provide a valid max_disp value.\n");
         fclose(file);
         return 1;
     }

@@ -8,7 +8,7 @@ struct parameters {
     int num_particles;
     double box_size;
     double density;
-    double disp_max;
+    double max_disp;
     double temperature;
     int num_steps;
     int num_realizations;

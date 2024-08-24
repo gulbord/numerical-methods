@@ -45,7 +45,7 @@ void monte_carlo_sweep(double *particles, struct observables *obs,
         pick = 3 * rng_int_n(params->num_particles);
         for (j = 0; j < 3; ++j) {
             trial[j] = particles[pick + j];
-            trial[j] += (2 * rng_real() - 1) * params->disp_max;
+            trial[j] += (2 * rng_real() - 1) * params->max_disp;
             // Periodic boundary conditions
             trial[j] -= params->box_size * floor(trial[j] / params->box_size);
         }
