@@ -9,8 +9,9 @@
 #define N_ARGS 2
 #define EPS 1e6
 
-double energy_delta(int pick, const double *trial, const double *particles,
-                    const struct parameters *params)
+double compute_energy_delta(int pick, const double *trial,
+                            const double *particles,
+                            const struct parameters *params)
 {
     double delta = 0.0;
 
@@ -39,7 +40,8 @@ double energy_delta(int pick, const double *trial, const double *particles,
     return delta;
 }
 
-double energy_total(const double *particles, const struct parameters *params)
+double compute_potential(const double *particles,
+                         const struct parameters *params)
 {
     double energy = 0.0;
 
@@ -96,10 +98,10 @@ int main(int argc, const char **argv)
         initialize(particles, &params);
 
         // Perform mc_steps Monte Carlo sweeps
-        obs.energy = energy_total(particles, &params);
+        obs.energy = compute_potential(particles, &params);
         for (int t = 1; t <= params.num_steps; ++t) {
             print_progress(t, params.num_steps);
-            sweep(particles, &obs, &params, &energy_delta);
+            sweep(particles, &obs, &params, &compute_energy_delta);
             fprintf(file, "%d,%g,%g\n", r, obs.acc_ratio, obs.energy);
         }
 

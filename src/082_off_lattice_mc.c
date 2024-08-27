@@ -8,8 +8,9 @@
 
 #define N_ARGS 2
 
-double energy_delta(int pick, const double *trial, const double *particles,
-                    const struct parameters *params)
+double compute_energy_delta(int pick, const double *trial,
+                            const double *particles,
+                            const struct parameters *params)
 {
     double delta = 0.0;
     for (int i = 0; i < 3 * params->num_particles; i += 3) {
@@ -34,7 +35,8 @@ double energy_delta(int pick, const double *trial, const double *particles,
     return delta;
 }
 
-double energy_total(const double *particles, const struct parameters *params)
+double compute_potential(const double *particles,
+                         const struct parameters *params)
 {
     double energy = 0.0;
     for (int i = 0; i < 3 * params->num_particles - 3; i += 3) {
@@ -81,11 +83,11 @@ int main(int argc, const char **argv)
     initialize(particles, &params);
 
     // Perform mc_steps Monte Carlo sweeps
-    struct observables obs = {0, energy_total(particles, &params)};
+    struct observables obs = {0, compute_potential(particles, &params)};
     fprintf(file, "%g\n", obs.energy);
     for (int t = 1; t < params.num_steps; ++t) {
         print_progress(t, params.num_steps);
-        sweep(particles, &obs, &params, &energy_delta);
+        sweep(particles, &obs, &params, &compute_energy_delta);
         fprintf(file, "%g\n", obs.energy);
     }
 

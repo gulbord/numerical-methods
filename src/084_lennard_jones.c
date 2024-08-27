@@ -10,8 +10,9 @@
 #define RCUT 3.0
 #define RCUT2 9.0
 
-double energy_delta(int pick, const double *trial, const double *particles,
-                    const struct parameters *params)
+double compute_energy_delta(int pick, const double *trial,
+                            const double *particles,
+                            const struct parameters *params)
 {
     double delta = 0.0;
 
@@ -55,7 +56,8 @@ double energy_delta(int pick, const double *trial, const double *particles,
     return 4.0 * delta;
 }
 
-double energy_total(const double *particles, const struct parameters *params)
+double compute_potential(const double *particles,
+                         const struct parameters *params)
 {
     double energy = 0.0;
     for (int i = 0; i < 3 * params->num_particles - 3; i += 3) {
@@ -79,7 +81,8 @@ double energy_total(const double *particles, const struct parameters *params)
     return energy;
 }
 
-static double virial(const double *particles, const struct parameters *params)
+static double compute_virial(const double *particles,
+                             const struct parameters *params)
 {
     double virial = 0.0;
 
@@ -149,12 +152,13 @@ int main(int argc, const char **argv)
         initialize(particles, &params);
 
         // Perform num_steps Monte Carlo sweeps
-        obs.energy = energy_total(particles, &params) + utail;
+        obs.energy = compute_potential(particles, &params) + utail;
         for (int t = 1; t <= params.num_steps; ++t) {
             print_progress(t, params.num_steps);
-            sweep(particles, &obs, &params, &energy_delta);
+            sweep(particles, &obs, &params, &compute_energy_delta);
             fprintf(file, "%d,%g,%g,%g\n", r, obs.energy,
-                    rho_temp + inv_vol * virial(particles, &params) + ptail,
+                    ptail + rho_temp +
+                        inv_vol * compute_virial(particles, &params),
                     obs.acc_ratio);
         }
 

@@ -34,7 +34,9 @@ void initialize(double *particles, const struct parameters *params)
 }
 
 void sweep(double *particles, struct observables *obs,
-           const struct parameters *params, const energy_delta_ptr energy_delta)
+           const struct parameters *params,
+           double compute_energy_delta(int, const double *, const double *,
+                                       const struct parameters *))
 {
     int accepted = 0;
     double trial[3];
@@ -48,7 +50,7 @@ void sweep(double *particles, struct observables *obs,
             trial[j] -= params->box_size * floor(trial[j] / params->box_size);
         }
 
-        double delta = energy_delta(pick, trial, particles, params);
+        double delta = compute_energy_delta(pick, trial, particles, params);
 
         if (delta < 0 || rng_real() < exp(-delta / params->temperature)) {
             ++accepted;
