@@ -12,5 +12,7 @@ uint32_t rng_int_n(uint32_t n);
 int32_t rng_int_range(int32_t min, int32_t max);
 // Generate a random double on [0, 1)
 double rng_real(void);
+// Generate a random double with a (0, 1) Gaussian distribution
+double rng_gauss(void);
 
 #endif

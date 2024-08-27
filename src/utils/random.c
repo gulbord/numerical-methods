@@ -1,4 +1,6 @@
 #include "random.h"
+#include <float.h>
+#include <math.h>
 
 // The rng_set_seed() and rng_int() functions form the xoshiro128++ PRNG by
 // David Blackman and Sebastiano Vigna [1]. It is very fast and statistically
@@ -76,3 +78,22 @@ int32_t rng_int_range(int32_t min, int32_t max)
 
 // Generate a random double on [0, 1)
 double rng_real(void) { return (rng() >> 11) * 0x1.0p-53; }
+
+// Generate a random double with a (0, 1) Gaussian distribution
+double rng_gauss(void)
+{
+    static double cached = DBL_MAX;
+    double result;
+
+    if (cached == DBL_MAX) {
+        double r = sqrt(-2.0 * log(1.0 - rng_real()));
+        double t = 2.0 * M_PI * rng_real();
+        cached = r * sin(t);
+        result = r * cos(t);
+    } else {
+        result = cached;
+        cached = DBL_MAX;
+    }
+
+    return result;
+}
