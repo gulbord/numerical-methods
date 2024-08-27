@@ -1,5 +1,5 @@
-#include "mcmd/dynamics.h"
-#include "mcmd/observables.h"
+#include "moldyn/dynamics.h"
+#include "moldyn/observables.h"
 #include "utils/progress.h"
 #include "utils/random.h"
 #include <math.h>

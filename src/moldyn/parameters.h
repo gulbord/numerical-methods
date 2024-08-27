@@ -9,6 +9,8 @@ struct parameters {
     double box_size;
     double density;
     double temperature;
+    char thermostat[TOKEN_BUFSIZ];
+    double andersen_freq;
     double rdf_max_radius;
     int rdf_num_bins;
     double rdf_binwidth;

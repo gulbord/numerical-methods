@@ -17,6 +17,8 @@ int parse_config(const char *filename, struct parameters *params)
     params->box_size = -1.0;
     params->density = -1.0;
     params->temperature = -1.0;
+    strcpy(params->thermostat, "none");
+    params->andersen_freq = -1.0;
     params->rdf_max_radius = -1.0;
     params->rdf_num_bins = -1;
     params->rdf_binwidth = -1.0;
@@ -46,6 +48,10 @@ int parse_config(const char *filename, struct parameters *params)
             params->density = atof(value);
         else if (strcmp(key, "temperature") == 0)
             params->temperature = atof(value);
+        else if (strcmp(key, "thermostat") == 0)
+            strcpy(params->thermostat, value);
+        else if (strcmp(key, "andersen_freq") == 0)
+            params->andersen_freq = atof(value);
         else if (strcmp(key, "rdf_max_radius") == 0)
             params->rdf_max_radius = atof(value);
         else if (strcmp(key, "rdf_num_bins") == 0)
@@ -100,11 +106,28 @@ int parse_config(const char *filename, struct parameters *params)
         return 1;
     }
 
+    if (strcmp(params->thermostat, "none") != 0 &&
+        strcmp(params->thermostat, "v_rescaling") != 0 &&
+        strcmp(params->thermostat, "andersen") != 0) {
+        fprintf(stderr, "Invalid thermostat value. It must be one of 'none', "
+                        "'v_rescaling' or 'andersen'.\n");
+        fclose(file);
+        return 1;
+    }
+
+    if (strcmp(params->thermostat, "andersen") == 0 &&
+        params->andersen_freq < 0.0) {
+        fprintf(stderr, "Provide a valid collision frequency for the Andersen "
+                        "thermostat.\n");
+        fclose(file);
+        return 1;
+    }
+
     // Complete num_particles, box_size and density
     int provided = (params->num_particles > 0) + (params->box_size > 0.0) +
                    (params->density > 0.0);
     if (provided < 2) {
-        fprintf(stderr, "Two values between num_particles, box_size, and "
+        fprintf(stderr, "Two values between num_particles, box_size and "
                         "density need to be provided!\n");
         fclose(file);
         return 1;

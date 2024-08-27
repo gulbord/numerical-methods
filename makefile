@@ -64,22 +64,22 @@ clean:
 
 8: 82 83 84
 
-82: $(SRC)/082_off_lattice_mc.c $(SRC)/olmc/dynamics.c \
-	$(SRC)/olmc/parameters.c $(SRC)/utils/progress.c $(RNG)
+82: $(SRC)/082_off_lattice_mc.c $(SRC)/offlat/dynamics.c \
+	$(SRC)/offlat/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/082_off_lattice_mc
 
-83: $(SRC)/083_hard_spheres.c $(SRC)/olmc/dynamics.c \
-	$(SRC)/olmc/parameters.c $(SRC)/utils/progress.c $(RNG)
+83: $(SRC)/083_hard_spheres.c $(SRC)/offlat/dynamics.c \
+	$(SRC)/offlat/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/083_hard_spheres
 
-84: $(SRC)/084_lennard_jones.c $(SRC)/olmc/dynamics.c \
-	$(SRC)/olmc/parameters.c $(SRC)/utils/progress.c $(RNG)
+84: $(SRC)/084_lennard_jones.c $(SRC)/offlat/dynamics.c \
+	$(SRC)/offlat/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/084_lennard_jones
 
 10: 102
 
-102: $(SRC)/102_lennard_jones.c $(SRC)/mcmd/dynamics.c \
-	$(SRC)/mcmd/observables.c $(SRC)/mcmd/parameters.c \
+102: $(SRC)/102_lennard_jones.c $(SRC)/moldyn/dynamics.c \
+	$(SRC)/moldyn/observables.c $(SRC)/moldyn/parameters.c \
 	$(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/102_lennard_jones
 

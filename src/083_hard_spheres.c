@@ -1,4 +1,4 @@
-#include "olmc/dynamics.h"
+#include "offlat/dynamics.h"
 #include "utils/progress.h"
 #include "utils/random.h"
 #include <math.h>
