@@ -5,7 +5,7 @@
 
 #define N_ARGS 7
 
-int main(int argc, char **argv)
+int main(int argc, const char **argv)
 {
     if (argc != N_ARGS) {
         fprintf(stderr, "Wrong number of arguments! (Should be %d)\n", N_ARGS);
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     // Reaction update functions array
     reac_ptr reac_fns[3] = {&prey_birth_u, &predation_u, &pred_death_u};
 
-    struct state *init = malloc(sizeof(struct state));
+    struct state *init = malloc(sizeof(*init));
     init_state_list(init, init_pops, 2);
 
     gillespie(&init, rate_fns, rate_con, reac_fns, 3, max_time);

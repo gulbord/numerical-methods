@@ -21,7 +21,7 @@ int main(int argc, const char **argv)
     // rho(x) = 2 * x * e^(-x^2) --> sample with F^(-1)(p) = sqrt(-log(p))
     int n_smp = atoi(argv[1]);
     for (int i = 0; i < n_smp; ++i)
-        fprintf(file, "%g\n", sqrt(-log(1 - rng_real())));
+        fprintf(file, "%g\n", sqrt(-log(1.0 - rng_real())));
 
     fclose(file);
 

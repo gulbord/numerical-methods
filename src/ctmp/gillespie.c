@@ -36,10 +36,10 @@ void write_state_list(struct state *head, FILE *file)
 {
     struct state *tmp = head;
 
-    size_t i, ps = head->p_size;
+    size_t ps = head->p_size;
     while (tmp != NULL) {
         fprintf(file, "%.10f,", tmp->time);
-        for (i = 0; i < ps; ++i)
+        for (size_t i = 0; i < ps; ++i)
             fprintf(file, "%d%c", tmp->pops[i], i == ps - 1 ? '\n' : ',');
         tmp = tmp->next;
     }
@@ -67,30 +67,29 @@ void gillespie(struct state **head, rate_ptr *rate_fns, double *rate_con,
     int new_pops[(*head)->p_size];
     int *cur_pops; // Just for clarity
 
-    double esc_rate, tau, thr, sum, tot_time = 0.0;
-    int i, pick;
+    double tot_time = 0.0;
 
     while (tot_time < max_time) {
         // Update current populations
         cur_pops = (*head)->pops;
 
         // Calculate the escape rate by looping over rate functions
-        esc_rate = 0.0;
-        for (i = 0; i < n_react; ++i) {
+        double esc_rate = 0.0;
+        for (int i = 0; i < n_react; ++i) {
             rates[i] = rate_fns[i](rate_con, cur_pops);
             esc_rate += rates[i];
         }
 
         // Calculate the residence time and check if we are past the maximum
-        tau = -log(1 - rng_real()) / esc_rate;
+        double tau = -log(1.0 - rng_real()) / esc_rate;
         if (tot_time + tau > max_time)
             break;
 
         // Pick a reaction with probability ~ rate_i / esc_rate
-        thr = rng_real() * esc_rate;
-        sum = 0.0;
-        pick = n_react - 1; // If you never reach thr, pick the last
-        for (i = 0; i < n_react; ++i) {
+        double thr = rng_real() * esc_rate;
+        double sum = 0.0;
+        int pick = n_react - 1; // If you never reach thr, pick the last
+        for (int i = 0; i < n_react; ++i) {
             sum += rates[i];
             if (sum > thr) {
                 pick = i;

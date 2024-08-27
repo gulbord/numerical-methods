@@ -1,4 +1,4 @@
-#include "olmc/monte_carlo.h"
+#include "olmc/dynamics.h"
 #include "utils/progress.h"
 #include "utils/random.h"
 #include <math.h>
@@ -13,21 +13,20 @@
 double energy_delta(int pick, const double *trial, const double *particles,
                     const struct parameters *params)
 {
-    int i, j;
-    double old_dr, new_dr, old_r2, new_r2, old_inv_r6, new_inv_r6;
-    double old_energy, new_energy, delta = 0.0;
+    double delta = 0.0;
 
-    for (i = 0; i < 3 * params->num_particles; i += 3) {
+    for (int i = 0; i < 3 * params->num_particles; i += 3) {
         if (i == pick)
             continue;
 
-        old_r2 = 0.0, new_r2 = 0.0;
-        for (j = 0; j < 3; ++j) {
-            old_dr = particles[pick + j] - particles[i + j];
+        double old_r2 = 0.0;
+        double new_r2 = 0.0;
+        for (int j = 0; j < 3; ++j) {
+            double old_dr = particles[pick + j] - particles[i + j];
             old_dr -= params->box_size * round(old_dr / params->box_size);
             old_r2 += old_dr * old_dr;
 
-            new_dr = trial[j] - particles[i + j];
+            double new_dr = trial[j] - particles[i + j];
             new_dr -= params->box_size * round(new_dr / params->box_size);
             new_r2 += new_dr * new_dr;
         }
@@ -35,16 +34,17 @@ double energy_delta(int pick, const double *trial, const double *particles,
         if (old_r2 > RCUT2 && new_r2 > RCUT2)
             continue;
 
+        double old_energy, new_energy;
         if (old_r2 < RCUT2) {
             old_r2 = 1.0 / old_r2;
-            old_inv_r6 = old_r2 * old_r2 * old_r2;
+            double old_inv_r6 = old_r2 * old_r2 * old_r2;
             old_energy = old_inv_r6 * old_inv_r6 - old_inv_r6;
         } else
             old_energy = 0.0;
 
         if (new_r2 < RCUT2) {
             new_r2 = 1.0 / new_r2;
-            new_inv_r6 = new_r2 * new_r2 * new_r2;
+            double new_inv_r6 = new_r2 * new_r2 * new_r2;
             new_energy = new_inv_r6 * new_inv_r6 - new_inv_r6;
         } else
             new_energy = 0.0;
@@ -57,13 +57,12 @@ double energy_delta(int pick, const double *trial, const double *particles,
 
 double energy_total(const double *particles, const struct parameters *params)
 {
-    int i, j, k;
-    double dr, r2, inv_r6, energy = 0.0;
-    for (i = 0; i < 3 * params->num_particles - 3; i += 3) {
-        for (j = i + 3; j < 3 * params->num_particles; j += 3) {
-            r2 = 0.0;
-            for (k = 0; k < 3; ++k) {
-                dr = particles[i + k] - particles[j + k];
+    double energy = 0.0;
+    for (int i = 0; i < 3 * params->num_particles - 3; i += 3) {
+        for (int j = i + 3; j < 3 * params->num_particles; j += 3) {
+            double r2 = 0.0;
+            for (int k = 0; k < 3; ++k) {
+                double dr = particles[i + k] - particles[j + k];
                 dr -= params->box_size * round(dr / params->box_size);
                 r2 += dr * dr;
             }
@@ -72,7 +71,7 @@ double energy_total(const double *particles, const struct parameters *params)
                 continue;
 
             r2 = 1.0 / r2;
-            inv_r6 = r2 * r2 * r2;
+            double inv_r6 = r2 * r2 * r2;
             energy += inv_r6 * inv_r6 - inv_r6;
         }
     }
@@ -82,13 +81,13 @@ double energy_total(const double *particles, const struct parameters *params)
 
 static double virial(const double *particles, const struct parameters *params)
 {
-    int i, j, k;
-    double dr, r2, inv_r6, virial = 0.0;
-    for (i = 0; i < 3 * params->num_particles - 3; i += 3) {
-        for (j = i + 3; j < 3 * params->num_particles; j += 3) {
-            r2 = 0.0;
-            for (k = 0; k < 3; ++k) {
-                dr = particles[i + k] - particles[j + k];
+    double virial = 0.0;
+
+    for (int i = 0; i < 3 * params->num_particles - 3; i += 3) {
+        for (int j = i + 3; j < 3 * params->num_particles; j += 3) {
+            double r2 = 0.0;
+            for (int k = 0; k < 3; ++k) {
+                double dr = particles[i + k] - particles[j + k];
                 dr -= params->box_size * round(dr / params->box_size);
                 r2 += dr * dr;
             }
@@ -97,7 +96,7 @@ static double virial(const double *particles, const struct parameters *params)
                 continue;
 
             r2 = 1.0 / r2;
-            inv_r6 = r2 * r2 * r2;
+            double inv_r6 = r2 * r2 * r2;
             virial += 2.0 * inv_r6 * inv_r6 - inv_r6;
         }
     }
@@ -147,13 +146,13 @@ int main(int argc, const char **argv)
         printf("\rRealization %d/%d\n", r, params.num_realizations);
 
         // Initialize particles according to config
-        init_particles(particles, &params);
+        initialize(particles, &params);
 
         // Perform num_steps Monte Carlo sweeps
         obs.energy = energy_total(particles, &params) + utail;
         for (int t = 1; t <= params.num_steps; ++t) {
             print_progress(t, params.num_steps);
-            monte_carlo_sweep(particles, &obs, &params, &energy_delta);
+            sweep(particles, &obs, &params, &energy_delta);
             fprintf(file, "%d,%g,%g,%g\n", r, obs.energy,
                     rho_temp + inv_vol * virial(particles, &params) + ptail,
                     obs.acc_ratio);

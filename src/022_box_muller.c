@@ -24,11 +24,10 @@ int main(int argc, const char *argv[])
     FILE *file = fopen(fname, "w");
     fprintf(file, "x,y\n");
 
-    double r, t;
     int n_smp = atoi(argv[3]);
     for (int i = 0; i < n_smp; ++i) {
-        r = sigma * sqrt(-2 * log(1 - rng_real()));
-        t = 2 * M_PI * rng_real();
+        double r = sigma * sqrt(-2.0 * log(1.0 - rng_real()));
+        double t = 2.0 * M_PI * rng_real();
         fprintf(file, "%g,%g\n", mu + r * cos(t), mu + r * sin(t));
     }
 

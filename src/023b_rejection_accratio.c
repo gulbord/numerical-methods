@@ -13,7 +13,7 @@ int main(int argc, const char *argv[])
         fprintf(stderr, "Wrong number of arguments!\n");
         fprintf(stderr, "[executable] [max. p] [# p] [# darts for each p]\n");
         return 1;
-    } else if (atof(argv[1]) < 1) {
+    } else if (atof(argv[1]) < 1.0) {
         fprintf(stderr, "Set the maximum p at least 1!\n");
         return 1;
     }
@@ -28,28 +28,24 @@ int main(int argc, const char *argv[])
     int n_darts = atoi(argv[3]);
 
     double dp = (max_p - MIN_P) / n_p;
-    double p, p2, A, log_2pA;
-    double u, x;
 
-    int i, j, acc;
-    for (i = 0; i < n_p; ++i) {
-        // Update quantities based on p
-        p = MIN_P + i * dp;
-        p2 = p * p;
-        A = 2 * p / (1 + 2 * p2);
-        log_2pA = log(1 + 2 * p2);
+    for (int i = 0; i < n_p; ++i) {
+        double p = MIN_P + i * dp;
+        double p2 = p * p;
+        double A = 2.0 * p / (1.0 + 2.0 * p2);
+        double log_2pA = log(1.0 + 2.0 * p2);
 
-        acc = 0;
-        for (j = 0; j < n_darts; ++j) {
-            u = rng_real();
+        int acc = 0;
+        for (int j = 0; j < n_darts; ++j) {
+            double u = rng_real();
             if (u < A * p) {
                 // Sample from uniform g(x) = A
-                x = u / A;
+                double x = u / A;
                 if (rng_real() < exp(-x * x))
                     ++acc;
             } else {
                 // Sample from exp g(x) = (A / p) * x * e^(p^2 - x^2)
-                x = sqrt(p2 - log_2pA - log(1 - u));
+                double x = sqrt(p2 - log_2pA - log(1.0 - u));
                 if (rng_real() * x < p * exp(-p2))
                     ++acc;
             }

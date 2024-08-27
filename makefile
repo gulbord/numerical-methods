@@ -64,15 +64,15 @@ clean:
 
 8: 82 83 84
 
-82: $(SRC)/082_off_lattice_mc.c $(SRC)/olmc/monte_carlo.c \
+82: $(SRC)/082_off_lattice_mc.c $(SRC)/olmc/dynamics.c \
 	$(SRC)/olmc/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/082_off_lattice_mc
 
-83: $(SRC)/083_hard_spheres.c $(SRC)/olmc/monte_carlo.c \
+83: $(SRC)/083_hard_spheres.c $(SRC)/olmc/dynamics.c \
 	$(SRC)/olmc/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/083_hard_spheres
 
-84: $(SRC)/084_lennard_jones.c $(SRC)/olmc/monte_carlo.c \
+84: $(SRC)/084_lennard_jones.c $(SRC)/olmc/dynamics.c \
 	$(SRC)/olmc/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/084_lennard_jones
 

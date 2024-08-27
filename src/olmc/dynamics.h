@@ -1,5 +1,5 @@
-#ifndef MONTE_CARLO_H
-#define MONTE_CARLO_H
+#ifndef DYNAMICS_H
+#define DYNAMICS_H
 
 #include "parameters.h"
 
@@ -11,11 +11,11 @@ struct observables {
     double energy;
 };
 
-void init_particles(double *particles, const struct parameters *params);
+void initialize(double *particles, const struct parameters *params);
 // Perform N (number of particles) Monte Carlo moves and return the difference
 // between the final and initial total energy
-void monte_carlo_sweep(double *particles, struct observables *obs,
-                       const struct parameters *params,
-                       const energy_delta_ptr energy_delta);
+void sweep(double *particles, struct observables *obs,
+           const struct parameters *params,
+           const energy_delta_ptr energy_delta);
 
 #endif

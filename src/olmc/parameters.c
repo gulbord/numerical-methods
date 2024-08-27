@@ -45,7 +45,7 @@ int parse_config(const char *filename, struct parameters *params)
         else if (strcmp(key, "num_realizations") == 0)
             params->num_realizations = atoi(value);
         else if (strcmp(key, "init_conf") == 0)
-            strcpy(params->init_conf, value); // Same buffer size
+            strcpy(params->init_conf, value);
     }
 
     if (params->temperature < 0) {
@@ -60,8 +60,15 @@ int parse_config(const char *filename, struct parameters *params)
         return 1;
     }
 
+    if (strcmp(params->init_conf, "random") != 0 &&
+        strcmp(params->init_conf, "cubic") != 0) {
+        fprintf(stderr, "Invalid init_conf value. It must be either 'random' "
+                        "or 'cubic'.\n");
+        fclose(file);
+        return 1;
+    }
+
     // Complete num_particles, box_size and density
-    double volume;
     int provided = (params->num_particles > 0) + (params->box_size > 0.0) +
                    (params->density > 0.0);
     if (provided < 2) {
@@ -72,13 +79,13 @@ int parse_config(const char *filename, struct parameters *params)
     }
 
     if (params->num_particles < 0) { // Calculate num_particles
-        volume = pow(params->box_size, 3);
+        double volume = pow(params->box_size, 3);
         params->num_particles = round(params->density * volume);
     } else if (params->box_size < 0.0) { // Calculate box_size
-        volume = params->num_particles / params->density;
+        double volume = params->num_particles / params->density;
         params->box_size = cbrt(volume);
     } else { // Calculate density
-        volume = pow(params->box_size, 3);
+        double volume = pow(params->box_size, 3);
         params->density = params->num_particles / volume;
     }
 

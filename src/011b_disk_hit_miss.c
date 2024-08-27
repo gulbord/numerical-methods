@@ -20,27 +20,24 @@ int main(int argc, const char **argv)
     FILE *file = fopen("out/011b.csv", "w");
     fprintf(file, "throws,error\n");
 
-    int n, i, j;
     int n_plot = atoi(argv[1]); // Number of different max_iter to analyse
     int dn = atoi(argv[2]);     // Step in max_iter
     int rep = atoi(argv[3]);    // Replicas for each value of max_iter
-    int hits, throws;
-    double x, y, mc_pi;
 
-    for (n = 0; n < n_plot; ++n) {
-        throws = (1 + n) * dn;
+    for (int n = 0; n < n_plot; ++n) {
+        int throws = (1 + n) * dn;
 
-        for (i = 0; i < rep; ++i) {
-            hits = 0; // Reset hit counter
-            for (j = 0; j < throws; ++j) {
-                x = rng_real();
-                y = rng_real();
+        for (int i = 0; i < rep; ++i) {
+            int hits = 0; // Reset hit counter
+            for (int j = 0; j < throws; ++j) {
+                double x = rng_real();
+                double y = rng_real();
                 if (x * x + y * y < 1)
                     ++hits;
             }
-            mc_pi = 4 * (double)hits / throws;
+            double mc_pi = 4.0 * (double)hits / throws;
 
-            fprintf(file, "%d,%g\n", throws, fabs(1 - mc_pi * M_1_PI));
+            fprintf(file, "%d,%g\n", throws, fabs(1.0 - mc_pi * M_1_PI));
         }
     }
 

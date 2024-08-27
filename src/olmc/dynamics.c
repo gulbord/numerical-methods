@@ -1,11 +1,11 @@
-#include "monte_carlo.h"
+#include "dynamics.h"
 #include "../utils/random.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void init_particles(double *particles, const struct parameters *params)
+void initialize(double *particles, const struct parameters *params)
 {
     if (strcmp(params->init_conf, "random") == 0) {
         for (int i = 0; i < 3 * params->num_particles; ++i)
@@ -33,29 +33,27 @@ void init_particles(double *particles, const struct parameters *params)
                 params->init_conf);
 }
 
-void monte_carlo_sweep(double *particles, struct observables *obs,
-                       const struct parameters *params,
-                       const energy_delta_ptr energy_delta)
+void sweep(double *particles, struct observables *obs,
+           const struct parameters *params, const energy_delta_ptr energy_delta)
 {
-    int i, j, pick, accepted = 0;
+    int accepted = 0;
     double trial[3];
-    double delta;
-    for (i = 0; i < params->num_particles; ++i) {
+    for (int i = 0; i < params->num_particles; ++i) {
         // Displace a particle picked at random
-        pick = 3 * rng_int_n(params->num_particles);
-        for (j = 0; j < 3; ++j) {
+        int pick = 3 * rng_int_n(params->num_particles);
+        for (int j = 0; j < 3; ++j) {
             trial[j] = particles[pick + j];
-            trial[j] += (2 * rng_real() - 1) * params->max_disp;
+            trial[j] += (2.0 * rng_real() - 1.0) * params->max_disp;
             // Periodic boundary conditions
             trial[j] -= params->box_size * floor(trial[j] / params->box_size);
         }
 
-        delta = energy_delta(pick, trial, particles, params);
+        double delta = energy_delta(pick, trial, particles, params);
 
         if (delta < 0 || rng_real() < exp(-delta / params->temperature)) {
             ++accepted;
             obs->energy += delta;
-            for (j = 0; j < 3; ++j)
+            for (int j = 0; j < 3; ++j)
                 particles[pick + j] = trial[j];
         }
     }
