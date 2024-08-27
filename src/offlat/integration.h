@@ -1,5 +1,5 @@
-#ifndef DYNAMICS_H
-#define DYNAMICS_H
+#ifndef INTEGRATION_H
+#define INTEGRATION_H
 
 #include "parameters.h"
 

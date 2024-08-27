@@ -1,4 +1,3 @@
-#include "moldyn/dynamics.h"
 #include "moldyn/observables.h"
 #include "utils/progress.h"
 #include "utils/random.h"

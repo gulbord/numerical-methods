@@ -6,7 +6,7 @@ EXE := exe
 
 RNG := $(SRC)/utils/random.c
 
-all: 1 2 7 8
+all: 1 2 7 8 10
 
 clean:
 	rm -f $(EXE)/*
@@ -64,21 +64,21 @@ clean:
 
 8: 82 83 84
 
-82: $(SRC)/082_off_lattice_mc.c $(SRC)/offlat/dynamics.c \
+82: $(SRC)/082_off_lattice_mc.c $(SRC)/offlat/integration.c \
 	$(SRC)/offlat/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/082_off_lattice_mc
 
-83: $(SRC)/083_hard_spheres.c $(SRC)/offlat/dynamics.c \
+83: $(SRC)/083_hard_spheres.c $(SRC)/offlat/integration.c \
 	$(SRC)/offlat/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/083_hard_spheres
 
-84: $(SRC)/084_lennard_jones.c $(SRC)/offlat/dynamics.c \
+84: $(SRC)/084_lennard_jones.c $(SRC)/offlat/integration.c \
 	$(SRC)/offlat/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/084_lennard_jones
 
 10: 102
 
-102: $(SRC)/102_lennard_jones.c $(SRC)/moldyn/dynamics.c \
+102: $(SRC)/102_lennard_jones.c $(SRC)/moldyn/integration.c \
 	$(SRC)/moldyn/observables.c $(SRC)/moldyn/parameters.c \
 	$(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/102_lennard_jones

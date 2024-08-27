@@ -1,7 +1,7 @@
 #ifndef OBSERVABLES_H
 #define OBSERVABLES_H
 
-#include "dynamics.h"
+#include "integration.h"
 
 struct observables {
     double kin_energy;

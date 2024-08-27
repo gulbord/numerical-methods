@@ -1,4 +1,4 @@
-#include "dynamics.h"
+#include "integration.h"
 #include "../utils/random.h"
 #include <math.h>
 #include <stdio.h>

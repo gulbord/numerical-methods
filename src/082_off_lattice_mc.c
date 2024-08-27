@@ -1,4 +1,4 @@
-#include "offlat/dynamics.h"
+#include "offlat/integration.h"
 #include "utils/progress.h"
 #include "utils/random.h"
 #include <math.h>
