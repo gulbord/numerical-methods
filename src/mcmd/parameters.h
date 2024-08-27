@@ -12,6 +12,7 @@ struct parameters {
     double rdf_max_radius;
     int rdf_num_bins;
     double rdf_binwidth;
+    double r_cut;
     double max_disp;
     double step_size;
     int num_steps;

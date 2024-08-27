@@ -9,7 +9,7 @@ void initialize(struct particle *particles, const struct parameters *params)
     if (strcmp(params->init_conf, "random") == 0) {
         for (int i = 0; i < params->num_particles; ++i)
             for (int j = 0; j < 3; ++j)
-                particles[i].x[j] = rng_real() * params->box_side;
+                particles[i].x[j] = rng_real() * params->box_size;
     } else if (strcmp(params->init_conf, "cubic") == 0) {
         // Number of particles in each direction
         int n = ceil(cbrt(params->num_particles));

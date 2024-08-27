@@ -78,7 +78,7 @@ double compute_potential(const double *particles,
         }
     }
 
-    return energy;
+    return 4.0 * energy;
 }
 
 static double compute_virial(const double *particles,

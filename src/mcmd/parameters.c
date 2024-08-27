@@ -1,6 +1,7 @@
 #include "parameters.h"
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 int parse_config(const char *filename, struct parameters *params)
@@ -13,13 +14,14 @@ int parse_config(const char *filename, struct parameters *params)
 
     // Provide default values
     params->num_particles = -1;
-    params->box_size = -1;
-    params->density = -1;
-    params->temperature = -1;
-    params->rdf_max_radius = -1;
+    params->box_size = -1.0;
+    params->density = -1.0;
+    params->temperature = -1.0;
+    params->rdf_max_radius = -1.0;
     params->rdf_num_bins = -1;
-    params->rdf_binwidth = -1;
-    params->max_disp = -1;
+    params->rdf_binwidth = -1.0;
+    params->r_cut = -1.0;
+    params->max_disp = -1.0;
     params->step_size = 0.01;
     params->num_steps = 1000;
     params->num_eq_steps = 1000;
@@ -50,6 +52,8 @@ int parse_config(const char *filename, struct parameters *params)
             params->rdf_num_bins = atoi(value);
         else if (strcmp(key, "rdf_binwidth") == 0)
             params->rdf_binwidth = atof(value);
+        else if (strcmp(key, "r_cut") == 0)
+            params->r_cut = atof(value);
         else if (strcmp(key, "max_disp") == 0)
             params->max_disp = atof(value);
         else if (strcmp(key, "step_size") == 0)

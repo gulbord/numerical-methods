@@ -76,4 +76,11 @@ clean:
 	$(SRC)/olmc/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/084_lennard_jones
 
+10: 102
+
+102: $(SRC)/102_lennard_jones.c $(SRC)/mcmd/dynamics.c \
+	$(SRC)/mcmd/observables.c $(SRC)/mcmd/parameters.c \
+	$(SRC)/utils/progress.c $(RNG)
+	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/102_lennard_jones
+
 .PHONY: all clean
