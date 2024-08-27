@@ -32,11 +32,11 @@ void initialize(struct particle *particles, const struct parameters *params)
 }
 
 void equilibrate(struct particle *particles, const struct parameters *params,
-                 const double *compute_energy_delta(int, const double *,
-                                                    const struct particle *,
-                                                    const struct parameters *),
-                 const void *compute_forces(struct particle *,
-                                            const struct parameters *))
+                 double compute_energy_delta(int, const double *,
+                                             const struct particle *,
+                                             const struct parameters *),
+                 void compute_forces(struct particle *,
+                                     const struct parameters *))
 {
     if (strcmp(params->eq_type, "mc")) {
         double trial[3];
@@ -50,7 +50,7 @@ void equilibrate(struct particle *particles, const struct parameters *params,
             }
 
             double delta = compute_energy_delta(pick, trial, particles, params);
-            if (delta < 0 || rng_real() < exp(-delta / params->temperature))
+            if (delta < 0.0 || rng_real() < exp(-delta / params->temperature))
                 memcpy(particles[pick].x, trial, 3 * sizeof(double));
         }
     } else if (strcmp(params->eq_type, "md")) {
@@ -79,8 +79,7 @@ void equilibrate(struct particle *particles, const struct parameters *params,
 }
 
 void step(struct particle *particles, const struct parameters *params,
-          const void *compute_forces(struct particle *,
-                                     const struct parameters *))
+          void compute_forces(struct particle *, const struct parameters *))
 {
     for (int i = 0; i < params->num_particles; ++i) {
         for (int j = 0; j < 3; ++j) {

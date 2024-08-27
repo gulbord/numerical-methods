@@ -52,7 +52,7 @@ void sweep(double *particles, struct observables *obs,
 
         double delta = compute_energy_delta(pick, trial, particles, params);
 
-        if (delta < 0 || rng_real() < exp(-delta / params->temperature)) {
+        if (delta < 0.0 || rng_real() < exp(-delta / params->temperature)) {
             ++accepted;
             obs->energy += delta;
             for (int j = 0; j < 3; ++j)

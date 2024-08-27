@@ -10,9 +10,8 @@ void alloc_obs(struct observables *obs, const struct parameters *params)
 
 void update_obs(struct observables *obs, const struct particle *particles,
                 const struct parameters *params,
-                const double *compute_potential_r2(double,
-                                                   const struct particle *,
-                                                   const struct parameters *))
+                double compute_potential_r2(double, const struct particle *,
+                                            const struct parameters *))
 {
     // Reset everything
     obs.kin_energy = 0.0;

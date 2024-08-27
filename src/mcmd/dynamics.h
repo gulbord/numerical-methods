@@ -11,13 +11,12 @@ struct particle {
 
 void initialize(struct particle *particles, const struct parameters *params);
 void equilibrate(struct particle *particles, const struct parameters *params,
-                 const double *compute_energy_delta(int, const double *,
-                                                    const struct particle *,
-                                                    const struct parameters *),
-                 const void *compute_forces(struct particle *,
-                                            const struct parameters *));
-void step(struct particle *particles, const struct parameters *params,
-          const void *compute_forces(struct particle *,
+                 double compute_energy_delta(int, const double *,
+                                             const struct particle *,
+                                             const struct parameters *),
+                 void compute_forces(struct particle *,
                                      const struct parameters *));
+void step(struct particle *particles, const struct parameters *params,
+          void compute_forces(struct particle *, const struct parameters *));
 
 #endif
