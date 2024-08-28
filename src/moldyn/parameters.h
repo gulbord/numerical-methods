@@ -10,6 +10,7 @@ struct parameters {
     double density;
     double temperature;
     char thermostat[TOKEN_BUFSIZ];
+    double berendsen_tau;
     double andersen_freq;
     double rdf_max_radius;
     int rdf_num_bins;

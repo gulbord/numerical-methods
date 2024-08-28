@@ -18,6 +18,7 @@ int parse_config(const char *filename, struct parameters *params)
     params->density = -1.0;
     params->temperature = -1.0;
     strcpy(params->thermostat, "none");
+    params->berendsen_tau = -1.0;
     params->andersen_freq = -1.0;
     params->rdf_max_radius = -1.0;
     params->rdf_num_bins = -1;
@@ -50,6 +51,8 @@ int parse_config(const char *filename, struct parameters *params)
             params->temperature = atof(value);
         else if (strcmp(key, "thermostat") == 0)
             strcpy(params->thermostat, value);
+        else if (strcmp(key, "berendsen_tau") == 0)
+            params->berendsen_tau = atof(value);
         else if (strcmp(key, "andersen_freq") == 0)
             params->andersen_freq = atof(value);
         else if (strcmp(key, "rdf_max_radius") == 0)
@@ -107,10 +110,18 @@ int parse_config(const char *filename, struct parameters *params)
     }
 
     if (strcmp(params->thermostat, "none") != 0 &&
-        strcmp(params->thermostat, "v_rescaling") != 0 &&
+        strcmp(params->thermostat, "berendsen") != 0 &&
         strcmp(params->thermostat, "andersen") != 0) {
         fprintf(stderr, "Invalid thermostat value. It must be one of 'none', "
-                        "'v_rescaling' or 'andersen'.\n");
+                        "'berendsen' or 'andersen'.\n");
+        fclose(file);
+        return 1;
+    }
+
+    if (strcmp(params->thermostat, "berendsen") == 0 &&
+        params->berendsen_tau < 0.0) {
+        fprintf(stderr, "Provide a valid characteristic time for the Berendsen "
+                        "thermostat.\n");
         fclose(file);
         return 1;
     }
