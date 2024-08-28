@@ -4,6 +4,42 @@
 #include <stdio.h>
 #include <string.h>
 
+static void thermostat(struct particle *particles,
+                       const struct parameters *params)
+{
+    switch (params->thermostat[0]) {
+    case 'n': // 'none' thermostat
+        break;
+    case 'b': // 'berendsen' thermostat
+        // Compute kinetic temperature
+        double kin_temp = 0.0;
+        for (int i = 0; i < params->num_particles; ++i)
+            for (int j = 0; j < 3; ++j)
+                kin_temp += particles[i].v[j] * particles[i].v[j];
+        kin_temp /= 3 * params->num_particles;
+
+        // Rescale velocities
+        double temp_delta = params->temperature / kin_temp - 1.0;
+        double lambda =
+            sqrt(1.0 + params->step_size * temp_delta / params->berendsen_tau);
+        for (int i = 0; i < params->num_particles; ++i)
+            for (int j = 0; j < 3; ++j)
+                particles[i].v[j] *= lambda;
+        break;
+    case 'a': // 'andersen' thermostat
+        double collision_prob = params->andersen_freq * params->step_size;
+        double sigma_mb = sqrt(params->temperature);
+        for (int i = 0; i < params->num_particles; ++i) {
+            if (rng_real() < collision_prob) {
+                // Reset velocity with equilibrium distribution
+                for (int j = 0; j < 3; ++j)
+                    particles[i].v[j] = sigma_mb * rng_gauss();
+            }
+        }
+        break;
+    }
+}
+
 void initialize(struct particle *particles, const struct parameters *params)
 {
     if (strcmp(params->init_conf, "random") == 0) {
@@ -93,4 +129,6 @@ void step(struct particle *particles, const struct parameters *params,
     for (int i = 0; i < params->num_particles; ++i)
         for (int j = 0; j < 3; ++j)
             particles[i].v[j] += 0.5 * particles[i].f[j] * params->step_size;
+
+    thermostat(particles, params);
 }

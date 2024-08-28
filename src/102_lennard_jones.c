@@ -123,7 +123,7 @@ int main(int argc, const char **argv)
         return 1;
     }
 
-    fprintf(file_ene, "realization,sample,kin_energy,pot_energy\n");
+    fprintf(file_ene, "realization,sample,temperature,kin_energy,pot_energy\n");
     fprintf(file_rdf, "realization,sample,radius,rdf\n");
 
     struct particle *particles =
@@ -149,8 +149,8 @@ int main(int argc, const char **argv)
             if (t % params.thinning == 0) {
                 ++s;
                 update_obs(obs, particles, &params, &compute_potential_r2);
-                fprintf(file_ene, "%d,%d,%g,%g\n", r, s, obs->kin_energy,
-                        obs->pot_energy + utail);
+                fprintf(file_ene, "%d,%d,%g,%g,%g\n", r, s, obs->temperature,
+                        obs->kin_energy, obs->pot_energy + utail);
                 for (int i = 0; i < params.rdf_num_bins; ++i)
                     fprintf(file_rdf, "%d,%d,%g,%g\n", r, s,
                             (i + 0.5) * params.rdf_binwidth, obs->rdf[i]);
