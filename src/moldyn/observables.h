@@ -4,6 +4,7 @@
 #include "integration.h"
 
 struct observables {
+    double temperature;
     double kin_energy;
     double pot_energy;
     double *rdf;
