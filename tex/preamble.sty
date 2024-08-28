@@ -46,9 +46,28 @@
 \let\tbfigures\tosfstyle
 \usepackage{cancel}
 
+% Environments
+\usepackage{enumitem}
+\newlist{sourcefiles}{description}{1}
+\newlength{\lblwd}
+\settowidth{\lblwd}{\textit{Analysis scripts}}
+\setlist[sourcefiles, 1]{
+  style=unboxed,
+  leftmargin=\dimexpr\leftmargini+\lblwd,
+  labelindent=\leftmargini,
+  labelwidth=\lblwd,
+  labelsep=0pt,
+  itemindent=0pt,
+  rightmargin=\leftmargini,
+  before=\csname par\endcsname\raggedright\ttfamily,
+  partopsep=0pt,
+  font=\normalfont\itshape
+}
+
 % Macros
 \usepackage{xparse}
 %% New commands
+\newcommand{\exref}[1]{Ex.~\ref{#1}}
 \newcommand{\figref}[1]{Fig.~\ref{#1}}
 \newcommand{\tabref}[1]{Tab.~\ref{#1}}
 \newcommand{\abbr}[1]{\textsc{\MakeLowercase{#1}}}
@@ -130,5 +149,9 @@
 }
 \DeclarePairedDelimiter{\expval}{\langle}{\rangle}
 \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+% Reset counters between exercises
+\counterwithin{figure}{section}
+\counterwithin{equation}{section}
 
 \usepackage[hidelinks]{hyperref}
