@@ -1,8 +1,8 @@
 setwd("~/PoD/Y2.1/NMSM/exercises")
 source("src/preamble.R")
 
-# system("exe/011a_rect_hit_miss 1000 100 10")
-# system("exe/011b_disk_hit_miss 1000 100 10")
+system("exe/011a_rect_hit_miss 1000 100 100")
+system("exe/011b_disk_hit_miss 1000 100 100")
 
 plt <- list(rect = fread("out/011a.csv"), disk = fread("out/011b.csv")) |>
   rbindlist(idcol = "id") |>

@@ -17,8 +17,8 @@ the disk case, it goes under \qty{1}{\percent} with as little as \num{10000}
   \centering
   \includegraphics{img/011.png}
   \caption{percentage error as a function of the number of \enquote{throws} for
-    \exref{ex:011}. The black line shows the average over 10 realizations, with
-    the standard deviation shaded in grey.}
+    \exref{ex:011}. The black line shows the average over \num{100}
+    realizations, with the standard deviation shaded in grey.}
   \label{fig:011}
 \end{figure}
 
@@ -54,9 +54,8 @@ from a sampling of \num{50000} iterations for $n = 3, 4$ are shown in
   \centering
   \includegraphics{img/012.png}
   \caption{histogram of \num{50000} samples from $\rho_n(x) = c x^n$, $x \in [0,
-    1]$, for $n = 3$ (up) and $n = 4$ (down), obtained with the inversion method
-    for \exref{ex:012}. The theoretical distribution is overlaid with a solid
-    line.}
+    1]$, for $n = 3$ (above) and $n = 4$ (below), obtained with the inversion
+    method. The theoretical distribution is overlaid with a solid line.}
   \label{fig:012}
 \end{figure}
 
@@ -85,8 +84,8 @@ and the theoretical curve in \figref{fig:013}.
   \centering
   \includegraphics{img/013.png}
   \caption{histogram of \num{50000} samples from $\rho(x) = 3 x^2 / 8$, $x \in
-    [0, 2]$, otained with the inversion method for \exref{ex:013}. The
-    theoretical distribution is overlaid with a solid line.}
+    [0, 2]$, otained with the inversion method. The theoretical distribution is
+    overlaid with a solid line.}
   \label{fig:013}
 \end{figure}
 
@@ -96,7 +95,7 @@ and the theoretical curve in \figref{fig:013}.
   \item[Source codes] src/014a\_inversion\_exp.c, src/014b\_inversion\_exp2.c,
     src/014c\_inversion\_powerlaw.c
   \item[Analysis scripts] src/012-4\_inversion\_method.R
-  \item[Executables] exe/012\_inversion\_exp, exe/014b\_inversion\_exp2,
+  \item[Executables] exe/014\_inversion\_exp, exe/014b\_inversion\_exp2,
     exe/014c\_inversion\_powerlaw
 \end{sourcefiles} 
 
@@ -112,8 +111,8 @@ I ran \num{50000} samples as before, choosing $\mu = 2$; see \figref{fig:014a}.
   \centering
   \includegraphics{img/014a.png}
   \caption{histogram of \num{50000} samples from $\rho(x) = 2 e^{-2x}$, $x
-    \in [0, \infty)$, otained with the inversion method for the first part of
-    \exref{ex:014}. The theoretical distribution is overlaid with a solid line.}
+    \in [0, \infty)$, otained with the inversion method. The theoretical
+    distribution is overlaid with a solid line.}
   \label{fig:014a}
 \end{figure}
 
@@ -129,8 +128,8 @@ A histogram of \num{50000} samples is shown in \figref{fig:014b}.
   \centering
   \includegraphics{img/014b.png}
   \caption{histogram of \num{50000} samples from $\rho(x) = 2x e^{-x^{2}}$, $x
-    \in [0, \infty)$, otained with the inversion method for the second part of
-    \exref{ex:014}. The theoretical distribution is overlaid with a solid line.}
+    \in [0, \infty)$, otained with the inversion method. The theoretical
+    distribution is overlaid with a solid line.}
   \label{fig:014b}
 \end{figure}
 
@@ -157,7 +156,7 @@ I chose $a = 1/2$, $b = 1/10$ and $n = 4$ -- resulting in $\rho_{3}(x) = 375 /
   \centering
   \includegraphics{img/014c.png}
   \caption{histogram of \num{50000} samples from $\rho(x) = 375 / (5 + x)^{4}$,
-    $x \in [0, \infty)$, otained with the inversion method for the third part of
-    \exref{ex:014}. The theoretical distribution is overlaid with a solid line.}
+    $x \in [0, \infty)$, otained with the inversion method. The theoretical
+    distribution is overlaid with a solid line.}
   \label{fig:014c}
 \end{figure}

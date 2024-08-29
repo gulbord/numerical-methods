@@ -1,13 +1,13 @@
-library(data.table)
-library(ggplot2)
-setwd("~/PoD/Y2.1/NMSM/exercises/")
+setwd("~/PoD/Y2.1/NMSM/exercises")
+source("src/preamble.R")
 
 # system("exe/022_box_muller 1 2 50000")
-fread("out/022_mu1_sigma2.csv") |>
+plt <- fread("out/022_mu1_sigma2.csv") |>
   melt(measure.vars = 1:2) |>
   ggplot() +
     geom_histogram(
       aes(value, after_stat(density)),
+      alpha = 0.5,
       boundary = 0,
       binwidth = \(x) 2 * IQR(x) / length(x)^(1 / 3),
     ) +
@@ -21,3 +21,5 @@ fread("out/022_mu1_sigma2.csv") |>
     ) +
     labs(x = "Sampled value", y = "Density") +
     theme(strip.text = ggtext::element_markdown())
+
+plot_tex("022", plt, asp_ratio = 1, scale_factor = 0.75)

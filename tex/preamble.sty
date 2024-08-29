@@ -41,7 +41,8 @@
 \usepackage[range-phrase=--, range-units=single]{siunitx}
 \usepackage[p, osf, largesc, nott, scale=0.95]{newpxtext}
 \usepackage[scale=0.96]{inconsolata}
-\usepackage[vvarbb, smallerops]{newpxmath}
+\usepackage[smallerops]{newpxmath}
+\usepackage[frak=euler, cal=euler, bb=esstix]{mathalpha}
 \usepackage[toc, eqno, enum, bib]{tabfigures}
 \let\tbfigures\tosfstyle
 \usepackage{cancel}
@@ -73,6 +74,9 @@
 \newcommand{\abbr}[1]{\textsc{\MakeLowercase{#1}}}
 \newcommand{\todo}[1]{\textcolor{red}{\ttfamily\textbf{TODO} #1}}
 \newcommand{\given}[1][]{\:#1\vert\:}
+\newcommand{\unif}[2]{\mathcal{U}_{[#1, #2]}}
+\newcommand{\gaus}[2]{\mathcal{N}(#1, #2)}
+\newcommand{\bigo}[1]{\mathcal{O}(#1)}
 \newcounter{subfigure}
 \counterwithin{subfigure}{figure}
 \renewcommand{\thesubfigure}{%

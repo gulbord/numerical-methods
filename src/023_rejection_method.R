@@ -1,8 +1,9 @@
-library(ggplot2)
 setwd("~/PoD/Y2.1/NMSM/exercises")
+source("src/preamble.R")
 
-# system("exe/023a_rejection_sampling 100000")
-read.csv("out/023a.csv", col.names = "x") |>
+# system("exe/023a_rejection_sampling 50000")
+
+plt_smp <- read.csv("out/023a.csv", col.names = "x") |>
   ggplot() +
     geom_histogram(
       aes(x, after_stat(density)),
@@ -11,12 +12,16 @@ read.csv("out/023a.csv", col.names = "x") |>
       binwidth = \(x) 2 * IQR(x) / length(x)^(1 / 3),
     ) +
     geom_function(fun = \(x) 2 * exp(-x^2) / sqrt(pi)) +
-    labs(x = "<i>x</i>", y = "Density") +
-    theme(axis.title.x = ggtext::element_markdown())
+    labs(x = "Sampled value", y = "Density")
+
+plot_tex("023a", plt_smp, asp_ratio = 4 / 3, scale_factor = 0.75)
 
 # system("exe/023b_rejection_accratio 5 5000 100000")
-read.csv("out/023b.csv") |>
+
+plt_acc <- read.csv("out/023b.csv") |>
   ggplot() +
     geom_line(aes(p, acc)) +
     labs(x = "<i>p</i>", y = "Acceptance ratio") +
     theme(axis.title.x = ggtext::element_markdown())
+
+plot_tex("023b", plt_acc, asp_ratio = 4 / 3, scale_factor = 0.75)

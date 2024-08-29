@@ -1,9 +1,8 @@
-library(data.table)
-library(ggplot2)
-setwd("~/PoD/Y2.1/NMSM/exercises/")
+setwd("~/PoD/Y2.1/NMSM/exercises")
+source("src/preamble.R")
 
 # system("exe/021_disk_sampling 50000")
-fread("out/021.csv") |>
+plt <- fread("out/021.csv") |>
   melt(
     id.vars = "theta",
     measure.vars = measure(r_type, pattern = "r_(.*)"),
@@ -15,7 +14,9 @@ fread("out/021.csv") |>
     labels = c("Naïve", "Correct")
   )] |>
   ggplot(aes(radius * cos(theta), radius * sin(theta))) +
-    geom_point(alpha = 0.1) +
-    facet_wrap(vars(r_type), nrow = 2) +
+    geom_point(alpha = 0.1, size = 0.08) +
+    facet_wrap(vars(r_type), ncol = 2) +
     labs(x = "<i>x</i>", y = "<i>y</i>") +
     theme(axis.title = ggtext::element_markdown())
+
+plot_tex("021", plt, asp_ratio = 9 / 5, scale_factor = 0.9)
