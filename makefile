@@ -6,7 +6,7 @@ EXE := exe
 
 RNG := $(SRC)/utils/random.c
 
-all: 1 2 7 8 10
+all: 1 2 3 7 8 10
 
 clean:
 	rm -f $(EXE)/*
@@ -53,6 +53,11 @@ clean:
 
 23b: $(SRC)/023b_rejection_accratio.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/023b_rejection_accratio
+
+3: 31
+
+31: $(SRC)/031_crude_vs_importance.c $(RNG)
+	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/031_crude_vs_importance
 
 7: 71 72
 
