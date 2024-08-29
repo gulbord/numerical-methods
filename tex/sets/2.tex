@@ -78,12 +78,7 @@ As usual, we compute the cumulative and invert it to generate a random $r \sim
 \rho_r(r)$:
 \begin{equation}
   F_r(r) = \int_{0}^{r} x e^{-x^{2}/2} \, dx = 1 - e^{-r^{2}/2} \implies
-  e^{-r^{2}/2} = 1 - u.
-\end{equation}
-Since $u$ is distributed uniformly, we can redefine it as $1 - u$ for
-simplicity:
-\begin{equation}
-  -\frac{r^{2}}{2} = \log u \implies r = \sqrt{-2\log u}.
+  e^{-r^{2}/2} = 1 - u \implies r = \sqrt{-2 \log(1 - u)}.
 \end{equation}
 Then, to get the angle $\theta$ we recover the \emph{conditional} distribution
 $\rho_{\theta\given r}(\theta \given r)$:
@@ -125,12 +120,9 @@ and you can see the results in \figref{fig:022}.
     exe/023b\_rejection\_accratio
 \end{sourcefiles} 
 
-Here I implemented the sampling of random numbers from the distribution
-\begin{equation}
-  f(x) = \frac{2}{\sqrt{\pi}} e^{-x^{2}}
-\end{equation}
-over $[0, \infty)$. We start from a function $g(x)$ that could serve as an
-upper limit to $f(x)$,
+Here I implemented the sampling of random numbers from the distribution $f(x) =
+2 e^{-x^{2}} / \sqrt{\pi}$ over $[0, \infty)$. We start from a function $g(x)$
+that could serve as an upper limit to $f(x)$,
 \begin{equation}
   g(x) =
   \begin{dcases}
@@ -167,7 +159,6 @@ $f(x)$ grows wider:
     \int_{0}^{\infty} (cg(x) - f(x))\, dx
     &= \frac{2}{\sqrt{\pi}} \int_{0}^{p} dx + \frac{2}{p \sqrt{\pi}}
     \int_{p}^{\infty} x e^{p^{2} - x^{2}} \, dx - 1 \\
-    &= \frac{2p}{\sqrt{\pi}} + \frac{2}{p \sqrt{\pi}} \frac{1}{2} - 1 \\
     &= \frac{2}{\sqrt{\pi}} \left(p + \frac{1}{2p}\right) - 1
     \xrightarrow{p \to \infty} \infty.
   \end{split}
