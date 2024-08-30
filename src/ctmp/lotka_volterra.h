@@ -16,20 +16,12 @@ static inline double pred_death_r(double *k, int *pops)
     return k[2] * pops[1];
 }
 
-static inline void prey_birth_u(int *old_pops, int *new_pops)
+static inline void prey_birth_u(int *pops) { pops[0] += 1; }
+static inline void predation_u(int *pops)
 {
-    new_pops[0] = old_pops[0] + 1;
-    new_pops[1] = old_pops[1];
+    pops[0] -= 1;
+    pops[1] += 1;
 }
-static inline void predation_u(int *old_pops, int *new_pops)
-{
-    new_pops[0] = old_pops[0] - 1;
-    new_pops[1] = old_pops[1] + 1;
-}
-static inline void pred_death_u(int *old_pops, int *new_pops)
-{
-    new_pops[0] = old_pops[0];
-    new_pops[1] = old_pops[1] - 1;
-}
+static inline void pred_death_u(int *pops) { pops[1] -= 1; }
 
 #endif

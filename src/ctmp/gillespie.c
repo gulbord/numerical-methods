@@ -1,107 +1,48 @@
 #include "gillespie.h"
 #include "../utils/random.h"
 #include <math.h>
-#include <stdlib.h>
 
-void init_state_list(struct state *head, int *pops, size_t p_size)
-{
-    // Fill `head` values
-    head->p_size = p_size;
-    head->pops = malloc(p_size * sizeof(int));
-    for (size_t i = 0; i < p_size; ++i)
-        head->pops[i] = pops[i];
-    head->time = 0.0;
-
-    // Set pointer to non-existent (yet) next item to NULL
-    head->next = NULL;
-}
-
-void update_state_list(struct state **head, int *pops, double time)
-{
-    struct state *tmp = malloc(sizeof(struct state));
-
-    // Fill the new state values
-    tmp->p_size = (*head)->p_size;
-    tmp->pops = malloc(tmp->p_size * sizeof(int));
-    for (size_t i = 0; i < tmp->p_size; ++i)
-        tmp->pops[i] = pops[i];
-    tmp->time = time;
-
-    // Make `tmp` the new head pointer
-    tmp->next = *head;
-    *head = tmp;
-}
-
-void write_state_list(struct state *head, FILE *file)
-{
-    struct state *tmp = head;
-
-    size_t ps = head->p_size;
-    while (tmp != NULL) {
-        fprintf(file, "%.10f,", tmp->time);
-        for (size_t i = 0; i < ps; ++i)
-            fprintf(file, "%d%c", tmp->pops[i], i == ps - 1 ? '\n' : ',');
-        tmp = tmp->next;
-    }
-}
-
-void free_state_list(struct state *head)
-{
-    struct state *tmp = head;
-
-    // If head == NULL the list is already empty
-    while (head != NULL) {
-        tmp = head;
-        head = head->next; // Move to next with `head`
-        free(tmp->pops);   // `tmp` points to prev, so we can free
-        free(tmp);
-    }
-}
-
-void gillespie(struct state **head, rate_ptr *rate_fns, double *rate_con,
-               reac_ptr *reac_fns, int n_react, double max_time)
+void gillespie(int *pops, int n_pops, reac_ptr *reactions, int n_reac,
+               rate_ptr *rates, double *k, double max_time, FILE *file)
 {
     // Rate array to be updated at every iteration
-    double rates[n_react];
-    // int array to momentarily hold the updated state
-    int new_pops[(*head)->p_size];
-    int *cur_pops; // Just for clarity
+    double w[n_reac];
+    double time = 0.0;
 
-    double tot_time = 0.0;
+    fprintf(file, "%f,", time);
+    for (int i = 0; i < n_pops; ++i)
+        fprintf(file, "%d%c", pops[i], i + 1 == n_pops ? '\n' : ',');
 
-    while (tot_time < max_time) {
-        // Update current populations
-        cur_pops = (*head)->pops;
-
+    while (time < max_time) {
         // Calculate the escape rate by looping over rate functions
         double esc_rate = 0.0;
-        for (int i = 0; i < n_react; ++i) {
-            rates[i] = rate_fns[i](rate_con, cur_pops);
-            esc_rate += rates[i];
+        for (int i = 0; i < n_reac; ++i) {
+            w[i] = rates[i](k, pops);
+            esc_rate += w[i];
         }
 
         // Calculate the residence time and check if we are past the maximum
         double tau = -log(1.0 - rng_real()) / esc_rate;
-        if (tot_time + tau > max_time)
+        time += tau;
+        if (time > max_time)
             break;
 
         // Pick a reaction with probability ~ rate_i / esc_rate
         double thr = rng_real() * esc_rate;
         double sum = 0.0;
-        int pick = n_react - 1; // If you never reach thr, pick the last
-        for (int i = 0; i < n_react; ++i) {
-            sum += rates[i];
+        int pick = n_reac - 1; // If you never reach thr, pick the last
+        for (int i = 0; i < n_reac; ++i) {
+            sum += w[i];
             if (sum > thr) {
                 pick = i;
                 break;
             }
         }
 
-        // Update the elapsed time
-        tot_time += tau;
-
         // Update the state according to the chosen reaction
-        reac_fns[pick](cur_pops, new_pops);
-        update_state_list(head, new_pops, tot_time);
+        reactions[pick](pops);
+        fprintf(file, "%f,", time);
+        for (int i = 0; i < n_pops; ++i)
+            fprintf(file, "%d%c", pops[i], i + 1 == n_pops ? '\n' : ',');
     }
 }

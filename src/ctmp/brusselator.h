@@ -19,25 +19,17 @@ static inline double y_to_x_r(double *k, int *pops)
 }
 static inline double x_to_y_r(double *k, int *pops) { return k[1] * pops[0]; }
 
-static inline void x_creat_u(int *old_pops, int *new_pops)
+static inline void x_creat_u(int *pops) { pops[0] += 1; }
+static inline void x_destr_u(int *pops) { pops[0] -= 1; }
+static inline void y_to_x_u(int *pops)
 {
-    new_pops[0] = old_pops[0] + 1;
-    new_pops[1] = old_pops[1];
+    pops[0] -= 1;
+    pops[1] += 1;
 }
-static inline void x_destr_u(int *old_pops, int *new_pops)
+static inline void x_to_y_u(int *pops)
 {
-    new_pops[0] = old_pops[0] - 1;
-    new_pops[1] = old_pops[1];
-}
-static inline void y_to_x_u(int *old_pops, int *new_pops)
-{
-    new_pops[0] = old_pops[0] + 1;
-    new_pops[1] = old_pops[1] - 1;
-}
-static inline void x_to_y_u(int *old_pops, int *new_pops)
-{
-    new_pops[0] = old_pops[0] - 1;
-    new_pops[1] = old_pops[1] + 1;
+    pops[0] -= 1;
+    pops[1] += 1;
 }
 
 #endif
