@@ -102,7 +102,7 @@ int main(int argc, const char **argv)
         for (int t = 1; t <= params.num_steps; ++t) {
             print_progress(t, params.num_steps);
             sweep(particles, &obs, &params, &compute_energy_delta);
-            fprintf(file, "%d,%g,%g\n", r, obs.acc_ratio, obs.energy);
+            fprintf(file, "%d,%f,%f\n", r, obs.acc_ratio, obs.energy);
         }
 
         printf("\r\033[K\033[F"); // After progress bar

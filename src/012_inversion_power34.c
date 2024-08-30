@@ -22,7 +22,7 @@ int main(int argc, const char **argv)
     // rho(x) = (n + 1) * x^n --> sample with F^(-1)(p) = p^(1/(n+1))
     int n_smp = atoi(argv[1]);
     for (int i = 0; i < n_smp; ++i)
-        fprintf(file, "%g,%g\n", pow(rng_real(), 0.25), // n = 3
+        fprintf(file, "%f,%f\n", pow(rng_real(), 0.25), // n = 3
                 pow(rng_real(), 0.2));                  // n = 4
 
     fclose(file);

@@ -37,7 +37,7 @@ int main(int argc, const char **argv)
             }
             double mc_pi = 4.0 * (double)hits / throws;
 
-            fprintf(file, "%d,%g\n", throws, fabs(1.0 - mc_pi * M_1_PI));
+            fprintf(file, "%d,%f\n", throws, fabs(1.0 - mc_pi * M_1_PI));
         }
     }
 

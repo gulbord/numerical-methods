@@ -30,7 +30,7 @@ int main(int argc, const char **argv)
     double ab = a / b;
     double iimn = 1.0 / (1.0 - n);
     for (int i = 0; i < n_smp; ++i)
-        fprintf(file, "%g\n", ab * (pow(rng_real(), iimn) - 1.0));
+        fprintf(file, "%f\n", ab * (pow(rng_real(), iimn) - 1.0));
 
     fclose(file);
 

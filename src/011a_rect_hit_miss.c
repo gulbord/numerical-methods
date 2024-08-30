@@ -37,7 +37,7 @@ int main(int argc, const char **argv)
             }
             double mc_area = (double)hits / throws;
 
-            fprintf(file, "%d,%g\n", throws, fabs(1.0 - 4.0 * mc_area));
+            fprintf(file, "%d,%f\n", throws, fabs(1.0 - 4.0 * mc_area));
         }
     }
 

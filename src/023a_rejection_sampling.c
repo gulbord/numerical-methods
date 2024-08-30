@@ -33,14 +33,14 @@ int main(int argc, const char *argv[])
             double x = u / A;
             if (rng_real() < exp(-x * x)) {
                 ++acc;
-                fprintf(file, "%g\n", x);
+                fprintf(file, "%f\n", x);
             }
         } else {
             // Sample from exp g(x) = (A / p) * x * e^(p^2 - x^2)
             double x = sqrt(p2 - log_2pA - log(1.0 - u));
             if (rng_real() * x < P * exp(-p2)) {
                 ++acc;
-                fprintf(file, "%g\n", x);
+                fprintf(file, "%f\n", x);
             }
         }
     }

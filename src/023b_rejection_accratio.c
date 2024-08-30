@@ -51,7 +51,7 @@ int main(int argc, const char *argv[])
             }
         }
 
-        fprintf(file, "%g,%g\n", p, (double)acc / n_darts);
+        fprintf(file, "%f,%f\n", p, (double)acc / n_darts);
     }
 
     fclose(file);

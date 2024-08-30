@@ -39,7 +39,7 @@ int main(int argc, const char **argv)
 
     for (int n = min_n; n <= max_n; n += dn)
         for (int i = 0; i < n_smp; ++i)
-            fprintf(file, "%d,%g\n", n, integral_cos(n));
+            fprintf(file, "%d,%f\n", n, integral_cos(n));
 
     fclose(file);
 

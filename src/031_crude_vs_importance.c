@@ -60,7 +60,7 @@ int main(int argc, const char **argv)
 
     for (int n = min_n; n <= max_n; n += dn)
         for (int i = 0; i < n_smp; ++i)
-            fprintf(file, "%d,%g,%g\n", n, integral_crude(n),
+            fprintf(file, "%d,%f,%f\n", n, integral_crude(n),
                     integral_importance(n));
 
     fclose(file);

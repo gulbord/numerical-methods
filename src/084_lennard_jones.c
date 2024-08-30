@@ -156,7 +156,7 @@ int main(int argc, const char **argv)
         for (int t = 1; t <= params.num_steps; ++t) {
             print_progress(t, params.num_steps);
             sweep(particles, &obs, &params, &compute_energy_delta);
-            fprintf(file, "%d,%g,%g,%g\n", r, obs.energy,
+            fprintf(file, "%d,%f,%f,%f\n", r, obs.energy,
                     ptail + rho_temp +
                         inv_vol * compute_virial(particles, &params),
                     obs.acc_ratio);

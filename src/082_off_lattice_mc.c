@@ -84,11 +84,11 @@ int main(int argc, const char **argv)
 
     // Perform mc_steps Monte Carlo sweeps
     struct observables obs = {0, compute_potential(particles, &params)};
-    fprintf(file, "%g\n", obs.energy);
+    fprintf(file, "%f\n", obs.energy);
     for (int t = 1; t < params.num_steps; ++t) {
         print_progress(t, params.num_steps);
         sweep(particles, &obs, &params, &compute_energy_delta);
-        fprintf(file, "%g\n", obs.energy);
+        fprintf(file, "%f\n", obs.energy);
     }
 
     printf("\n"); // After progress bar

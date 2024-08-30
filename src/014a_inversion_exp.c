@@ -25,7 +25,7 @@ int main(int argc, const char **argv)
     // rho(x) = μ * e^(-μ * x) --> sample with F^(-1)(p) = -log(p) / μ
     int n_smp = atoi(argv[2]);
     for (int i = 0; i < n_smp; ++i)
-        fprintf(file, "%g\n", -log(1.0 - rng_real()) / mu);
+        fprintf(file, "%f\n", -log(1.0 - rng_real()) / mu);
 
     fclose(file);
 
