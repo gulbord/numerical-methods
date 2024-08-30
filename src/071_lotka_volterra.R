@@ -42,15 +42,4 @@ plot_ex <- function(init_prey, init_pred, max_time) {
       labs(x = "Time (s)", y = "Population", colour = "Species")
 }
 
-plot_ex(500, 20, 15)
-
-
-fread("out/071_500_100.csv")[, .(dt = diff(time))] |>
-  ggplot() +
-    geom_histogram(
-      aes(dt, after_stat(density)),
-      boundary = 0,
-      binwidth = \(x) 2 * IQR(x) / length(x)^(1 / 3)
-    ) +
-    geom_function(fun = dexp, args = list(rate = 4539.3))
-
+plot_ex(500, 10, 10)

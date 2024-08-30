@@ -15,6 +15,7 @@ void gillespie(int *pops, int n_pops, reac_ptr *reactions, int n_reac,
     for (int i = 0; i < n_pops; ++i)
         fprintf(file, "%d%c", pops[i], i + 1 == n_pops ? '\n' : ',');
 
+    int pop_left = 0, one_left = 0;
     while (time < max_time) {
         // Calculate the escape rate by looping over rate functions
         double esc_rate = 0.0;
@@ -30,10 +31,12 @@ void gillespie(int *pops, int n_pops, reac_ptr *reactions, int n_reac,
             break;
 
         // If there is only one population left, check if tau is not too small
-        int pop_left = 0;
-        for (int i = 0; i < n_pops; ++i)
-            pop_left += pops[i] > 0;
-        if (pop_left == 1 && tau < TAU_EPS)
+        if (!one_left) {
+            pop_left = 0;
+            for (int i = 0; i < n_pops; ++i)
+                pop_left += pops[i] > 0;
+            one_left = pop_left == 1;
+        } else if (tau < TAU_EPS)
             break;
 
         // Pick a reaction with probability ~ rate_i / esc_rate
