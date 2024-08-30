@@ -6,7 +6,6 @@
 
 #define N_ARGS 5
 #define MAX_X 5
-#define TRUE_INT 0.25
 
 inline double g(double x) { return x * cos(x * x); }
 
@@ -61,9 +60,8 @@ int main(int argc, const char **argv)
 
     for (int n = min_n; n <= max_n; n += dn)
         for (int i = 0; i < n_smp; ++i)
-            fprintf(file, "%d,%g,%g\n", n,
-                    fabs(1.0 - integral_crude(n) / TRUE_INT),
-                    fabs(1.0 - integral_importance(n) / TRUE_INT));
+            fprintf(file, "%d,%g,%g\n", n, integral_crude(n),
+                    integral_importance(n));
 
     fclose(file);
 

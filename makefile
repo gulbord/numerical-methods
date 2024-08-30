@@ -54,10 +54,13 @@ clean:
 23b: $(SRC)/023b_rejection_accratio.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/023b_rejection_accratio
 
-3: 31
+3: 31 32
 
 31: $(SRC)/031_crude_vs_importance.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/031_crude_vs_importance
+
+32: $(SRC)/032_cosx_importance.c $(RNG)
+	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/032_cosx_importance
 
 7: 71 72
 

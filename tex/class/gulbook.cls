@@ -312,10 +312,10 @@
 \RequirePackage{booktabs}
 \ifnum\@ptsize=0
 \setlength\abovecaptionskip{8\p@ \@plus 2\p@ \@minus 2\p@}
-\setlength\abovetopsep{3\p@}
+\setlength\abovetopsep{0\p@}
 \else
 \setlength\abovecaptionskip{9\p@ \@plus 3\p@ \@minus 3\p@}
-\setlength\abovetopsep{3\p@}
+\setlength\abovetopsep{0\p@}
 \fi
 \setlength\belowcaptionskip{0\p@}
 \long\def\@makecaption#1#2{%
