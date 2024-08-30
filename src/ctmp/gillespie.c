@@ -2,6 +2,8 @@
 #include "../utils/random.h"
 #include <math.h>
 
+#define TAU_EPS 1e-9
+
 void gillespie(int *pops, int n_pops, reac_ptr *reactions, int n_reac,
                rate_ptr *rates, double *k, double max_time, FILE *file)
 {
@@ -25,6 +27,13 @@ void gillespie(int *pops, int n_pops, reac_ptr *reactions, int n_reac,
         double tau = -log(1.0 - rng_real()) / esc_rate;
         time += tau;
         if (time > max_time)
+            break;
+
+        // If there is only one population left, check if tau is not too small
+        int pop_left = 0;
+        for (int i = 0; i < n_pops; ++i)
+            pop_left += pops[i] > 0;
+        if (pop_left == 1 && tau < TAU_EPS)
             break;
 
         // Pick a reaction with probability ~ rate_i / esc_rate

@@ -33,6 +33,7 @@ plot_ex <- function(init_prey, init_pred, max_time) {
     ggplot(aes(colour = species)) +
       geom_line(aes(time, curr)) +
       geom_line(aes(time, eq), linetype = "dashed") +
+      scale_colour_brewer(palette = "Dark2") +
       scale_x_continuous(
         breaks = scales::pretty_breaks(),
         limits = c(0, max_time),
@@ -41,12 +42,15 @@ plot_ex <- function(init_prey, init_pred, max_time) {
       labs(x = "Time (s)", y = "Population", colour = "Species")
 }
 
-plot_ex(500, 250, 15)
+plot_ex(500, 20, 15)
 
-fread("out/071_500_250.csv") |>
-  _[, .(dt = diff(time))] |>
+
+fread("out/071_500_100.csv")[, .(dt = diff(time))] |>
   ggplot() +
     geom_histogram(
       aes(dt, after_stat(density)),
+      boundary = 0,
       binwidth = \(x) 2 * IQR(x) / length(x)^(1 / 3)
-    )
+    ) +
+    geom_function(fun = dexp, args = list(rate = 4539.3))
+
