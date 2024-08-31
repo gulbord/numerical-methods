@@ -68,9 +68,6 @@
 % Macros
 \usepackage{xparse}
 %% New commands
-\newcommand{\exref}[1]{Ex.~\ref{#1}}
-\newcommand{\figref}[1]{Fig.~\ref{#1}}
-\newcommand{\tabref}[1]{Tab.~\ref{#1}}
 \newcommand{\abbr}[1]{\textsc{\MakeLowercase{#1}}}
 \newcommand{\todo}[1]{\textcolor{red}{\ttfamily\textbf{TODO} #1}}
 \newcommand{\given}[1][]{\:#1\vert\:}
@@ -160,5 +157,5 @@
 \counterwithin{table}{section}
 
 \usepackage[hidelinks]{hyperref}
-
-\usepackage{printlen}
+\usepackage{cleveref}
+\crefname{section}{exercise}{exercises}

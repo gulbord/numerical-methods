@@ -9,7 +9,7 @@
   \item[Executables] exe/011a\_rect\_hit\_miss, exe/011b\_disk\_hit\_miss
 \end{sourcefiles} 
 
-The error as a function of the number of throws is shown in \figref{fig:011}. In
+The error as a function of the number of throws is shown in \cref{fig:011}. In
 the disk case, it goes under \qty{1}{\percent} with as little as \num{10000}
 \enquote{throws}.
 
@@ -17,7 +17,7 @@ the disk case, it goes under \qty{1}{\percent} with as little as \num{10000}
   \centering
   \includegraphics{img/011.png}
   \caption{percentage error as a function of the number of \enquote{throws} for
-    \exref{ex:011}. The black line represents the average over \num{100}
+    \cref{ex:011}. The black line represents the average over \num{100}
     realizations, with the standard deviation shaded in grey.}
   \label{fig:011}
 \end{figure}
@@ -48,7 +48,7 @@ and invert it:
 So, we just have to sample a random floating point number between $0$ and $1$
 and raise it to the power of $1 / (n + 1)$ to get $x \sim (n + 1) x^n$. Results
 from a sampling of \num{50000} iterations for $n = 3, 4$ are shown in
-\figref{fig:012}.
+\cref{fig:012}.
 
 \begin{figure}
   \centering
@@ -78,7 +78,7 @@ The cumulative is then
   u^{1/3}.
 \end{equation}
 Once again, you can see the comparison between a \num{50000}-points histogram
-and the theoretical curve in \figref{fig:013}.
+and the theoretical curve in \cref{fig:013}.
 
 \begin{figure}
   \centering
@@ -105,7 +105,7 @@ $x \in [0, \infty)$. The cumulative and the sampling rule are then
   F_1(x) = \mu \int_{0}^{x} e^{-\mu y}\, dy = \mu (1 - e^{-\mu x}) \implies
   x = -\log(1 - u) / \mu.
 \end{equation}
-I ran \num{50000} samples as before, choosing $\mu = 2$; see \figref{fig:014a}.
+I ran \num{50000} samples as before, choosing $\mu = 2$; see \cref{fig:014a}.
 
 \begin{figure}
   \centering
@@ -122,7 +122,7 @@ Cumulative and sampling rule:
   F_2(x) = 2 \int_{0}^{x} e^{-y^{2}}\, dy = 1 - e^{-x^{2}} \implies x =
   \sqrt{-\log(1 - u)}.
 \end{equation}
-A histogram of \num{50000} samples is shown in \figref{fig:014b}.
+A histogram of \num{50000} samples is shown in \cref{fig:014b}.
 
 \begin{figure}
   \centering
@@ -150,7 +150,7 @@ from which we can sample with
   (1-n)} - 1\right].
 \end{equation}
 I chose $a = 1/2$, $b = 1/10$ and $n = 4$ -- resulting in $\rho_{3}(x) = 375 /
-(5 + x)^{4}$ -- for a run of \num{50000} samples, shown in \figref{fig:014c}.
+(5 + x)^{4}$ -- for a run of \num{50000} samples, shown in \cref{fig:014c}.
 
 \begin{figure}
   \centering
