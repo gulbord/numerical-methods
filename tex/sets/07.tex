@@ -85,13 +85,34 @@ extinction of both species, as shown in \cref{fig:071d}.
 
 \section{Brusselator model}
 
+\begin{sourcefiles}
+  \item[Source codes] src/072\_brusselator.c, src/ctmp/gillespie.h,
+    src/ctmp/gillespie.c, src/ctmp/brusselator.h
+  \item[Analysis script] src/072\_brusselator.R
+  \item[Executables] exe/072\_brusselator
+\end{sourcefiles}
+
+This exercise uses the same base implementation of the Gillespie algorithm found
+in \texttt{src/ctmp}, with a different header file that implements the rate and
+update functions of the Brusselator model, located at
+\texttt{src/ctmp/brusselator.h}. I ran three set of simulations using fixed
+parameters $a = \qty{2}{\per\second}$ and $b = \qty{5}{\per\second}$ while
+varying the \enquote{volume} $\Omega = \{\num{e2}, \num{e3}, \num{e4}\}$; the
+results are presented in \cref{fig:072a,fig:072b,fig:072c}. For each value of
+$\Omega$, I considered four initial conditions: $(X_{0}, Y_{0}) = (2\Omega,
+\Omega)$, shown in the upper left panel of each figure, $(2 \Omega, 5 \Omega /
+2)$ in the upper right panel, $(\Omega / 2, \Omega)$ in the lower left panel and
+$(\Omega / 2, 5 \Omega / 2)$ in the lower right panel. These choices intend to
+explore the vicinity of the stationary solution $(a \Omega, a \Omega / b) = (2
+\Omega, 5 \Omega / 2)$.
+
 \begin{figure}
   \centering
   \includegraphics{img/072a.png}
   \caption{first set of Brusselator simulations, with $a =
     \qty{2}{\per\second}$, $b = \qty{5}{\per\second}$ and volume $\Omega =
     \num{e2}$. The initial conditions are reported above each plot and the
-    stationary solution $(a \Omega, a \Omega / b)$ is highlighted with dashed
+    stationary solution $(a \Omega, b \Omega / a)$ is highlighted with dashed
     lines.}
   \label{fig:072a}
 \end{figure}
@@ -102,7 +123,7 @@ extinction of both species, as shown in \cref{fig:071d}.
   \caption{first set of Brusselator simulations, with $a =
     \qty{2}{\per\second}$, $b = \qty{5}{\per\second}$ and volume $\Omega =
     \num{e3}$. The initial conditions are reported above each plot and the
-    stationary solution $(a \Omega, a \Omega / b)$ is highlighted with dashed
+    stationary solution $(a \Omega, b \Omega / a)$ is highlighted with dashed
     lines.}
   \label{fig:072b}
 \end{figure}
@@ -113,7 +134,27 @@ extinction of both species, as shown in \cref{fig:071d}.
   \caption{first set of Brusselator simulations, with $a =
     \qty{2}{\per\second}$, $b = \qty{5}{\per\second}$ and volume $\Omega =
     \num{e4}$. The initial conditions are reported above each plot and the
-    stationary solution $(a \Omega, a \Omega / b)$ is highlighted with dashed
+    stationary solution $(a \Omega, b \Omega / a)$ is highlighted with dashed
     lines.}
   \label{fig:072c}
 \end{figure}
+
+To understand what happens, let's refer to the four transitions of the model:
+\begin{alignat}{3}
+  (X, Y) &\rightarrow (X + 1, Y)     \quad && \text{with rate }
+    w_{1} = a \Omega, \\
+  (X, Y) &\rightarrow (X - 1, Y)     \quad && \text{with rate }
+    w_{2} = X, \\
+  (X, Y) &\rightarrow (X + 1, Y - 1) \quad && \text{with rate }
+    w_{3} = X (X - 1) Y / \Omega^{2}, \\
+  (X, Y) &\rightarrow (X - 1, Y + 1) \quad && \text{with rate }
+    w_{4} = b X.
+\end{alignat}
+With $b > a$ the fourth reaction is favoured for every chosen initial condition.
+This is evident in the sharp rise in $Y$ observed in all cases except the upper
+right panels, where both populations are large enough to favour the third
+reaction, which competes with the fourth. A recurring feature is a sudden
+decline in $Y$ accompanied by a corresponding rise in $X$: this is again
+triggered by the third reaction, which becomes more frequent as $Y$ grows -- and
+less frequent at large volumes, explaining the generally less \enquote{spiky}
+behaviour in \cref{fig:072c}.
