@@ -61,9 +61,9 @@ int parse_config(const char *filename, struct parameters *params)
     }
 
     if (strcmp(params->init_conf, "random") != 0 &&
-        strcmp(params->init_conf, "cubic") != 0) {
+        strcmp(params->init_conf, "lattice") != 0) {
         fprintf(stderr, "Invalid init_conf value. It must be either 'random' "
-                        "or 'cubic'.\n");
+                        "or 'lattice'.\n");
         fclose(file);
         return 1;
     }

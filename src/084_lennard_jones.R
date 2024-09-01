@@ -2,7 +2,7 @@ library(data.table)
 library(ggplot2)
 setwd("~/PoD/Y2.1/NMSM/exercises")
 
-df <- fread("out/084_N100_r0.5_d0.3_T2_icubic_s50000.csv") |>
+df <- fread("out/084_N100_r0.5_d0.3_T2_ilattice_s50000.csv") |>
   _[, energy := energy / 100] |>
   _[, iter := 1:.N, by = realization]
 

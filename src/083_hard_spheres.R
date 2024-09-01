@@ -24,7 +24,7 @@ for (rho in c(0.05, 0.3, 0.5, 1)) {
     system(sprintf("sed -i 's/density .*/density %g/' src/083.cfg", rho))
     system(sprintf("sed -i 's/max_disp .*/max_disp %g/' src/083.cfg", dmax))
     system("exe/083_hard_spheres_mc src/083.cfg")
-    system("sed -i 's/init_conf .*/init_conf cubic/' src/083.cfg")
+    system("sed -i 's/init_conf .*/init_conf lattice/' src/083.cfg")
     system("exe/083_hard_spheres_mc src/083.cfg")
   }
 }
