@@ -1,0 +1,101 @@
+\chapter{Off-lattice Monte Carlo simulations}
+
+\section{Reduced units}
+
+The given parameters for argon and krypton are
+\begin{alignat}{2}
+  \sigma_{\ce{Ar}} = \qty{3.41}{\angstrom}, \quad&
+  \sigma_{\ce{Kr}} = \qty{3.38}{\angstrom}, &\quad& \text{(length)}, \\
+  \epsilon_{\ce{Ar}} / k_{\mathrm{B}} = \qty{119.8}{K}, \quad&
+  \epsilon_{\ce{Kr}} / k_{\mathrm{B}} = \qty{164.0}{K}, &\quad&
+  \text{(temperature)}.
+\end{alignat}
+Therefore, a reduced temperature of $T^{*} = 2$ corresponds to
+$2\epsilon_{\ce{Ar}} / k_{\mathrm{B}} = \qty{239.6}{K}$ for argon and $2
+\epsilon_{\ce{Kr}} / k_{\mathrm{B}} = \qty{328}{K}$ for krypton.
+
+The reduced time unit is derived from the reduced units of length, mass and
+energy, since of course $[\epsilon] = \unit{kg.m\squared\per\second\squared}$:
+\begin{equation}
+  \tau_{\ce{X}} = \sqrt{\frac{m_{\ce{X}}
+  \sigma_{\ce{X}}^{2}}{\epsilon_{\ce{X}}}},
+  \label{eq:taureduced}
+\end{equation}
+with \ce{X} a placeholder element. The characteristic times for argon and
+krypton are thus
+\begin{gather}
+  \tau_{\ce{Ar}} = \sqrt{%
+    \frac{\num{39.95} (\qty{1.6605e-27}{kg}) (\qty{3.41e-10}{m})^{2}}%
+         {(\qty{119.8}{K}) (\qty{1.3806e-23}{J\per\kelvin})}
+  } = \qty{2.16e-12}{s}, \\
+  \tau_{\ce{Kr}} = \sqrt{%
+    \frac{\num{83.798} (\qty{1.6605e-27}{kg}) (\qty{3.38e-10}{m})^{2}}%
+         {(\qty{164.0}{K}) (\qty{1.3806e-23}{J\per\kelvin)}}
+  } = \qty{2.65e-12}{s},
+\end{gather}
+and the corresponding typical values of a molecular dynamics time step, $\Delta
+t_{\ce{X}} = \num{0.001} \tau_{\ce{X}}$, are $\Delta t_{\ce{Ar}} =
+\qty{2.16e-15}{s}$ and $\Delta t_{\ce{Kr}} = \qty{2.65e-15}{s}$.
+
+The friction coefficient is defined through the relation $F = \gamma m v$, so it
+has units of $\unit{\newton\second\per\meter\per\kilogram} =
+\unit{\per\second}$. So, we just have to invert \cref{eq:taureduced}:
+\begin{equation}
+  \gamma_{\ce{X}} = \sqrt{%
+    \frac{\epsilon_{\ce{X}}}%
+         {m_{\ce{X}}\sigma_{\ce{X}}^{2}}
+  }.
+\end{equation}
+Then, we can also get the dynamic viscosity $\eta$ by relating it to $\gamma$
+with Stokes' law, $\gamma = 6 \pi R \eta$ with $R$ a particle radius. The units
+of $\eta$ are thus $\unit{m^{-1} s^{-1}}$, and using once again
+\cref{eq:taureduced}
+\begin{equation}
+  \eta_{\ce{X}} = \frac{1}{\sigma_{\ce{X}}^{2}}
+  \sqrt{\frac{\epsilon_{\ce{X}}}{m_{\ce{X}}}}.
+\end{equation}
+
+\section{Off-lattice Monte Carlo program prototype}
+
+\begin{sourcefiles}
+  \item[Source codes] src/082\_off\_lattice\_mc.c, src/offlat/integration.c,
+    src/offlat/integration.h, src/offlat/parameters.c, src/offlat/parameters.h
+\end{sourcefiles}
+
+The four source files listed above form a flexible base for implementing an
+off-lattice Monte Carlo simulation. \texttt{parameters.c} and
+\texttt{parameters.h} define a \texttt{struct parameters} to hold the simulation
+parameters that are fed to the program through a configuration file with a
+\texttt{keyword\textvisiblespace value} format. The function
+\texttt{parse\_config} reads the configuration file and updates the
+\texttt{struct parameters} it receives. The parameters to set are:
+\begin{description}[font=\normalfont\ttfamily]
+  \item[num\_particles] number of particles.
+  \item[box\_size] length of the (cubic) simulation box's side, in reduced
+    units.
+  \item[density] in reduced units. Only two between this and the two
+    previous two parameters need be specified; \texttt{parse\_config} calculates
+    the remaining one.
+  \item[temperature] in reduced units.
+  \item[max\_disp] maximum displacement in each Cartesian direction of a Monte
+    Carlo trial move, in reduced units.
+  \item[num\_steps] number of Monte Carlo sweeps (each comprising
+    \texttt{num\_particles} trial moves).
+  \item[num\_realizations] number of system realizations.
+  \item[init\_conf] initialization strategy, either \texttt{random} or
+    (cubic) \texttt{lattice}.
+\end{description}
+
+\texttt{integration.c} holds two functions that take the \texttt{parameters}
+structure updated through the configuration file to run the specified
+simulation. The first function, \texttt{initialize}, populates a \texttt{double}
+array of $3 \times \text{\texttt{num\_particles}}$ elements (flattened) with
+particle coordinates determined by the strategy set with the \texttt{init\_conf}
+parameter. The second function, \texttt{sweep}, performs a single Monte Carlo
+sweep of \texttt{num\_particles} trial moves using the Metropolis algorithm. The
+\texttt{sweep} function requires a pointer to a \texttt{compute\_energy\_delta}
+function, specific to the system being simulated, which returns the energy
+difference resulting from the trial move. The header file \texttt{integration.h}
+also defines a \texttt{struct observables}, intended to store the current system
+energy and the acceptance ratio from the last sweep. The \texttt{sweep} function
+takes a \texttt{struct observables} as an argument and updates it accordingly.
