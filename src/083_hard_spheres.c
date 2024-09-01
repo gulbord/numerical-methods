@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define N_ARGS 2
+#define N_ARGS 3
 #define EPS 1e6
 
 double compute_energy_delta(int pick, const double *trial,
@@ -66,7 +66,8 @@ int main(int argc, const char **argv)
 {
     if (argc != N_ARGS) {
         fprintf(stderr, "Wrong number of arguments! (Should be %d)\n", N_ARGS);
-        fprintf(stderr, "[executable] [configuration file]\n");
+        fprintf(stderr,
+                "[executable] [configuration file] [output file prefix]\n");
         return 1;
     }
 
@@ -77,9 +78,7 @@ int main(int argc, const char **argv)
         return 1;
 
     char fname[255];
-    snprintf(fname, sizeof(fname), "out/083_N%d_r%g_d%g_T%g_i%s_s%d.csv",
-             params.num_particles, params.density, params.max_disp,
-             params.temperature, params.init_conf, params.num_steps);
+    snprintf(fname, sizeof(fname), "out/083_%s.csv", argv[2]);
 
     FILE *file = fopen(fname, "w");
     if (file == NULL) {
