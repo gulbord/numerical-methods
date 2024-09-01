@@ -4,28 +4,31 @@ setwd("~/PoD/Y2.1/NMSM/exercises")
 
 writeLines(
   c(
-    "# Leave whitespace between keyword and value",
     "num_particles 100",
     "density 0.1",
     "max_disp 0.1",
     "temperature 1",
-    "num_steps 1000000",
-    "init_conf random",
-    "num_realizations 10"
+    "num_steps 100000",
+    "num_realizations 10",
+    "init_conf random"
   ),
   "src/083.cfg"
 )
 
-system("rm out/083*.csv")
+# system("rm out/083*.csv")
 for (rho in c(0.05, 0.3, 0.5, 1)) {
   for (dmax in c(0.01, 0.1, 0.3, 0.6, 1)) {
     message(sprintf("Processing density = %g, max_disp = %g", rho, dmax))
     system("sed -i 's/init_conf .*/init_conf random/' src/083.cfg")
     system(sprintf("sed -i 's/density .*/density %g/' src/083.cfg", rho))
     system(sprintf("sed -i 's/max_disp .*/max_disp %g/' src/083.cfg", dmax))
-    system("exe/083_hard_spheres_mc src/083.cfg")
+    system(
+      sprintf("exe/083_hard_spheres src/083.cfg r%g_d%g_random", rho, dmax)
+    )
     system("sed -i 's/init_conf .*/init_conf lattice/' src/083.cfg")
-    system("exe/083_hard_spheres_mc src/083.cfg")
+    system(
+      sprintf("exe/083_hard_spheres src/083.cfg r%g_d%g_lattice", rho, dmax)
+    )
   }
 }
 
