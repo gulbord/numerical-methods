@@ -60,6 +60,7 @@ of $\eta$ are thus $\unit{m^{-1} s^{-1}}$, and using once again
 \begin{sourcefiles}
   \item[Source codes] src/082\_off\_lattice\_mc.c, src/offlat/integration.c,
     src/offlat/integration.h, src/offlat/parameters.c, src/offlat/parameters.h
+  \item[Executable] exe/082\_off\_lattice\_mc
 \end{sourcefiles}
 
 The four source files listed above form a flexible base for implementing an
@@ -99,3 +100,12 @@ difference resulting from the trial move. The header file \texttt{integration.h}
 also defines a \texttt{struct observables}, intended to store the current system
 energy and the acceptance ratio from the last sweep. The \texttt{sweep} function
 takes a \texttt{struct observables} as an argument and updates it accordingly.
+
+\section{Off-lattice Monte Carlo of hard spheres}
+
+\begin{sourcefiles}
+  \item[Source codes] src/083\_hard\_spheres.c, src/offlat/integration.c,
+    src/offlat/integration.h, src/offlat/parameters.c, src/offlat/parameters.h
+  \item[Analysis script] src/083\_hard\_spheres.R
+  \item[Executable] exe/083\_hard\_spheres
+\end{sourcefiles}
