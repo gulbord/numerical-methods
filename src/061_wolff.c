@@ -1,3 +1,4 @@
+#include "utils/progress.h"
 #include "utils/random.h"
 #include <math.h>
 #include <stdio.h>
@@ -6,10 +7,6 @@
 #include <time.h>
 
 #define N_ARGS 5
-
-struct neighbours {
-    int idx[4];
-};
 
 int main(int argc, const char **argv)
 {
@@ -44,8 +41,8 @@ int main(int argc, const char **argv)
 
     // Initialize with random spins, find nearest neighbours and compute initial
     // energy and magnetization
-    double energy = 0.0;
-    double magnet = 0.0;
+    int energy = 0;
+    int magnet = 0;
     int k = 0;
     for (int i = 0; i < side; ++i) {
         for (int j = 0; j < side; ++j) {
@@ -56,16 +53,12 @@ int main(int argc, const char **argv)
             nn[k][2] = i == 0 ? k - side + num_spins : k - side;        // Down
             nn[k][3] = j == 0 ? k - 1 + side : k - 1;                   // Left
 
-            energy -= spins[k] * (nn[k].up + nn[k].right);
+            energy -= spins[k] * (spins[nn[k][0]] + spins[nn[k][1]]);
             magnet += spins[k];
 
             ++k;
         }
     }
-
-    // Normalize observables
-    energy /= num_spins;
-    magnet /= num_spins;
 
     double p_add = 1.0 - exp(-2.0 / temperature);
     // Save unvisited spins in a queue
@@ -75,12 +68,13 @@ int main(int argc, const char **argv)
 
     // Start the main loop
     for (int t = 1; t <= num_steps; ++t) {
+        print_progress(t, num_steps);
+
         memset(is_cluster, 0, num_spins * sizeof(int));
 
-        // Pick a starting spin at random
+        // Pick a starting spin at random and flip it
         int seed = rng_int_n(num_spins);
         is_cluster[seed] = 1;
-        // Flip the seed spin and save its value
         int s0 = spins[seed];
         spins[seed] = -s0;
 
@@ -108,7 +102,7 @@ int main(int argc, const char **argv)
         // Check if we are flipping the whole cluster
         if (cluster_size == num_spins) {
             magnet = -magnet; // While the energy stays the same
-            fprintf(file, "%f,%f,%d\n", energy, magnet, cluster_size);
+            fprintf(file, "%d,%d,%d\n", energy, magnet, cluster_size);
             continue;
         }
 
@@ -123,9 +117,10 @@ int main(int argc, const char **argv)
             for (int i = 0; i < 4; ++i) {
                 int nbr = nn[pick][i];
 
+                // With s0 = - (i.e. the cluster is + after flipping)
                 // c | b       c | b    [c = cluster, b = border]
-                // + | -  -->  + | +    then delta < 0
-                // + | +  -->  + | -    then delta > 0
+                // - | -  -->  + | -    then delta > 0
+                // - | +  -->  + | +    then delta < 0
                 switch (is_cluster[nbr]) {
                 case 0: // Border spin
                     delta += s0 * spins[nbr];
@@ -140,10 +135,12 @@ int main(int argc, const char **argv)
             }
         }
 
-        energy += (double)(2 * delta) / num_spins;
-        magnet -= (double)(2 * s0 * cluster_size) / num_spins;
-        fprintf(file, "%f,%f,%d\n", energy, magnet, cluster_size);
+        energy += 2 * delta;
+        magnet -= 2 * s0 * cluster_size;
+        fprintf(file, "%d,%d,%d\n", energy, magnet, cluster_size);
     }
+
+    printf("\n"); // After progress bar
 
     fclose(file);
     free(spins);

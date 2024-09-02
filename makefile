@@ -6,7 +6,7 @@ EXE := exe
 
 RNG := $(SRC)/utils/random.c
 
-all: 1 2 3 7 8 10
+all: 1 2 3 6 7 8 10
 
 clean:
 	rm -f $(EXE)/*
@@ -64,7 +64,7 @@ clean:
 
 6: 61
 
-61: $(SRC)/061_wolff.c $(RNG)
+61: $(SRC)/061_wolff.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/061_wolff
 
 7: 71 72
