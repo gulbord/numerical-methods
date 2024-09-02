@@ -95,8 +95,7 @@ double compute_virial(const double *particles, const struct parameters *params)
             if (r2 > RCUT2)
                 continue;
 
-            r2 = 1.0 / r2;
-            double inv_r6 = r2 * r2 * r2;
+            double inv_r6 = 1.0 / (r2 * r2 * r2);
             virial += 2.0 * inv_r6 * inv_r6 - inv_r6;
         }
     }
