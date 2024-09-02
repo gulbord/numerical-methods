@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define N_ARGS 2
+#define N_ARGS 3
 #define RCUT 3.0
 #define RCUT2 9.0
 
