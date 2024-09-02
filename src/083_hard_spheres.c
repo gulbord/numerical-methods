@@ -93,14 +93,13 @@ int main(int argc, const char **argv)
     struct observables obs;
 
     for (int r = 1; r <= params.num_realizations; ++r) {
-        printf("\rRealization %d/%d\n", r, params.num_realizations);
+        printf("\rRealization %2d/%d\n", r, params.num_realizations);
 
         // Initialize particles according to config
         initialize(particles, &params);
 
         // Perform mc_steps Monte Carlo sweeps
         obs.energy = compute_potential(particles, &params);
-        printf("starting energy %f\n", obs.energy);
         for (int t = 1; t <= params.num_steps; ++t) {
             print_progress(t, params.num_steps);
             sweep(particles, &obs, &params, &compute_energy_delta);
