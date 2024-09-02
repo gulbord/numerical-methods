@@ -62,6 +62,11 @@ clean:
 32: $(SRC)/032_cosx_importance.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/032_cosx_importance
 
+6: 61
+
+61: $(SRC)/061_wolff.c $(RNG)
+	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/061_wolff
+
 7: 71 72
 
 71: $(SRC)/071_lotka_volterra.c $(SRC)/ctmp/gillespie.c $(RNG)
