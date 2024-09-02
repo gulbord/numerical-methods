@@ -1,6 +1,7 @@
 #include "offlat/integration.h"
 #include "utils/progress.h"
 #include "utils/random.h"
+#include <float.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +9,7 @@
 
 #define N_ARGS 3
 #define EPS 1e6
+#define RADIUS 1.0
 
 double compute_energy_delta(int pick, const double *trial,
                             const double *particles,
@@ -31,9 +33,9 @@ double compute_energy_delta(int pick, const double *trial,
             new_r2 += new_dr * new_dr;
         }
 
-        if (old_r2 > 1.0 && new_r2 < 1.0)
+        if (old_r2 > RADIUS && new_r2 <= RADIUS) // Creating an overlap
             delta += EPS;
-        else if (old_r2 < 1.0 && new_r2 > 1.0)
+        else if (old_r2 <= RADIUS && new_r2 > RADIUS) // Removing an overlap
             delta -= EPS;
     }
 
@@ -54,7 +56,7 @@ double compute_potential(const double *particles,
                 r2 += dr * dr;
             }
 
-            if (r2 < 1.0)
+            if (r2 <= RADIUS)
                 energy += EPS;
         }
     }
@@ -98,6 +100,7 @@ int main(int argc, const char **argv)
 
         // Perform mc_steps Monte Carlo sweeps
         obs.energy = compute_potential(particles, &params);
+        printf("starting energy %f\n", obs.energy);
         for (int t = 1; t <= params.num_steps; ++t) {
             print_progress(t, params.num_steps);
             sweep(particles, &obs, &params, &compute_energy_delta);

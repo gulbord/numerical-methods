@@ -1,79 +1,32 @@
 library(data.table)
 library(ggplot2)
+library(stringr)
 setwd("~/PoD/Y2.1/NMSM/exercises")
 
-writeLines(
-  c(
-    "num_particles 100",
-    "density 0.1",
-    "max_disp 0.1",
-    "temperature 1",
-    "num_steps 100000",
-    "num_realizations 10",
-    "init_conf random"
-  ),
-  "src/083.cfg"
+# List all files from previous runs
+fnames <- list.files(
+  path = "out",
+  pattern = "083_r[.0-9]+_d[.0-9]+_(random|lattice).csv",
+  full.names = TRUE
 )
 
-# system("rm out/083*.csv")
-for (rho in c(0.05, 0.3, 0.5, 1)) {
-  for (dmax in c(0.01, 0.1, 0.3, 0.6, 1)) {
-    message(sprintf("Processing density = %g, max_disp = %g", rho, dmax))
-    system("sed -i 's/init_conf .*/init_conf random/' src/083.cfg")
-    system(sprintf("sed -i 's/density .*/density %g/' src/083.cfg", rho))
-    system(sprintf("sed -i 's/max_disp .*/max_disp %g/' src/083.cfg", dmax))
-    system(
-      sprintf("exe/083_hard_spheres src/083.cfg r%g_d%g_random", rho, dmax)
-    )
-    system("sed -i 's/init_conf .*/init_conf lattice/' src/083.cfg")
-    system(
-      sprintf("exe/083_hard_spheres src/083.cfg r%g_d%g_lattice", rho, dmax)
-    )
-  }
-}
+# Recover densities and max. disp. from list of files
+rho <- fnames |>
+  str_extract("(?<=r)[.0-9]+") |>
+  unique() |>
+  as.numeric() |>
+  sort()
+dmax <- fnames |>
+  str_extract("(?<=d)[.0-9]+") |>
+  unique() |>
+  as.numeric() |>
+  sort()
 
-plot_obs <- function(fname) {
-  df <- fread(fname) |>
-    _[, iter := 1:.N, by = realization] |>
-    _[, energy := energy / 100] |>
-    _[, c(mean = lapply(.SD, mean), sd = lapply(.SD, sd))
-      , keyby = iter, .SDcols = !"realization"] |>
-    setnames(
-      -1, c("acc_ratio.mean", "energy.mean", "acc_ratio.sd", "energy.sd")
-    ) |>
-    melt(
-      id.vars = "iter",
-      measure.vars = measure(variable, value.name, sep = ".")
-    )
-
-  box_side <- fname |>
-    stringr::str_extract("(?<=L)[0-9.]+") |>
-    as.numeric()
-  max_disp <- fname |>
-    stringr::str_extract("(?<=d)[0-9.]+") |>
-    as.numeric()
-
-  ggplot(df) +
-    geom_ribbon(
-      aes(iter, ymin = mean - sd, ymax = mean + sd),
-      alpha = 0.5,
-    ) +
-    geom_line(aes(iter, mean)) +
-    facet_wrap(
-      vars(variable),
-      nrow = 2,
-      scales = "free_y",
-      labeller = as_labeller(c(
-        acc_ratio = "Acceptance ratio",
-        energy = "Number of overlaps"
-      ))
-    ) +
-    labs(
-      x = "Monte Carlo sweeps",
-      y = "Average over 10 realizations",
-      title = sprintf(
-        "Density %g, Max. displacement %g",
-        round(100 / box_side^3, 1), max_disp
-      )
-    )
-}
+fnames[15] |>
+  fread() |>
+  _[, acc_ratio := NULL] |>
+  _[sample(1:.N, 1e5L)] |>
+  _[, iter := 1:.N, by = realization] |>
+  _[, energy := energy / 1e6] |>
+  ggplot(aes(iter, energy, group = realization)) +
+    geom_line(alpha = 0.5)
