@@ -22,6 +22,7 @@ double compute_energy_delta(int pick, const double *trial,
 
         double old_r2 = 0.0;
         double new_r2 = 0.0;
+
         for (int j = 0; j < 3; ++j) {
             double old_dr = particles[pick + j] - particles[i + j];
             old_dr -= params->box_size * round(old_dr / params->box_size);
@@ -37,15 +38,13 @@ double compute_energy_delta(int pick, const double *trial,
 
         double old_energy, new_energy;
         if (old_r2 < RCUT2) {
-            old_r2 = 1.0 / old_r2;
-            double old_inv_r6 = old_r2 * old_r2 * old_r2;
+            double old_inv_r6 = 1.0 / (old_r2 * old_r2 * old_r2);
             old_energy = old_inv_r6 * old_inv_r6 - old_inv_r6;
         } else
             old_energy = 0.0;
 
         if (new_r2 < RCUT2) {
-            new_r2 = 1.0 / new_r2;
-            double new_inv_r6 = new_r2 * new_r2 * new_r2;
+            double new_inv_r6 = 1.0 / (new_r2 * new_r2 * new_r2);
             new_energy = new_inv_r6 * new_inv_r6 - new_inv_r6;
         } else
             new_energy = 0.0;
@@ -72,8 +71,7 @@ double compute_potential(const double *particles,
             if (r2 > RCUT2)
                 continue;
 
-            r2 = 1.0 / r2;
-            double inv_r6 = r2 * r2 * r2;
+            double inv_r6 = 1.0 / (r2 * r2 * r2);
             energy += inv_r6 * inv_r6 - inv_r6;
         }
     }
@@ -81,8 +79,7 @@ double compute_potential(const double *particles,
     return 4.0 * energy;
 }
 
-static double compute_virial(const double *particles,
-                             const struct parameters *params)
+double compute_virial(const double *particles, const struct parameters *params)
 {
     double virial = 0.0;
 
@@ -111,7 +108,8 @@ int main(int argc, const char **argv)
 {
     if (argc != N_ARGS) {
         fprintf(stderr, "Wrong number of arguments! (Should be %d)\n", N_ARGS);
-        fprintf(stderr, "[executable] [configuration file]\n");
+        fprintf(stderr,
+                "[executable] [configuration file] [output file prefix]\n");
         return 1;
     }
 
@@ -122,9 +120,7 @@ int main(int argc, const char **argv)
         return 1;
 
     char fname[255];
-    snprintf(fname, sizeof(fname), "out/084_N%d_r%g_d%g_T%g_i%s_s%d.csv",
-             params.num_particles, params.density, params.max_disp,
-             params.temperature, params.init_conf, params.num_steps);
+    snprintf(fname, sizeof(fname), "out/084_%s.csv", argv[2]);
 
     FILE *file = fopen(fname, "w");
     if (file == NULL) {
@@ -137,7 +133,7 @@ int main(int argc, const char **argv)
     struct observables obs;
 
     double inv_vol = 1.0 / pow(params.box_size, 3);
-    double rho_temp = params.density * params.temperature;
+    double rho_temp = params.density * params.temperature; // Ideal gas pressure
 
     // Tail corrections for energy and pressure
     double utail = (8.0 * M_PI / 9.0) * params.num_particles * params.density *
