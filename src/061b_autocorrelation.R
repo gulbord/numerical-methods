@@ -29,14 +29,14 @@ acf_fft <- function(x, max_lag = NULL, thr = 0) {
 }
 
 lat_sides <- round(exp(seq(log(10), log(50), length.out = 6)))
-num_steps <- 5e4
+num_steps <- 5e5
 Tc <- 2 / log(1 + sqrt(2))
 
 for (L in lat_sides) {
   message(paste("Running Metropolis for L =", L))
   system(sprintf(
     "exe/051_metropolis %s%d %d %f %d",
-    "acor_L", L, L, Tc, min(1e7L, num_steps * L^2)
+    "acor_L", L, L, Tc, num_steps
   ))
   message(paste("Running Wolff for L =", L))
   system(sprintf(
@@ -45,33 +45,68 @@ for (L in lat_sides) {
   ))
 }
 
-eqtime <- 500L # Manual analysis
+get_tau <- function(L, eqtime) {
+  metro <- fread(paste0("out/051_acor_L", L, ".csv"))[eqtime:.N][, .SD / L^2]
+  wolff <- fread(paste0("out/061_acor_L", L, ".csv"))[eqtime:.N]
+  avg_cs <- mean(wolff$clus_size)
+  wolff[, let(energy = energy / L^2, magnet = magnet / L^2, clus_size = NULL)]
+  N <- nrow(metro) - 1
 
-get_tau <- function(L) {
-  df <- fread(paste0("out/061_acor_L", L, ".csv")) |>
-    _[eqtime:.N] |>
-    _[, let(energy = energy / L^2, magnet = magnet / L^2)]
-  
-  avg_cs <- mean(df$clus_size)
-
-  lapply(
-    df[, .(energy, magnet)],
+  res <- lapply(
+    cbind(metro = metro, wolff = wolff),
     function(x) {
-        acf <- acf_fft(x)
-        tau_data <- sum((1 - seq_along(acf) / (nrow(df) - eqtime)) * acf)
-        return(tau_data * avg_cs / L^2)
+      acf <- acf_fft(x)
+      tau <- sum((1 - seq_along(acf) / N) * acf)
+      return(tau)
     }
   )
+
+  for (j in grep("wolff", colnames(res)))
+    set(res, j = j, value = res[[j]] * avg_cs / L^2)
+
+  return(res)
 }
 
-taus <- lapply(lat_sides, get_tau) |>
+taus <- lapply(lat_sides, get_tau, eqtime = 1000L) |>
   rbindlist() |>
   _[, lat_side := lat_sides]
 
+plt <- taus |>
+  melt(
+    id.vars = "lat_side",
+    measure.vars = measure(algorithm, variable, sep = ".")
+  ) |>
+  _[, algorithm := factor(
+    algorithm,
+    levels = c("metro", "wolff"),
+    labels = c("Metropolis", "Wolff")
+  )] |>
+  ggplot(aes(lat_side, value, colour = algorithm, fill = algorithm)) +
+    geom_point(size = 1) +
+    scale_x_log10(guide = "axis_logticks") +
+    scale_y_log10(guide = "axis_logticks") +
+    scale_colour_brewer(palette = "Dark2") +
+    scale_fill_brewer(palette = "Dark2") +
+    geom_smooth(method = "lm", formula = y ~ x, linewidth = 0.5) +
+    facet_wrap(
+      vars(variable),
+      nrow = 2,
+      scale = "free_y",
+      labeller = as_labeller(c(energy = "Energy", magnet = "Magnetization")),
+    ) +
+    labs(
+      x = "Lattice size",
+      y = "Autocorrelation time",
+      colour = "Algorithm",
+      fill = "Algorithm",
+    )
+
+plot_tex("061d", plt, asp_ratio = 1, scale_factor = 0.75)
+
 taus |>
-  melt(id.vars = "lat_side") |>
-  ggplot(aes(lat_side, value, colour = variable)) +
-    geom_point() +
-    geom_smooth(method = "lm", formula = y ~ x) +
-    scale_x_log10() +
-    scale_y_log10()
+  melt(
+    id.vars = "lat_side",
+    measure.vars = measure(algorithm, variable, sep = ".")
+  ) |>
+  _[, as.list(coef(lm(log(value) ~ log(lat_side)))),
+    , by = .(algorithm, variable)]
