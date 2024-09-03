@@ -3,7 +3,7 @@ source("src/preamble.R")
 
 L <- 50L
 N <- L * L
-num_steps <- 1e5L
+num_steps <- 5e5L
 Tc <- 2 / log(1 + sqrt(2))
 temps <- c(Tc / 2, Tc, 2 * Tc)
 temp_names <- c("low", "crit", "high")
@@ -27,14 +27,18 @@ plt <- lapply(
     y <- h$counts[mask]
     err <- sqrt(y)
 
-    ggplot(data.table(x, y, err)) +
+    res <- ggplot(data.table(x, y, err)) +
       geom_pointrange(
         aes(x, y, ymin = y - err, ymax = y + err),
         size = 0.04,
         linewidth = 0.4,
-      ) + 
-      scale_y_log10(guide = "axis_logticks") +
+      ) +
       labs(x = "Cluster size", y = "Count")
+
+    if (f == "high")
+      res <- res + scale_y_log10(guide = "axis_logticks")
+
+    return(res)
   }
 )
 

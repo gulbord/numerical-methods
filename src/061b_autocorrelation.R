@@ -46,10 +46,13 @@ Tc <- 2 / log(1 + sqrt(2))
 # }
 
 get_tau <- function(L, eqtime) {
-  metro <- fread(paste0("out/051_acor_L", L, ".csv"))[eqtime:.N][, .SD / L^2]
+  metro <- fread(paste0("out/051_acor_L", L, ".csv"))[eqtime:.N] |>
+    _[, let(energy = energy / L^2, magnet = abs(magnet) / L^2)]
+
   wolff <- fread(paste0("out/061_acor_L", L, ".csv"))[eqtime:.N]
   avg_cs <- mean(wolff$clus_size)
-  wolff[, let(energy = energy / L^2, magnet = magnet / L^2, clus_size = NULL)]
+  wolff[, clus_size := NULL]
+  wolff[, let(energy = energy / L^2, magnet = abs(magnet) / L^2)]
   N <- nrow(metro) - 1
 
   res <- lapply(
@@ -76,12 +79,12 @@ plt <- taus |>
     id.vars = "lat_side",
     measure.vars = measure(algorithm, variable, sep = ".")
   ) |>
-  _[, algorithm := factor(
-    algorithm,
-    levels = c("metro", "wolff"),
-    labels = c("Metropolis", "Wolff")
+  _[, variable := factor(
+    variable,
+    levels = c("energy", "magnet"),
+    labels = c("Energy", "Magnetization")
   )] |>
-  ggplot(aes(lat_side, value, colour = algorithm, fill = algorithm)) +
+  ggplot(aes(lat_side, value, colour = variable, fill = variable)) +
     geom_point(size = 1) +
     scale_x_log10(guide = "axis_logticks") +
     scale_y_log10(guide = "axis_logticks") +
@@ -89,16 +92,16 @@ plt <- taus |>
     scale_fill_brewer(palette = "Dark2") +
     geom_smooth(method = "lm", formula = y ~ x, linewidth = 0.5) +
     facet_wrap(
-      vars(variable),
+      vars(algorithm),
       nrow = 2,
       scale = "free_y",
-      labeller = as_labeller(c(energy = "Energy", magnet = "Magnetization")),
+      labeller = as_labeller(c(metro = "Metropolis", wolff = "Wolff")),
     ) +
     labs(
       x = "Lattice size",
       y = "Autocorrelation time",
-      colour = "Algorithm",
-      fill = "Algorithm",
+      colour = "Observable",
+      fill = "Observable",
     )
 
 plot_tex("061d", plt, asp_ratio = 1, scale_factor = 0.75)
