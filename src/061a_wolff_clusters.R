@@ -8,13 +8,13 @@ Tc <- 2 / log(1 + sqrt(2))
 temps <- c(Tc / 2, Tc, 2 * Tc)
 temp_names <- c("low", "crit", "high")
 
-for (i in seq_along(temps)) {
-  argv <- sprintf(
-    "exe/061_ising_wolff %s %d %g %d",
-    temp_names[i], L, temps[i], num_steps
-  )
-  system(argv)
-}
+# for (i in seq_along(temps)) {
+#   argv <- sprintf(
+#     "exe/061_ising_wolff %s %d %g %d",
+#     temp_names[i], L, temps[i], num_steps
+#   )
+#   system(argv)
+# }
 
 plt <- lapply(
   temp_names,
@@ -27,18 +27,14 @@ plt <- lapply(
     y <- h$counts[mask]
     err <- sqrt(y)
 
-    res <- ggplot(data.table(x, y, err)) +
+    ggplot(data.table(x, y, err)) +
       geom_pointrange(
         aes(x, y, ymin = y - err, ymax = y + err),
         size = 0.04,
         linewidth = 0.4,
       ) +
+      scale_y_log10(guide = "axis_logticks") +
       labs(x = "Cluster size", y = "Count")
-
-    if (f == "high")
-      res <- res + scale_y_log10(guide = "axis_logticks")
-
-    return(res)
   }
 )
 
