@@ -7,8 +7,8 @@ Tc=$(echo "2 / l(1 + sqrt(2))" | bc -l)
 
 for L in "${lat_sides[@]}"; do
   echo "Running Metropolis for L = $L"
-  exe/051_metropolis acor_L${L} ${L} ${Tc} ${num_steps}
+  exe/051_ising_metropolis acor_L${L} ${L} ${Tc} ${num_steps}
   
   echo "Running Wolff for L = $L"
-  exe/061_wolff acor_L${L} ${L} ${Tc} ${num_steps}
+  exe/061_ising_wolff acor_L${L} ${L} ${Tc} ${num_steps}
 done

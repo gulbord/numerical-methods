@@ -35,12 +35,12 @@ Tc <- 2 / log(1 + sqrt(2))
 # for (L in lat_sides) {
 #   message(paste("Running Metropolis for L =", L))
 #   system(sprintf(
-#     "exe/051_metropolis %s%d %d %f %d",
+#     "exe/051_ising_metropolis %s%d %d %f %d",
 #     "acor_L", L, L, Tc, num_steps
 #   ))
 #   message(paste("Running Wolff for L =", L))
 #   system(sprintf(
-#     "exe/061_wolff %s%d %d %f %d",
+#     "exe/061_ising_wolff %s%d %d %f %d",
 #     "acor_L", L, L, Tc, num_steps
 #   ))
 # }

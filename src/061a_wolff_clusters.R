@@ -10,7 +10,7 @@ temp_names <- c("low", "crit", "high")
 
 for (i in seq_along(temps)) {
   argv <- sprintf(
-    "exe/061_wolff %s %d %g %d",
+    "exe/061_ising_wolff %s %d %g %d",
     temp_names[i], L, temps[i], num_steps
   )
   system(argv)
