@@ -29,21 +29,21 @@ acf_fft <- function(x, max_lag = NULL, thr = 0) {
 }
 
 lat_sides <- round(exp(seq(log(10), log(50), length.out = 6)))
-num_steps <- 5e5
+num_steps <- 1e6L
 Tc <- 2 / log(1 + sqrt(2))
 
-for (L in lat_sides) {
-  message(paste("Running Metropolis for L =", L))
-  system(sprintf(
-    "exe/051_metropolis %s%d %d %f %d",
-    "acor_L", L, L, Tc, num_steps
-  ))
-  message(paste("Running Wolff for L =", L))
-  system(sprintf(
-    "exe/061_wolff %s%d %d %f %d",
-    "acor_L", L, L, Tc, num_steps
-  ))
-}
+# for (L in lat_sides) {
+#   message(paste("Running Metropolis for L =", L))
+#   system(sprintf(
+#     "exe/051_metropolis %s%d %d %f %d",
+#     "acor_L", L, L, Tc, num_steps
+#   ))
+#   message(paste("Running Wolff for L =", L))
+#   system(sprintf(
+#     "exe/061_wolff %s%d %d %f %d",
+#     "acor_L", L, L, Tc, num_steps
+#   ))
+# }
 
 get_tau <- function(L, eqtime) {
   metro <- fread(paste0("out/051_acor_L", L, ".csv"))[eqtime:.N][, .SD / L^2]
@@ -61,8 +61,8 @@ get_tau <- function(L, eqtime) {
     }
   )
 
-  for (j in grep("wolff", colnames(res)))
-    set(res, j = j, value = res[[j]] * avg_cs / L^2)
+  res$wolff.energy <- res$wolff.energy * avg_cs / L^2
+  res$wolff.magnet <- res$wolff.magnet * avg_cs / L^2
 
   return(res)
 }
@@ -103,10 +103,13 @@ plt <- taus |>
 
 plot_tex("061d", plt, asp_ratio = 1, scale_factor = 0.75)
 
-taus |>
+# Parameters
+fits <- taus |>
   melt(
     id.vars = "lat_side",
     measure.vars = measure(algorithm, variable, sep = ".")
   ) |>
-  _[, as.list(coef(lm(log(value) ~ log(lat_side)))),
+  _[, broom::tidy(lm(log(value) ~ log(lat_side)))
     , by = .(algorithm, variable)]
+
+fwrite(fits, "src/061b_fits.csv")
