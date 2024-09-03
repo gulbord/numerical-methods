@@ -6,7 +6,7 @@ EXE := exe
 
 RNG := $(SRC)/utils/random.c
 
-all: 1 2 3 6 7 8 10
+all: 1 2 3 5 6 7 8 10
 
 clean:
 	rm -f $(EXE)/*
@@ -61,6 +61,11 @@ clean:
 
 32: $(SRC)/032_cosx_importance.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/032_cosx_importance
+
+5: 51
+
+51: $(SRC)/051_metropolis.c $(SRC)/utils/progress.c $(RNG)
+	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/051_metropolis
 
 6: 61
 
