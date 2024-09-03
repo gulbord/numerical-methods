@@ -111,6 +111,7 @@ int main(int argc, const char **argv)
         front = 0;
         rear = 0;
         unvisited[rear++] = seed;
+        is_cluster[seed] = 2;
         while (front != rear) {
             // Get an unvisited cluster site from the front
             int pick = unvisited[front++];
