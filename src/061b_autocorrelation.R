@@ -29,17 +29,21 @@ acf_fft <- function(x, max_lag = NULL, thr = 0) {
 }
 
 lat_sides <- round(exp(seq(log(10), log(50), length.out = 6)))
-num_steps <- 1e6L
+num_steps <- 5e4
 Tc <- 2 / log(1 + sqrt(2))
 
-# Already run
-# for (L in lat_sides) {
-#   argv <- sprintf(
-#     "exe/061_wolff %s%d %d %f %d",
-#     "acor_L", L, L, Tc, num_steps
-#   )
-#   system(argv)
-# }
+for (L in lat_sides) {
+  message(paste("Running Metropolis for L =", L))
+  system(sprintf(
+    "exe/051_metropolis %s%d %d %f %d",
+    "acor_L", L, L, Tc, min(1e7L, num_steps * L^2)
+  ))
+  message(paste("Running Wolff for L =", L))
+  system(sprintf(
+    "exe/061_wolff %s%d %d %f %d",
+    "acor_L", L, L, Tc, num_steps
+  ))
+}
 
 eqtime <- 500L # Manual analysis
 
