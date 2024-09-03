@@ -12,8 +12,8 @@ for L in "${lat_sides[@]}"; do
   if [ $min_steps -eq 1 ]; then
     metropolis_steps=10000000
   fi
-  exe/051_metropolis "acor_L$L" $L $L $Tc $metropolis_steps
+  exe/051_metropolis acor_L${L} ${L} ${Tc} ${metropolis_steps}
   
   echo "Running Wolff for L = $L"
-  exe/061_wolff "acor_L$L" $L $L $Tc $num_steps
+  exe/061_wolff acor_L${L} ${L} ${Tc} ${num_steps}
 done
