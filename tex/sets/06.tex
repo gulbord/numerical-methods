@@ -1,3 +1,58 @@
 \chapter{Advanced simulations of the Ising model}
 
 \section{Wolff cluster algorithm}
+
+\begin{sourcefiles}
+  \item[Source codes] src/061\_ising\_wolff.c
+  \item[Analysis scripts] src/061a\_wolff\_clusters.R
+    src/061b\_autocorrelation.sh src/061b\_autocorrelation.R
+  \item[Executable] exe/061\_ising\_wolff
+\end{sourcefiles}
+
+For the first part of the exercise, I ran three simulations on a lattice of $N =
+\num{50} \times \num{50}$ spins at three different temperatures: $T_{\mathrm{c}}
+/ 2$, $T_{\mathrm{c}}$ and $2 T_{\mathrm{c}}$, each lasting \num{500000} time
+steps. The histograms of cluster sizes, shown in
+\cref{fig:061a,fig:061b,fig:061c}, exhibit expected profiles. The histogram at
+low temperature (\cref{fig:061a}), is strongly bimodal with the largest peak
+around \num{2500} -- corresponding to events where the entire lattice is flipped
+-- and a rather smaller peak around \num{1}, representing the clusters that do
+not spread beyond the first few spins. This is the expected behaviour in the
+ferromagnetic phase, since $P_{\mathrm{add}}$ is high. In contrast, the
+histogram at high temperature (\cref{fig:061c}) shows an almost power-law
+distribution, with smaller sized clusters being predominant. The behaviour at
+the critical point (\cref{fig:061b}) is intermediate between the ferromagnetic
+and paramagnetic histograms: the distribution is still bimodal, but cluster
+sizes near \num{1} are the most frequent, and the peak at larger sizes is wider
+and shifted to the left. Indeed, at the critical point we expect large
+\enquote{seas} of correlated spins, though not encompassing the whole lattice.
+
+\begin{figure}
+  \centering
+  \includegraphics{img/061a.png}
+  \caption{histogram of cluster sizes obtained from a Wolff algorithm simulation
+    with $N = \num{2500}$ spins, run at a temperature $T = T_{\mathrm{c}} / 2$
+    over \num{500000} time steps. Error bars represent Poissonian
+    uncertainties.}
+  \label{fig:061a}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{img/061b.png}
+  \caption{histogram of cluster sizes obtained from a Wolff algorithm simulation
+    with $N = \num{2500}$ spins, run at a temperature $T = T_{\mathrm{c}}$
+    over \num{500000} time steps. Error bars represent Poissonian
+    uncertainties.}
+  \label{fig:061b}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{img/061c.png}
+  \caption{histogram of cluster sizes obtained from a Wolff algorithm simulation
+    with $N = \num{2500}$ spins, run at a temperature $T = 2 T_{\mathrm{c}}$
+    over \num{500000} time steps. Error bars represent Poissonian
+    uncertainties.}
+  \label{fig:061c}
+\end{figure}
