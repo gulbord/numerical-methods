@@ -31,7 +31,7 @@ int main(int argc, const char **argv)
     fprintf(file, "energy,magnet,clus_size\n");
 
     int side = atoi(argv[2]);
-    double temperature = atof(argv[3]);
+    double beta = 1.0 / atof(argv[3]);
     int num_steps = atoi(argv[4]);
 
     int num_spins = side * side;
@@ -60,7 +60,7 @@ int main(int argc, const char **argv)
         }
     }
 
-    double p_add = 1.0 - exp(-2.0 / temperature);
+    double p_add = 1.0 - exp(-2.0 * beta);
     // Save unvisited spins in a queue
     int *unvisited = malloc(num_spins * sizeof(*unvisited));
     // Array of bools for cluster membership

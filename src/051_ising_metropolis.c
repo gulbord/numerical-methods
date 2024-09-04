@@ -30,7 +30,7 @@ int main(int argc, const char **argv)
     fprintf(file, "energy,magnet\n");
 
     int side = atoi(argv[2]);
-    double temperature = atof(argv[3]);
+    double beta = 1.0 / atof(argv[3]);
     int num_steps = atoi(argv[4]);
 
     int num_spins = side * side;
@@ -71,7 +71,7 @@ int main(int argc, const char **argv)
             int delta = 2 * spins[i] * nn_sum;
 
             // Metropolis acceptance condition
-            if (delta < 0 || rng_real() < exp(-(double)delta / temperature)) {
+            if (delta < 0 || rng_real() < exp(-beta * delta)) {
                 spins[i] = -spins[i];
                 energy += delta;
                 magnet += 2 * spins[i];
