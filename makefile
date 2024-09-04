@@ -67,10 +67,13 @@ clean:
 51: $(SRC)/051_ising_metropolis.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/051_ising_metropolis
 
-6: 61
+6: 61 62
 
 61: $(SRC)/061_ising_wolff.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/061_ising_wolff
+
+62: $(SRC)/062_ising_mmc.c $(SRC)/utils/progress.c $(RNG)
+	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/062_ising_mmc
 
 7: 71 72
 
