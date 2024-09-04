@@ -10,22 +10,22 @@
 \end{sourcefiles}
 
 For the first part of the exercise, I ran three simulations on a lattice of $N =
-\num{50} \times \num{50}$ spins at three different temperatures: $T_{\mathrm{c}}
-/ 2$, $T_{\mathrm{c}}$ and $2 T_{\mathrm{c}}$, each lasting \num{500000} time
-steps. The histograms of cluster sizes, shown in
-\cref{fig:061a,fig:061b,fig:061c}, exhibit expected profiles. The histogram at
-low temperature (\cref{fig:061a}), is strongly bimodal with the largest peak
-around \num{2500} -- corresponding to events where the entire lattice is flipped
--- and a rather smaller peak around \num{1}, representing the clusters that do
-not spread beyond the first few spins. This is the expected behaviour in the
-ferromagnetic phase, since $P_{\mathrm{add}}$ is high. In contrast, the
-histogram at high temperature (\cref{fig:061c}) shows an almost power-law
-distribution, with smaller sized clusters being predominant. The behaviour at
-the critical point (\cref{fig:061b}) is intermediate between the ferromagnetic
-and paramagnetic histograms: the distribution is still bimodal, but cluster
-sizes near \num{1} are the most frequent, and the peak at larger sizes is wider
-and shifted to the left. Indeed, at the critical point we expect large
-\enquote{seas} of correlated spins, though not encompassing the whole lattice.
+50 \times 50$ spins at three different temperatures: $T_{\mathrm{c}} / 2$,
+$T_{\mathrm{c}}$ and $2 T_{\mathrm{c}}$, each lasting \num{500000} time steps.
+The histograms of cluster sizes, shown in \cref{fig:061a,fig:061b,fig:061c},
+exhibit expected profiles. The histogram at low temperature (\cref{fig:061a}),
+is strongly bimodal with the largest peak around \num{2500} -- corresponding to
+events where the entire lattice is flipped -- and a rather smaller peak around
+\num{1}, representing the clusters that do not spread beyond the first few
+spins. This is the expected behaviour in the ferromagnetic phase, since
+$P_{\mathrm{add}}$ is high. In contrast, the histogram at high temperature
+(\cref{fig:061c}) shows an almost power-law distribution, with smaller sized
+clusters being predominant. The behaviour at the critical point
+(\cref{fig:061b}) is intermediate between the ferromagnetic and paramagnetic
+histograms: the distribution is still bimodal, but cluster sizes near \num{1}
+are the most frequent, and the peak at larger sizes is wider and shifted to the
+left. Indeed, at the critical point we expect large \enquote{seas} of correlated
+spins, though not encompassing the whole lattice.
 
 \begin{figure}
   \centering
@@ -56,3 +56,65 @@ and shifted to the left. Indeed, at the critical point we expect large
     uncertainties.}
   \label{fig:061c}
 \end{figure}
+
+In the second part of the exercise, I examined the relationship between the
+autocorrelation time of the observed energy and magnetization with the lattice
+size, $L$, for both the Metropolis single spin-flip algorithm and the Wolff
+algorithm. The aim was to validate the scaling relation $\tau \sim L^{z}$, with
+the expectation that $z$ would be smaller in the case of the Wolff algorithm. I
+conducted two sets of simulations, running each algorithm with $L \in \{10, 14,
+20, 28, 40, 50\}$ at the critical temperature $T_{\mathrm{c}}$ for \num{1000000}
+time steps. From each dataset, I computed the autocorrelation time of the energy
+and magnetization time series, after discounting the equilibration phase. For
+the Wolff algorithm, I adjusted $\tau$ by multiplying it by a factor of
+$\mathcal{S} / L^{2}$, with $\mathcal{S}$ being the average cluster size at the
+given temperature and lattice size.
+
+A log-log plot of $\tau$ as a function of $L$, separated by algorithm and
+observable, is presented in \cref{fig:061d}. The parameters of the fitted lines
+are listed in \cref{tab:061}. The slope ($z$) for Wolff's energy is in good
+agreement with the expected value of $z \approx 0.25$, while the magnetization
+$z$ is approximately half that. Another result in line with expectations is the
+smaller exponent $z$ for the Wolff algorithm, observed for both energy and
+magnetization. In general, all autocorrelation times for the Metropolis
+algorithm are larger than those for the Wolff algorithm, particularly at larger
+lattice sizes. This is consistent with the expectation that the Wolff algorithm
+is significantly more efficient than the Metropolis algorithm near
+$T_{\mathrm{c}}$.
+
+\begin{figure}
+  \centering
+  \includegraphics{img/061d.png}
+  \caption{autocorrelation time of energy and magnetization as a function of the
+    lattice size for the Metropolis and Wolff algorithms. Each run lasted
+    \num{1000000} time steps. The parameters of the fitted lines are reported in
+    \cref{tab:061}.}
+  \label{fig:061d}
+\end{figure}
+
+\begin{table}
+  \centering
+  \captionabove{parameters of the $\log \tau \sim \log L$ linear fits from
+    \cref{fig:061d}.}
+  \label{tab:061}
+  \begin{tabular}{
+    @{}
+    l l l
+    S[table-format=+1.2(1)] S[table-format=+2.1] S[table-format=1.1e-1]
+    @{}
+  }
+    \toprule
+    Algorithm & Observable & Parameter & {Estimate} & {\textit{t}-statistic} &
+    {\textit{p}-value} \\
+    \midrule
+    Metropolis & Energy & Intercept & -2.35(2) & -14 & 1.7e-4 \\
+    Metropolis & Energy & Slope & 1.54(6) & 28 & 9.6e-6 \\
+    Metropolis & Magnetization & Intercept & -2.9(1) & -24 & 1.9e-5 \\
+    Metropolis & Magnetization & Slope & 1.94(4) & 49 & 1.0e-6 \\
+    Wolff & Energy & Intercept & -0.13(3) & -3.9 & 1.7e-2 \\
+    Wolff & Energy & Slope & 0.24(1) & 23 & 2.3e-5 \\
+    Wolff & Magnetization & Intercept & 0.08(4) & 2.1 & 9.9e-2 \\
+    Wolff & Magnetization & Slope & 0.12(1) & 10 & 5.1e-4 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
