@@ -19,3 +19,30 @@ plot_tex <- function(basename, plt, asp_ratio = 4 / 3, scale_factor = 0.8) {
   )
   knitr::plot_crop(filename)
 }
+
+acf_fft <- function(x, max_lag = NULL, thr = 0) {
+  x <- x - mean(x)
+
+  # Pad with zeros to correct cyclicity
+  len <- length(x)
+  x_pad <- c(x, rep.int(0L, len))
+  
+  # fft and inverse
+  fft <- fftwtools::fftw(x_pad)
+  acf <- fftwtools::fftw(abs(fft)^2, inverse = 1)
+
+  # Do the same on a 'mask' of ones to estimate the error
+  mask <- fftwtools::fftw(c(rep.int(1L, len), rep.int(0L, len))) 
+  err <- fftwtools::fftw(abs(mask)^2, inverse = 1)
+
+  # Normalize with error and variance
+  acf <- Re(acf / err)
+  var <- acf[1]
+
+  if (!is.null(max_lag))
+    return(acf[1:min(max_lag, len)] / var)
+
+  acf <- acf / var
+
+  return(acf[1:which.max(acf < thr)])
+}

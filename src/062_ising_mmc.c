@@ -12,8 +12,7 @@ int main(int argc, const char **argv)
     if (argc != N_ARGS) {
         fprintf(stderr, "Wrong number of arguments! (Should be %d)\n", N_ARGS);
         fprintf(stderr, "[executable] [output file prefix] [lattice side]\\\n");
-        fprintf(stderr,
-                "  [min. temperature] [max. temperature] [# of chains] \\\n");
+        fprintf(stderr, "  [min. beta] [max. beta] [# of chains] \\\n");
         fprintf(stderr, "  [# of steps between swaps] [# of steps]\n");
         return 1;
     }
@@ -30,23 +29,23 @@ int main(int argc, const char **argv)
     }
 
     int side = atoi(argv[2]);
-    double min_temp = atof(argv[3]);
-    double max_temp = atof(argv[4]);
+    double min_beta = atof(argv[3]);
+    double max_beta = atof(argv[4]);
     int num_chains = atoi(argv[5]);
     if (num_chains < 2) {
         fprintf(stderr, "Put at least two chains!\n");
         return 1;
     }
-    int num_steps = atoi(argv[6]);
-    int swap_step = atoi(argv[7]);
+    int swap_step = atoi(argv[6]);
+    int num_steps = atoi(argv[7]);
 
     // Construct the array of inverse temperatures
-    double temp_step = (max_temp - min_temp) / (num_chains - 1);
+    double beta_step = (max_beta - min_beta) / (num_chains - 1);
     double *betas = malloc(num_chains * sizeof(*betas));
     // Array holding the beta index of the corresponding chain
     int *which_beta = malloc(num_chains * sizeof(*which_beta));
     for (int c = 0; c < num_chains; ++c) {
-        betas[c] = 1.0 / (min_temp + c * temp_step);
+        betas[c] = min_beta + c * beta_step;
         which_beta[c] = c;
     }
 
@@ -86,8 +85,8 @@ int main(int argc, const char **argv)
     }
 
     // Start the main loop
-    for (int t = 0; t < num_steps; ++t) {
-        print_progress(t + 1, num_steps);
+    for (int t = 1; t <= num_steps; ++t) {
+        print_progress(t, num_steps);
 
         // Visit all chains and spins sequentially
         for (int c = 0; c < num_chains; ++c) {
@@ -129,16 +128,17 @@ int main(int argc, const char **argv)
         else
             c2 = rng_real() < 0.5 ? c1 - 1 : c1 + 1;
 
-        double delta_beta = betas[which_beta[c2]] - betas[which_beta[c1]];
-        if ((energies[c2] > energies[c1] && delta_beta > 0.0) ||
-            rng_real() < exp(delta_beta * (energies[c2] - energies[c1]))) {
+        double beta1 = betas[which_beta[c1]];
+        double beta2 = betas[which_beta[c2]];
+        if ((energies[c2] > energies[c1] && beta2 > beta1) ||
+            rng_real() < exp((beta2 - beta1) * (energies[c2] - energies[c1]))) {
             // Swap the 'pointers' which_beta
             int tmp = which_beta[c1];
             which_beta[c1] = which_beta[c2];
             which_beta[c2] = tmp;
 
-            // Save the swapped temperature indices
-            fprintf(file, "%d,%d\n", which_beta[c1], which_beta[c2]);
+            // Save the swapped temperatures
+            fprintf(file, "%f,%f\n", beta1, beta2);
         } else
             fprintf(file, "-1,-1\n"); // No swap
     }
