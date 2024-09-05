@@ -46,13 +46,12 @@ Tc <- 2 / log(1 + sqrt(2))
 # }
 
 get_tau <- function(L, eqtime) {
-  metro <- fread(paste0("out/051_acor_L", L, ".csv"))[eqtime:.N] |>
-    _[, let(energy = energy / L^2, magnet = abs(magnet) / L^2)]
+  metro <- fread(paste0("out/051_acor_L", L, ".csv"))[eqtime:.N]
+  metro[, magnet := abs(magnet)]
 
   wolff <- fread(paste0("out/061_acor_L", L, ".csv"))[eqtime:.N]
   avg_cs <- mean(wolff$clus_size)
-  wolff[, clus_size := NULL]
-  wolff[, let(energy = energy / L^2, magnet = abs(magnet) / L^2)]
+  wolff[, let(clus_size = NULL, magnet = abs(magnet))]
   N <- nrow(metro) - 1
 
   res <- lapply(
