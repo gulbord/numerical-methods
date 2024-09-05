@@ -115,4 +115,4 @@ fits <- taus |>
   _[, broom::tidy(lm(log(value) ~ log(lat_side)))
     , by = .(algorithm, variable)]
 
-fwrite(fits, "src/061b_fits.csv")
+fwrite(fits, "src/data/061b_fits.csv")
