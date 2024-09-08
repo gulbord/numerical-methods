@@ -2,11 +2,11 @@ setwd("~/PoD/Y2.1/NMSM/exercises")
 source("src/preamble.R")
 
 L <- 50L
-delta_swap <- 10L
-num_steps <- 2.5e5L
-num_chains <- 9
+delta_swap <- 20L
+num_steps <- 1e5L
+num_chains <- 6
 min_beta <- 0.42
-max_beta <- 0.47
+max_beta <- 0.48
 betas <- seq(min_beta, max_beta, length.out = num_chains)
 
 system(
@@ -21,17 +21,20 @@ system(
 fname <- sprintf("out/062_%g_%g_%d.csv", min_beta, max_beta, num_chains)
 
 # Equilibration check
-fread(fname) |>
-  _[1:2e4, .SD, .SDcols = patterns("energy")] |>
+plt_eq <- fread(fname)[1:2e4] |>
   _[, iter := 1:.N] |>
-  melt("iter", measure(value.name, chain = as.factor, sep = ".")) |>
+  melt("iter", measure(value.name, chain, pattern = "(energy|beta).(.+)")) |>
   _[, energy := energy / L^2] |>
-  ggplot(aes(iter, energy)) +
-    geom_line() +
-    facet_wrap(vars(chain)) +
-    labs(x = "Time step", y = "Energy per spin")
+  ggplot() +
+    geom_line(aes(iter, energy, colour = as.factor(beta), group = 1)) +
+    scale_colour_viridis_d() +
+    facet_wrap(vars(chain), ncol = 2) +
+    labs(x = "Time step", y = "Energy per spin", colour = "<i>β</i>") +
+    theme(legend.position = "bottom", legend.title = ggtext::element_markdown())
 
-eqdata <- fread(fname)[1001:.N]
+plot_tex("062a", plt_eq, asp_ratio = 1, scale_factor = 1)
+
+eqdata <- fread(fname)[1001:.N][, iter := 1:.N]
 
 swaps <- eqdata |>
   _[, .SD, .SDcols = patterns("swap")] |>
@@ -52,71 +55,83 @@ swaps[c1 > 0, .(N = 100 * .N / nrow(swaps)), keyby = .(c1, c2)] |>
     labs(x = "<i>β</i>", y = "<i>β</i>", fill = "Percentage") +
     theme(axis.title = ggtext::element_markdown())
 
-eqdata |>
-  _[, iter := 1:.N] |>
-  melt(
-    id.vars = "iter",
-    measure.vars = measure(
-      value.name, chain = as.factor, pattern = "(energy|beta).([0-9]+)"
-    )
-  ) |>
-  _[, let(energy = energy / 50^2, temp = as.factor(signif(1 / beta, 3)))] |>
+melt(
+  eqdata,
+  "iter",
+  measure(value.name, chain, pattern = "(energy|beta).([0-9]+)")
+) |>
+  _[, let(energy = energy / L^2, temp = as.factor(signif(1 / beta, 3)))] |>
   ggplot() +
     geom_histogram(
       aes(energy, after_stat(density), fill = temp),
       position = "identity",
       boundary = 0,
-      binwidth = 0.015
+      binwidth = 0.015,
+      alpha = 0.75
     ) +
     scale_fill_viridis_d() +
     labs(x = "Energy per spin", y = "Density", fill = "Temperature")
 
 # Replicate the simulation without swaps
-# system(
-#   sprintf(
-#     "exe/062_ising_mmc %g_%g_%d_ns %d %g %g %d %d %d",
-#     min_beta, max_beta, num_chains,
-#     L, min_beta, max_beta, num_chains,
-#     num_steps + 2, # delta_swap > num_steps ==> no swaps
-#     num_steps
-#   )
-# )
+system(
+  sprintf(
+    "exe/062_ising_mmc %g_%g_%d_ns %d %g %g %d %d %d",
+    min_beta, max_beta, num_chains,
+    L, min_beta, max_beta, num_chains,
+    num_steps + 2, # delta_swap > num_steps ==> no swaps
+    num_steps
+  )
+)
 
 fname_ns <- sprintf("out/062_%g_%g_%d_ns.csv", min_beta, max_beta, num_chains)
 
-# Equilibration check
-fread(fname_ns) |>
-  _[1:2e4, .SD, .SDcols = patterns("energy")] |>
-  _[, iter := 1:.N] |>
-  melt("iter", measure(value.name, chain = as.factor, sep = ".")) |>
-  _[, energy := energy / L^2] |>
-  ggplot(aes(iter, energy)) +
-    geom_line() +
-    facet_wrap(vars(chain)) +
-    labs(x = "Time step", y = "Energy per spin")
+eqdata_ns <- fread(fname_ns)[1001:.N][, iter := 1:.N]
 
-eqdata_ns <- fread(fname_ns)[1001:.N]
-
-get_tau <- function(x, max_lag = NULL) {
-  acf <- acf_fft(x, max_lag)
+get_tau <- function(x, max_lag = NULL, thr = 0) {
+  acf <- acf_fft(x, max_lag, thr)
   return(sum((1 - seq_along(acf) / length(x)) * acf))
 }
 
-magnets <- melt(
-  eqdata[, iter := 1:.N],
-  id.vars = "iter",
-  measure.vars = measure(
-    value.name, chain = as.factor, pattern = "(magnet|beta).([0-9]+)"
-  )
+energies <- melt(
+  eqdata,
+  "iter",
+  measure(value.name, chain, pattern = "(energy|beta).(.+)")
 )
-magnets_ns <- melt(
-  eqdata_ns[, iter := 1:.N],
-  id.vars = "iter",
-  measure.vars = measure(
-    value.name, chain = as.factor, pattern = "(magnet|beta).([0-9]+)"
-  )
+energies_ns <- melt(
+  eqdata_ns,
+  "iter",
+  measure(value.name, chain, pattern = "(energy|beta).(.+)")
 )
 
-magnets[, get_tau(magnet), keyby = beta]
+get_tau_lag <- function(x, max_lag) {
+  lags <- 1:max_lag
+  taus <- sapply(lags, \(m) get_tau(x, m))
+  pick <- which.max(lags < 5 * taus) + 1
+  return(list(max_lag = lags[pick], tau = taus[pick]))
+}
 
-energies[iter < 50000][beta == 0.46375, plot(energy, type = "l")]
+taus <- energies[, get_tau(energy, thr = 0.001), keyby = beta, showProgress = TRUE]
+taus_ns <- energies_ns[, get_tau(energy, thr = 0.001), keyby = beta, showProgress = TRUE]
+
+merge(
+  energies[, !"chain"],
+  energies_ns[, !"chain"],
+  by = c("iter", "beta"),
+  suffixes = c(".mmc", ".single")
+) |>
+  melt(c("iter", "beta"), measure(value.name, algo, sep = ".")) |>
+  _[, .(lag = 1:250, acf = acf_fft(energy, max_lag = 250)),
+    keyby = .(algo, beta)] |>
+  ggplot() +
+    geom_line(aes(lag, acf, colour = algo)) +
+    facet_wrap(
+      vars(signif(1 / beta, 3)),
+      ncol = 2,
+      labeller = as_labeller(\(x) paste("<i>T</i> =", x))
+    ) +
+    scale_colour_brewer(
+      palette = "Dark2",
+      labels = c("Multiple chains", "Single chain"),
+    ) +
+    labs(x = "Lag", y = "Autocorrelation function", colour = "Algorithm") +
+    theme(strip.text = ggtext::element_markdown(), legend.position = "bottom")

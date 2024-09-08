@@ -104,7 +104,7 @@ int main(int argc, const char **argv)
                 if (delta < 0 || rng_real() < exp(-beta * delta)) {
                     spins[c][i] = -s;
                     energies[c] += delta;
-                    magnets[c] += 2 * s;
+                    magnets[c] -= 2 * s;
                 }
             }
 
