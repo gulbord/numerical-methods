@@ -1,4 +1,7 @@
-setwd("~/PoD/Y2.1/NMSM/exercises")
+wd <- unlist(strsplit(getwd(), "/"))
+src <- match("src", wd)
+if (!is.na(src))
+  setwd(paste(wd[1:(src - 1)], collapse = "/"))
 source("src/preamble.R")
 
 a <- 2

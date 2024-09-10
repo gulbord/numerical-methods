@@ -1,7 +1,9 @@
-library(data.table)
-library(ggplot2)
+wd <- unlist(strsplit(getwd(), "/"))
+src <- match("src", wd)
+if (!is.na(src))
+  setwd(paste(wd[1:(src - 1)], collapse = "/"))
+source("src/preamble.R")
 library(stringr)
-setwd("~/PoD/Y2.1/NMSM/exercises")
 
 # List all files from previous runs
 fnames <- list.files(
