@@ -37,12 +37,12 @@ acf_fft <- function(x, max_lag = NULL, thr = 0) {
 
   # Normalize with error and variance
   acf <- Re(acf / err)
-  var <- acf[1]
+  acf <- acf / acf[1]
 
-  if (!is.null(max_lag))
-    return(acf[1:min(max_lag, len)] / var)
-
-  acf <- acf / var
-
-  return(acf[1:which.max(acf < thr)])
+  if (is.null(max_lag)) {
+    return(acf[1:which.max(acf < thr)])
+  } else {
+    max_lag <- min(max_lag, if (is.null(thr)) len else which.max(acf < thr))
+    return(acf[1:max_lag])
+  }
 }
