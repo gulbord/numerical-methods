@@ -34,7 +34,7 @@ fnames <- expand.grid(side = sides, temp = temps) |>
   apply(1, \(x) sprintf("out/051_L%d_T%g.csv", x[1], x[2]))
 
 lapply(
-  fnames[1:5],
+  fnames[1:10],
   function(fname) {
     side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
     temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d+"))
@@ -42,7 +42,7 @@ lapply(
     df[, let(magnet = abs(magnet) / side^2, energy = energy / side^2)]
 
     tau <- df[, lapply(.SD, function(col) {
-      acf <- acf_fft(col, thr = 0.001)
+      acf <- acf_fft(col, max_lag = 250, thr = 0.005)
       return(sum((1 - seq_along(acf) / .N) * acf))
     })]
 
