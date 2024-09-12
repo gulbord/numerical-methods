@@ -33,8 +33,8 @@ eq_time <- 5000
 fnames <- expand.grid(sides, temps) |>
   apply(1, \(x) sprintf("out/051_L%d_T%g.csv", x[1], x[2]))
 
-lapply(
-  fnames[1:3],
+enemag <- lapply(
+  fnames,
   function(fname) {
     side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
     temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d+"))
@@ -59,6 +59,12 @@ lapply(
       }
     )
 
-    return(rbindlist(results))
+    return(cbind(side = side, temp = temp, rbindlist(results)))
   }
-)
+) |>
+  rbindlist()
+
+ggplot(enemag, aes(colour = factor(side), fill = factor(side))) +
+  #geom_ribbon(aes(temp, ymin = mean - sd, ymax = mean + sd)) +
+  geom_line(aes(temp, mean)) +
+  facet_wrap(vars(obs), nrow = 2, scales = "free_y")
