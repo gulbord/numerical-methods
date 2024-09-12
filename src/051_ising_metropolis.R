@@ -30,22 +30,35 @@ num_steps <- 1e5
 
 eq_time <- 5000
 
-fnames <- expand.grid(side = sides, temp = temps) |>
+fnames <- expand.grid(sides, temps) |>
   apply(1, \(x) sprintf("out/051_L%d_T%g.csv", x[1], x[2]))
 
 lapply(
-  fnames[1:10],
+  fnames[1:3],
   function(fname) {
     side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
     temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d+"))
     df <- fread(fname)[(eq_time + 1):.N]
     df[, let(magnet = abs(magnet) / side^2, energy = energy / side^2)]
+    N <- nrow(df)
 
-    tau <- df[, lapply(.SD, function(col) {
-      acf <- acf_fft(col, max_lag = 250, thr = 0.005)
-      return(sum((1 - seq_along(acf) / .N) * acf))
-    })]
+    results <- lapply(
+      names(df),
+      function(col) {
+        acf <- acf_fft(df[[col]], max_lag = 250, thr = 0.005)
+        tau <- sum((1 - seq_along(acf) / N) * acf)
 
-    return(tau)
+        return(
+          list(
+            obs = col,
+            mean = mean(df[[col]]),
+            sd = sd(df[[col]]) * sqrt(1 + 2 * tau),
+            tau = tau
+          )
+        )
+      }
+    )
+
+    return(rbindlist(results))
   }
 )
