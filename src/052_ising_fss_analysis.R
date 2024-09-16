@@ -86,7 +86,8 @@ tcrits <- split(fss_spec_heat, by = "side") |>
       return(opt)
     }
   ) |>
-  rbindlist(idcol = "side")
+  rbindlist(idcol = "side") |>
+  _[, side := as.integer(side)]
 
 plt_tcrit <- ggplot(
   fss_spec_heat,
@@ -122,3 +123,81 @@ plt_tcrit <- ggplot(
   )
 
 plot_tex("052a", plt_tcrit, asp_ratio = 5 / 3, scale_factor = 0.9)
+
+# Estimation of nu
+
+plt_nu <- ggplot(tcrits, aes(abs(temp - Tc) / Tc, side)) +
+  geom_smooth(
+    colour = "black",
+    method = "lm",
+    formula = y ~ x,
+    linewidth = 0.5,
+  ) +
+  geom_point() +
+  scale_x_log10(breaks = scales::pretty_breaks()) +
+  scale_y_log10(breaks = scales::pretty_breaks()) +
+  labs(
+    x = "Relative distance from <i>T</i><sub>c</sub>",
+    y = "Lattice size",
+  ) +
+  theme(axis.title.x = ggtext::element_markdown())
+
+plot_tex("052b", plt_nu, asp_ratio = 4 / 3, scale_factor = 0.75)
+
+nu_fit <- copy(tcrits) |>
+  _[, temp := abs(temp - Tc) / Tc] |>
+  lm(log(side) ~ log(temp), data = _) |>
+  summary() |>
+  _[["coefficients"]]
+print(sprintf("nu = %g +/- %g", -nu_fit[2, 1], nu_fit[2, 2]))
+
+# Estimation of beta, gamma and alpha
+
+# split(tcrits, seq_len(nrow(tcrits))) |>
+#   parallel::mclapply(
+#     \(x) launch_sim(x, prefix = "beta", num_steps = 5e6),
+#     mc.cores = min(10, parallel::detectCores())
+#   )
+
+crit_obs <- tcrits[, sprintf("out/051_beta_L%d_T%g.csv", side, temp)] |>
+  parallel::mclapply(
+    function(fname) {
+      side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
+      temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
+
+      df <- fread(fname) |>
+        _[(eq_steps + 1):.N] |>
+        _[, let(magnet = abs(magnet) / side^2, energy = energy / side^2)]
+
+      acf_e <- acf_fft(df$energy, max_lag = 250, thr = 0.005)
+      tau_e <- sum((1 - seq_along(acf_e) / nrow(df)) * acf_e)
+      acf_m <- acf_fft(df$magnet, max_lag = 250, thr = 0.005)
+      tau_m <- sum((1 - seq_along(acf_m) / nrow(df)) * acf_m)
+
+      magnet <- df[seq(1, .N, round(tau_m)), mean(magnet)]
+      suscep <- df[seq(1, .N, round(tau_m)), var(magnet) * side^2 / temp]
+      spec_heat <- df[seq(1, .N, round(tau_e)), var(energy) * (side / temp)^2]
+
+      return(
+        list(
+          side = side,
+          magnet = magnet,
+          suscep = suscep,
+          spec_heat = spec_heat
+        )
+      )
+    },
+    mc.cores = getDTthreads()
+  ) |>
+  rbindlist()
+
+crit_fits <- crit_obs |>
+  melt(id.vars = "side") |>
+  split(by = "variable") |>
+  lapply(\(x) summary(lm(log(value) ~ log(side), x))$coefficients)
+
+propagate::propagate(
+  expression(-num / den),
+  cbind(num = crit_fits$suscep[2, 1:2], den = nu_fit[2, 1:2])
+)$resSIM |>
+  hist(breaks = "FD")
