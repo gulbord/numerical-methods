@@ -102,7 +102,7 @@ fnames <- expand.grid(sides, temps) |>
 # ) |>
 #   rbindlist()
 
-observ <- fread("src/051_results.csv") |>
+observ <- fread("src/data/051_results.csv") |>
   melt(
     measure.vars = measure(
       level = as.integer, value.name, pattern = "var_ci(.*)_(.*)"
