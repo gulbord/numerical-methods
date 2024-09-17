@@ -11,8 +11,8 @@ launch_sim <- function(x, prefix = "", num_steps = 5e5) {
   fname <- sprintf("%sL%d_T%g", prefix, x$side, x$temp)
   system(
     sprintf(
-      "exe/051_ising_metropolis %s %d %f %d",
-      fname, x$side, x$temp, num_steps
+      "exe/051_ising_metropolis %s %d %f %d %d",
+      fname, x$side, x$temp, num_steps, x$seed
     )
   )
 }
@@ -42,7 +42,9 @@ pars <- data.table(
   side = c(90L, 64L, 45L, 32L),
   low = c(2.26, 2.26, 2.27, 2.27),
   high = c(2.29, 2.30, 2.31, 2.32)
-)[, .(temp = seq(low, high, length.out = 10)), keyby = side]
+) |>
+  _[, .(temp = seq(low, high, length.out = 10)), keyby = side] |>
+  _[, seed := abs(sample(.Random.seed, .N))]
 
 # split(pars, seq_len(nrow(pars))) |>
 #   parallel::mclapply(
@@ -51,27 +53,29 @@ pars <- data.table(
 #   )
 
 eq_steps <- 10000
-# fss_spec_heat <- pars |>
-#   _[, sprintf("out/051_fss_L%d_T%g.csv", side, temp)] |>
-#   parallel::mclapply(
-#     function(fname) {
-#       side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
-#       temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
-# 
-#       energy <- fread(fname)[(eq_steps + 1):.N, energy / side^2]
-# 
-#       acf <- acf_fft(energy, max_lag = 250, thr = 0.005)
-#       tau <- sum((1 - seq_along(acf) / length(energy)) * acf)
-# 
-#       result <- var(energy) * (1 + 2 * tau) * (side / temp)^2
-# 
-#       return(list(side = side, temp = temp, spec_heat = result))
-#     },
-#     mc.cores = getDTthreads()
-#   ) |>
-#   rbindlist()
+fss_spec_heat <- pars |>
+  _[, sprintf("out/051_fss_L%d_T%g.csv", side, temp)] |>
+  parallel::mclapply(
+    function(fname) {
+      side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
+      temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
 
-fss_spec_heat <- fread("src/data/052_fss_spec_heat.csv")
+      energy <- fread(fname)[(eq_steps + 1):.N, energy / side^2]
+      N <- length(energy)
+
+      acf <- acf_fft(energy, max_lag = 250, thr = 0.005)
+      tau <- sum((1 - seq_along(acf) / N) * acf)
+
+      result <- var(energy[seq(1, N, round(tau))]) * (side / temp)^2
+      #result <- var(energy) * (1 + 2 * tau) * (side / temp)^2
+
+      return(list(side = side, temp = temp, spec_heat = result))
+    },
+    mc.cores = getDTthreads()
+  ) |>
+  rbindlist()
+
+# fss_spec_heat <- fread("src/data/052_fss_spec_heat.csv")
 
 tcrits <- split(fss_spec_heat, by = "side") |>
   lapply(
@@ -109,7 +113,7 @@ plt_tcrit <- ggplot(
   geom_text(
     aes(label = sprintf("%.3f", temp)),
     data = tcrits,
-    nudge_y = -12,
+    nudge_y = -0.03,
     family = "TeX Gyre Pagella",
     size = 7 / .pt
   ) +
@@ -153,13 +157,14 @@ print(sprintf("nu = %g +/- %g", -nu_fit[2, 1], nu_fit[2, 2]))
 
 # Estimation of beta, gamma and alpha
 
-# split(tcrits, seq_len(nrow(tcrits))) |>
+# cbind(tcrits, seed = abs(sample(.Random.seed, 4))) |>
+#   split(seq_len(nrow(tcrits))) |>
 #   parallel::mclapply(
-#     \(x) launch_sim(x, prefix = "beta", num_steps = 5e6),
+#     \(x) launch_sim(x, prefix = "crit", num_steps = 5e6),
 #     mc.cores = min(10, parallel::detectCores())
 #   )
 
-crit_obs <- tcrits[, sprintf("out/051_beta_L%d_T%g.csv", side, temp)] |>
+crit_obs <- tcrits[, sprintf("out/051_crit_L%d_T%g.csv", side, temp)] |>
   parallel::mclapply(
     function(fname) {
       side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
@@ -174,6 +179,9 @@ crit_obs <- tcrits[, sprintf("out/051_beta_L%d_T%g.csv", side, temp)] |>
       acf_m <- acf_fft(df$magnet, max_lag = 250, thr = 0.005)
       tau_m <- sum((1 - seq_along(acf_m) / nrow(df)) * acf_m)
 
+      #magnet <- mean(df$magnet)
+      #suscep <- var(df$magnet) * (1 + 2 * tau_m) * side^2 / temp
+      #spec_heat <- var(df$energy) * (1 + 2 * tau_e) * (side / temp)^2
       magnet <- df[seq(1, .N, round(tau_m)), mean(magnet)]
       suscep <- df[seq(1, .N, round(tau_m)), var(magnet) * side^2 / temp]
       spec_heat <- df[seq(1, .N, round(tau_e)), var(energy) * (side / temp)^2]
@@ -196,8 +204,5 @@ crit_fits <- crit_obs |>
   split(by = "variable") |>
   lapply(\(x) summary(lm(log(value) ~ log(side), x))$coefficients)
 
-propagate::propagate(
-  expression(-num / den),
-  cbind(num = crit_fits$suscep[2, 1:2], den = nu_fit[2, 1:2])
-)$resSIM |>
-  hist(breaks = "FD")
+crit_fits |>
+  lapply(\(x) -x[2, 1] / nu_fit[2, 1])
