@@ -1,0 +1,18 @@
+\chapter{Ising model with the Metropolis algorithm}
+
+\section{Simulations at different temperatures}
+
+\begin{sourcefiles}
+  \item[Source code] src/051\_ising\_metropolis.c
+  \item[Analysis script] src/051\_ising\_metropolis.R
+  \item[Executable] exe/051\_ising\_metropolis
+\end{sourcefiles}
+
+For this and the following exercise, I implemented the Metropolis algorithm with
+Glauber dynamics and sequential updating to simulate the two-dimensional Ising
+model. The program outputs the total energy and magnetization after each sweep
+of $N = L^{2}$ local spin flips.
+
+In order to estimate correctly the observables of interest, after discarding an
+appropriate amount of equilibration time steps, I estimated the autocorrelation
+time 
