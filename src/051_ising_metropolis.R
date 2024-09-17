@@ -32,11 +32,11 @@ pars <- data.table(
   seed = .Random.seed[seq_len(4 * num_temps)]
 )
 
-split(pars, seq_len(nrow(pars))) |>
-  parallel::mclapply(
-    \(x) launch_sim(x, num_steps = 1e6L),
-    mc.cores = min(10, parallel::detectCores())
-  )
+# split(pars, seq_len(nrow(pars))) |>
+#   parallel::mclapply(
+#     \(x) launch_sim(x, num_steps = 1e6L),
+#     mc.cores = min(10, parallel::detectCores())
+#   )
 
 plot_one <- function(side, temp) {
   fread(sprintf("out/051_L%d_T%g.csv", side, temp)) |>
