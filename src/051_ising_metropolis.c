@@ -5,18 +5,22 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define N_ARGS 5
+#define N_ARGS 6
 
 int main(int argc, const char **argv)
 {
     if (argc != N_ARGS) {
         fprintf(stderr, "Wrong number of arguments! (Should be %d)\n", N_ARGS);
         fprintf(stderr, "[executable] [output file prefix] \\\n");
-        fprintf(stderr, "  [lattice side] [temperature] [# of steps]\n");
+        fprintf(stderr, "  [lattice side] [temperature] [# of steps] [seed]\n");
         return 1;
     }
 
-    rng_set_seed(time(NULL));
+    unsigned long seed = atol(argv[5]);
+    if (seed == 0)
+        rng_set_seed(time(NULL));
+    else
+        rng_set_seed(seed);
 
     char fname[100];
     snprintf(fname, sizeof(fname), "out/051_%s.csv", argv[1]);
