@@ -53,29 +53,29 @@ pars <- data.table(
 #   )
 
 eq_steps <- 10000
-fss_spec_heat <- pars |>
-  _[, sprintf("out/051_fss_L%d_T%g.csv", side, temp)] |>
-  parallel::mclapply(
-    function(fname) {
-      side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
-      temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
+# fss_spec_heat <- pars |>
+#   _[, sprintf("out/051_fss_L%d_T%g.csv", side, temp)] |>
+#   parallel::mclapply(
+#     function(fname) {
+#       side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
+#       temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
+# 
+#       energy <- fread(fname)[(eq_steps + 1):.N, energy / side^2]
+#       N <- length(energy)
+# 
+#       acf <- acf_fft(energy, max_lag = 250, thr = 0.005)
+#       tau <- sum((1 - seq_along(acf) / N) * acf)
+# 
+#       result <- var(energy[seq(1, N, round(tau))]) * (side / temp)^2
+#       #result <- var(energy) * (1 + 2 * tau) * (side / temp)^2
+# 
+#       return(list(side = side, temp = temp, spec_heat = result))
+#     },
+#     mc.cores = getDTthreads()
+#   ) |>
+#   rbindlist()
 
-      energy <- fread(fname)[(eq_steps + 1):.N, energy / side^2]
-      N <- length(energy)
-
-      acf <- acf_fft(energy, max_lag = 250, thr = 0.005)
-      tau <- sum((1 - seq_along(acf) / N) * acf)
-
-      result <- var(energy[seq(1, N, round(tau))]) * (side / temp)^2
-      #result <- var(energy) * (1 + 2 * tau) * (side / temp)^2
-
-      return(list(side = side, temp = temp, spec_heat = result))
-    },
-    mc.cores = getDTthreads()
-  ) |>
-  rbindlist()
-
-# fss_spec_heat <- fread("src/data/052_fss_spec_heat.csv")
+fss_spec_heat <- fread("src/data/052_fss_spec_heat.csv")
 
 tcrits <- split(fss_spec_heat, by = "side") |>
   lapply(
@@ -179,9 +179,9 @@ crit_obs <- tcrits[, sprintf("out/051_crit_L%d_T%g.csv", side, temp)] |>
       acf_m <- acf_fft(df$magnet, max_lag = 250, thr = 0.005)
       tau_m <- sum((1 - seq_along(acf_m) / nrow(df)) * acf_m)
 
-      #magnet <- mean(df$magnet)
-      #suscep <- var(df$magnet) * (1 + 2 * tau_m) * side^2 / temp
-      #spec_heat <- var(df$energy) * (1 + 2 * tau_e) * (side / temp)^2
+      # magnet <- mean(df$magnet)
+      # suscep <- var(df$magnet) * (1 + 2 * tau_m) * side^2 / temp
+      # spec_heat <- var(df$energy) * (1 + 2 * tau_e) * (side / temp)^2
       magnet <- df[seq(1, .N, round(tau_m)), mean(magnet)]
       suscep <- df[seq(1, .N, round(tau_m)), var(magnet) * side^2 / temp]
       spec_heat <- df[seq(1, .N, round(tau_e)), var(energy) * (side / temp)^2]
@@ -189,6 +189,7 @@ crit_obs <- tcrits[, sprintf("out/051_crit_L%d_T%g.csv", side, temp)] |>
       return(
         list(
           side = side,
+          temp = temp,
           magnet = magnet,
           suscep = suscep,
           spec_heat = spec_heat
@@ -200,9 +201,54 @@ crit_obs <- tcrits[, sprintf("out/051_crit_L%d_T%g.csv", side, temp)] |>
   rbindlist()
 
 crit_fits <- crit_obs |>
-  melt(id.vars = "side") |>
+  melt(id.vars = c("side", "temp")) |>
   split(by = "variable") |>
   lapply(\(x) summary(lm(log(value) ~ log(side), x))$coefficients)
 
 crit_fits |>
-  lapply(\(x) -x[2, 1] / nu_fit[2, 1])
+  lapply(
+    function(x) {
+      # Monte Carlo sampling to determine confidence intervals
+      num_samples <- 1e6L
+      exp_nu_sim <- rnorm(num_samples, mean = abs(x[2, 1]), sd = x[2, 2])
+      nu_sim <- rnorm(num_samples, mean = -nu_fit[2, 1], sd = nu_fit[2, 2])
+
+      exp_sim <- exp_nu_sim / nu_sim
+
+      return(
+        c(
+          mean = mean(exp_sim),
+          sd = sd(exp_sim),
+          quantile(exp_sim, c(0.025, 0.975), type = 6)
+        )
+      )
+    }
+  )
+
+plt_crit_obs <- crit_obs |>
+  melt(id.vars = c("side", "temp")) |>
+  ggplot(aes(side, value)) +
+    geom_smooth(
+      colour = "black",
+      method = "lm",
+      formula = y ~ x,
+      linewidth = 0.5,
+    ) +
+    geom_point() +
+    scale_x_log10(breaks = scales::pretty_breaks()) +
+    scale_y_log10(breaks = scales::pretty_breaks()) +
+    facet_wrap(
+      vars(variable),
+      scales = "free_y",
+      ncol = 1,
+      labeller = as_labeller(
+        c(
+          magnet = "Magnetization per spin",
+          suscep = "Magnetic susceptibility per spin",
+          spec_heat = "Specific heat per spin"
+        )
+      )
+    ) +
+    labs(x = "Lattice size", y = "Monte Carlo average")
+
+plot_tex("052c", plt_crit_obs, asp_ratio = 2 / 3, scale_factor = 0.9)

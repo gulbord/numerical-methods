@@ -15,19 +15,19 @@ temps <- c(
 sides <- c(32, 45, 64, 90)
 num_steps <- 6e5
 
-# for (i in seq_along(sides)) {
-#   for (j in seq_along(temps)) {
+# k <- 1
+# max_seed <- length(.Random.seed)
+# for (side in sides) {
+#   for (temp in temps) {
 #     message(sprintf(
 #         "Processing L = %d, T = %g [%d/%d]",
-#         sides[i], temps[j],
-#         length(temps) * (i - 1) + j,
-#         length(temps) * length(sides)
+#         side, temps, k, length(sides) * length(temps)
 #     ))
-#     fname <- sprintf("L%d_T%g", sides[i], temps[j])
+#     fname <- sprintf("L%d_T%g", side, temp)
 #     system(
 #       sprintf(
-#         "exe/051_ising_metropolis %s %d %f %d",
-#         fname, sides[i], temps[j], num_steps
+#         "exe/051_ising_metropolis %s %d %f %d %d",
+#         fname, side, temp, num_steps, .Random.seed[k %% max_seed]
 #       )
 #     )
 #   }
@@ -155,7 +155,7 @@ temps_new <- seq(0.2, 4.2, by = 0.1)
   k <- 1
   for (s in sides) {
     for (t in temps_new) {
-      pars_new[[k]] <- list(side = s, temp = t)
+      pars_new[[k]] <- list(side = s, temp = t, seed = .Random.seed[k])
       k <- k + 1
     }
   }
@@ -167,8 +167,8 @@ launch_sim <- function(x, prefix = "") {
   fname <- sprintf("%sL%d_T%g", prefix, x$side, x$temp)
   system(
     sprintf(
-      "exe/051_ising_metropolis %s %d %f %d",
-      fname, x$side, x$temp, num_steps
+      "exe/051_ising_metropolis %s %d %f %d %d",
+      fname, x$side, x$temp, num_steps, x$seed
     )
   )
 }
@@ -245,53 +245,3 @@ plt_new <- ggplot(observ_new, aes(temp, mean)) +
   )
 
 plot_tex("051b", plt_new, asp_ratio = 0.75, scale_factor = 0.75)
-
-# Finite size scaling analysis
-spec_heat <- observ[obs == "energy", .(side, temp, value = var)]
-tcrits <- spec_heat[, .(temp = temp[which.max(value)]), by = side]
-
-{
-  pars_fss <- list()
-  k <- 1
-  dt <- unique(diff(temps))[1]
-  for (i in seq_along(sides)) {
-    for (tc in round(tcrits[i, temp], 3)) {
-      temps_fss <- seq(tc - dt, tc + dt, by = dt / 5)
-      for (t in temps_fss) {
-        pars_fss[[k]] <- list(side = sides[i], temp = t)
-        k <- k + 1
-      }
-    }
-  }
-}
-
-# parallel::mclapply(
-#   pars_fss,
-#   \(x) launch_sim(x, prefix = "fss"),
-#   mc.cores = getDTthreads()
-# )
-
-fnames_fss <- lapply(
-  pars_fss,
-  \(x) sprintf("out/051_fss_L%d_T%g.csv", x$side, x$temp)
-)
-
-observ_fss <- purrr::map(
-  fnames_fss,
-  function(fname) {
-    side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
-    temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
-
-    energy <- fread(fname)[(eq_time + 1):.N, energy / side^2]
-    N <- length(energy)
-
-    acf <- acf_fft(energy, max_lag = 250, thr = 0.005)
-    tau <- sum((1 - seq_along(acf) / N) * acf)
-
-    spec_heat <- var(energy[seq(1, N, by = round(tau))]) * (side / temp)^2
-    
-    return(list(side = side, temp = temp, spec_heat = spec_heat))
-  },
-  .progress = TRUE
-) |>
-  rbindlist()
