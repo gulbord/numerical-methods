@@ -18,6 +18,16 @@ launch_sim <- function(x, prefix = "", num_steps = 5e5) {
   )
 }
 
+launch_sim(
+  list(side = 64, temp = temps[16], seed = 141428),
+  num_steps = 1e6L
+)
+
+launch_sim(
+  list(side = 45, temp = temps[11], seed = 152359),
+  num_steps = 1e6L
+)
+
 Tc <- 2 / log(1 + sqrt(2))
 temp_step <- 0.005
 num_temps <- 60
@@ -67,31 +77,13 @@ eq_time <- 10000
 #         function(col) {
 #           acf <- acf_fft(df[[col]], max_lag = 250, thr = 0.005)
 #           tau <- sum((1 - seq_along(acf) / N) * acf)
-#           uncor <- df[[col]][seq(1, N, by = round(tau))]
-# 
-#           # Bootstrapped variance
-#           bt_var <- boot::boot(
-#             uncor,
-#             \(x, i) var(x[i]),
-#             R = 1000,
-#             parallel = "multicore",
-#             ncpus = min(10, parallel::detectCores())
-#           )
-# 
-#           var_ci <- boot::boot.ci(
-#             bt_var,
-#             conf = 0.95,
-#             type = "basic"
-#           )$basic[4:5]
 # 
 #           return(
 #             list(
 #               obs = col,
-#               mean = mean(uncor),
-#               var = bt_var$t0,
-#               var_lwr = var_ci[1],
-#               var_hgr = var_ci[2],
-#               tau = tau
+#               tau = tau,
+#               mean = mean(df[[col]]),
+#               var = var(df[[col]]) * (N - 1) / (N - 1 - 2 * tau)
 #             )
 #           )
 #         }
@@ -101,21 +93,17 @@ eq_time <- 10000
 #     },
 #     .progress = TRUE
 #   ) |>
-#   rbindlist()
+#   rbindlist() |>
+#   _[, var := var * side^2 / temp] |>
+#   _[obs == "energy", var := var / temp]
 
-fluct <- fread("src/data/051_fluct.csv") |>
-  _[, names(.SD) := lapply(.SD, \(x) x * side^2 / temp)
-    , .SDcols = patterns("^var")] |>
-  _[obs == "energy", names(.SD) := lapply(.SD, \(x) x / temp)
-    , .SDcols = patterns("^var")] 
+# fwrite(fluct, "src/data/051_fluct.csv")
+
+fluct <- fread("src/data/051_fluct.csv")
 
 plt_fluct <- fluct |>
   ggplot(aes(temp, var)) +
-    geom_pointrange(
-      aes(ymin = var_lwr, ymax = var_hgr, colour = factor(side)),
-      size = 0.004,
-      linewidth = 0.2,
-    ) +
+    geom_line(aes(colour = factor(side))) +
     facet_wrap(
       vars(obs),
       nrow = 2,
@@ -141,7 +129,37 @@ plt_fluct <- fluct |>
       axis.text.x = ggtext::element_markdown(),
     )
 
-plot_tex("051a", plt_fluct, asp_ratio = 0.75, scale_factor = 0.75)
+plot_tex("051a", plt_fluct, asp_ratio = 0.75, scale_factor = 0.8)
+
+plt_tau <- fluct |>
+  ggplot(aes(temp, tau)) +
+    geom_line(aes(colour = factor(side))) +
+    facet_wrap(
+      vars(obs),
+      nrow = 2,
+      scales = "free_y",
+      labeller = as_labeller(c(
+        energy = "Energy",
+        magnet = "Magnetization"
+      ))
+    ) +
+    scale_colour_viridis_d() +
+    scale_x_continuous(
+      breaks = c(pretty(fluct$temp), Tc),
+      labels = c(pretty(fluct$temp), "<i>T</i><sub>c</sub>"),
+    ) +
+    scale_y_log10(guide = "axis_logticks") +
+    labs(
+      x = "Temperature",
+      y = "Autocorrelation time",
+      colour = "Lattice size",
+    ) +
+    theme(
+      legend.position = "bottom",
+      axis.text.x = ggtext::element_markdown(),
+    )
+
+plot_tex("051b", plt_tau, asp_ratio = 0.75, scale_factor = 0.8)
 
 # Another set of simulations for a bigger energy/magnetization plot
 temps_big <- seq(0.2, 4.2, by = 0.1)
@@ -172,17 +190,9 @@ pars_big <- data.table(
 #         names(df),
 #         function(col) {
 #           acf <- acf_fft(df[[col]], max_lag = 250, thr = 0.005)
-#           tau <- if (is.na(acf[1])) 1 else sum((1 - seq_along(acf) / N) * acf)
-#           uncor <- df[[col]][seq(1, N, by = round(tau))]
+#           tau <- sum((1 - seq_along(acf) / N) * acf)
 # 
-#           return(
-#             list(
-#               obs = col,
-#               mean = mean(uncor),
-#               lwr = quantile(uncor, 0.025, type = 6),
-#               hgr = quantile(uncor, 0.975, type = 6)
-#             )
-#           )
+#           return(list(obs = col, tau = tau, mean = mean(df[[col]])))
 #         }
 #       )
 # 
@@ -190,16 +200,15 @@ pars_big <- data.table(
 #     },
 #     mc.cores = min(10, parallel::detectCores())
 #   ) |>
-#   rbindlist()
+#   rbindlist() |>
+#   melt(id.vars = c("side", "temp", "obs"))
+
+# fwrite(observ, "src/data/051_observ.csv")
 
 observ <- fread("src/data/051_observ.csv")
 
-plt_obs <- ggplot(observ, aes(temp, mean)) +
-  geom_pointrange(
-    aes(ymin = lwr, ymax = hgr, colour = factor(side)),
-    size = 0.004,
-    linewidth = 0.2,
-  ) +
+plt_obs <- ggplot(observ[variable == "mean"], aes(temp, value)) +
+  geom_point(aes(colour = factor(side)), size = 0.5) +
   facet_wrap(
     vars(obs),
     nrow = 2,
@@ -210,6 +219,7 @@ plt_obs <- ggplot(observ, aes(temp, mean)) +
     ))
   ) +
   scale_colour_viridis_d() +
+  scale_fill_viridis_d() +
   scale_x_continuous(
     breaks = c(pretty(observ$temp), Tc),
     labels = c(pretty(observ$temp), "<i>T</i><sub>c</sub>"),
@@ -218,10 +228,11 @@ plt_obs <- ggplot(observ, aes(temp, mean)) +
     x = "Temperature",
     y = "Monte Carlo average",
     colour = "Lattice size",
+    fill = "Lattice size",
   ) +
   theme(
     legend.position = "bottom",
     axis.text.x = ggtext::element_markdown(),
   )
 
-plot_tex("051b", plt_obs, asp_ratio = 0.75, scale_factor = 0.75)
+plot_tex("051c", plt_obs, asp_ratio = 0.75, scale_factor = 0.75)

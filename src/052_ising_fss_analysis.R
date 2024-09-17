@@ -20,7 +20,7 @@ launch_sim <- function(x, prefix = "", num_steps = 5e5) {
 Tc <- 2 / log(1 + sqrt(2))
 sides <- c(32, 45, 64, 90)
 
-spec_heat <- fread("src/data/051_results.csv") |>
+spec_heat <- fread("src/data/051_fluct.csv") |>
   _[obs == "energy", .(side, temp, value = var * (side / temp)^2)]
 
 ggplot(spec_heat, aes(temp, value, colour = factor(side))) +
@@ -53,6 +53,7 @@ pars <- data.table(
 #   )
 
 eq_steps <- 10000
+
 # fss_spec_heat <- pars |>
 #   _[, sprintf("out/051_fss_L%d_T%g.csv", side, temp)] |>
 #   parallel::mclapply(
@@ -66,8 +67,7 @@ eq_steps <- 10000
 #       acf <- acf_fft(energy, max_lag = 250, thr = 0.005)
 #       tau <- sum((1 - seq_along(acf) / N) * acf)
 # 
-#       result <- var(energy[seq(1, N, round(tau))]) * (side / temp)^2
-#       #result <- var(energy) * (1 + 2 * tau) * (side / temp)^2
+#       result <- var(energy) * (side / temp)^2 * (N - 1) / (N - 1 - 2 * tau)
 # 
 #       return(list(side = side, temp = temp, spec_heat = result))
 #     },
@@ -179,12 +179,11 @@ crit_obs <- tcrits[, sprintf("out/051_crit_L%d_T%g.csv", side, temp)] |>
       acf_m <- acf_fft(df$magnet, max_lag = 250, thr = 0.005)
       tau_m <- sum((1 - seq_along(acf_m) / nrow(df)) * acf_m)
 
-      # magnet <- mean(df$magnet)
-      # suscep <- var(df$magnet) * (1 + 2 * tau_m) * side^2 / temp
-      # spec_heat <- var(df$energy) * (1 + 2 * tau_e) * (side / temp)^2
-      magnet <- df[seq(1, .N, round(tau_m)), mean(magnet)]
-      suscep <- df[seq(1, .N, round(tau_m)), var(magnet) * side^2 / temp]
-      spec_heat <- df[seq(1, .N, round(tau_e)), var(energy) * (side / temp)^2]
+      N <- nrow(df)
+      V <- side^2
+      magnet <- mean(df$magnet)
+      suscep <- var(df$magnet) * (V / temp) * (N - 1) / (N - 1 - 2 * tau_m)
+      spec_heat <- var(df$energy) * (V / temp^2) * (N - 1) / (N - 1 - 2 * tau_e)
 
       return(
         list(
