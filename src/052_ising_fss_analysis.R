@@ -20,23 +20,6 @@ launch_sim <- function(x, prefix = "", num_steps = 5e5) {
 Tc <- 2 / log(1 + sqrt(2))
 sides <- c(32, 45, 64, 90)
 
-spec_heat <- fread("src/data/051_fluct.csv") |>
-  _[obs == "energy", .(side, temp, value = var * (side / temp)^2)]
-
-ggplot(spec_heat, aes(temp, value, colour = factor(side))) +
-  geom_point() +
-  scale_colour_viridis_d() +
-  scale_x_continuous(
-    breaks = c(pretty(spec_heat$temp), Tc),
-    labels = c(pretty(spec_heat$temp), "<i>T</i><sub>c</sub>"),
-  ) +
-  labs(
-    x = "Temperature",
-    y = "Specific heat per spin",
-    colour = "Lattice size",
-  ) +
-  theme(axis.text.x = ggtext::element_markdown())
-
 # Zoom in on the peaks and perform another set of simulations
 pars <- data.table(
   side = c(90L, 64L, 45L, 32L),
@@ -54,28 +37,29 @@ pars <- data.table(
 
 eq_steps <- 10000
 
-# fss_spec_heat <- pars |>
-#   _[, sprintf("out/051_fss_L%d_T%g.csv", side, temp)] |>
-#   parallel::mclapply(
-#     function(fname) {
-#       side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
-#       temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
-# 
-#       energy <- fread(fname)[(eq_steps + 1):.N, energy / side^2]
-#       N <- length(energy)
-# 
-#       acf <- acf_fft(energy, max_lag = 250, thr = 0.005)[-1]
-#       tau <- sum((N - seq_along(acf)) * acf / (N - 1))
-# 
-#       result <- var(energy) * (side / temp)^2 * (N - 1) / (N - 1 - 2 * tau)
-# 
-#       return(list(side = side, temp = temp, spec_heat = result))
-#     },
-#     mc.cores = getDTthreads()
-#   ) |>
-#   rbindlist()
+fss_spec_heat <- pars |>
+  _[, sprintf("out/051_fss_L%d_T%g.csv", side, temp)] |>
+  parallel::mclapply(
+    function(fname) {
+      side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
+      temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
 
-fss_spec_heat <- fread("src/data/052_fss_spec_heat.csv")
+      energy <- fread(fname)[(eq_steps + 1):.N, energy / side^2]
+      N <- length(energy)
+
+      acf <- acf_fft(energy, max_lag = 250, thr = 0.005)[-1]
+      tau <- sum((1 - seq_along(acf) / N) * acf)
+
+      result <- var(energy) * (side / temp)^2 * (N - 1) / (N - 1 - 2 * tau)
+
+      return(list(side = side, temp = temp, spec_heat = result))
+    },
+    mc.cores = getDTthreads()
+  ) |>
+  rbindlist()
+
+# fwrite(fss_spec_heat, "src/data/052_fss_spec_heat.csv")
+# fss_spec_heat <- fread("src/data/052_fss_spec_heat.csv")
 
 tcrits <- split(fss_spec_heat, by = "side") |>
   lapply(
@@ -176,9 +160,9 @@ crit_obs <- tcrits[, sprintf("out/051_crit_L%d_T%g.csv", side, temp)] |>
       N <- nrow(df)
 
       acf_e <- acf_fft(df$energy, max_lag = 250, thr = 0.005)[-1]
-      tau_e <- sum((N - seq_along(acf_e)) * acf_e / (N - 1))
+      tau_e <- sum((1 - seq_along(acf_e) / N) * acf_e)
       acf_m <- acf_fft(df$magnet, max_lag = 250, thr = 0.005)[-1]
-      tau_m <- sum((N - seq_along(acf_m)) * acf_m / (N - 1))
+      tau_m <- sum((1 - seq_along(acf_m) / N) * acf_m)
 
       N <- nrow(df)
       V <- side^2
