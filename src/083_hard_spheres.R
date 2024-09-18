@@ -12,23 +12,50 @@ fnames <- list.files(
   full.names = TRUE
 )
 
-# Recover densities and max. disp. from list of files
-rho <- fnames |>
-  str_extract("(?<=r)[.0-9]+") |>
-  unique() |>
-  as.numeric() |>
-  sort()
-dmax <- fnames |>
-  str_extract("(?<=d)[.0-9]+") |>
-  unique() |>
-  as.numeric() |>
-  sort()
+eq_time <- 1e4L
+obs <- lapply(
+  fnames,
+  function(f) {
+    rho <- as.numeric(str_extract(f, "(?<=r)[.0-9]+"))
+    dmax <- as.numeric(str_extract(f, "(?<=d)[.0-9]+"))
+    init <- sub(".*_([a-z]+).csv", "\\1", f)
 
-fnames[15] |>
-  fread() |>
-  _[, acc_ratio := NULL] |>
-  _[sample(1:.N, 1e5L)] |>
-  _[, iter := 1:.N, by = realization] |>
-  _[, energy := energy / 1e6] |>
-  ggplot(aes(iter, energy, group = realization)) +
-    geom_line(alpha = 0.5)
+    df <- fread(f)[(eq_time + 1):.N]
+    df[, let(realization = NULL, energy = energy / (100 * 99))]
+
+    return(cbind(rho = rho, dmax = dmax, init = init, df[, lapply(.SD, mean)]))
+  }
+) |>
+  rbindlist()
+
+plt <- melt(obs, measure.vars = c("acc_ratio", "energy")) |>
+  ggplot(aes(dmax, value, colour = factor(rho))) +
+    geom_line(linewidth = 0.5) +
+    geom_point(size = 1) +
+    scale_y_continuous(
+      breaks = scales::pretty_breaks(),
+      trans = scales::pseudo_log_trans(base = 10),
+      guide = "axis_logticks",
+    ) +
+    scale_colour_viridis_d() +
+    facet_grid(
+      rows = vars(variable),
+      cols = vars(init),
+      scales = "free_y",
+      labeller = as_labeller(
+        c(
+          lattice = "Cubic lattice initialization",
+          random = "Random initialization",
+          acc_ratio = "Acceptance ratio",
+          energy = "Energy (number of overlaps)"
+        )
+      )
+    ) +
+    labs(
+      x = "Maximum displacement",
+      y = "Average over 10 realizations",
+      colour = "Density",
+    ) +
+    theme(legend.position = "bottom")
+
+plot_tex("083", plt, asp_ratio = 0.75, scale_factor = 1)
