@@ -55,7 +55,7 @@ of $\eta$ are thus $\unit{m^{-1} s^{-1}}$, and using once again
   \sqrt{\frac{\epsilon_{\ce{X}}}{m_{\ce{X}}}}.
 \end{equation}
 
-\section{Off-lattice Monte Carlo program prototype}
+\section{Program prototype}
 
 \begin{sourcefiles}
   \item[Source codes] src/082\_off\_lattice\_mc.c, src/offlat/integration.c,
@@ -94,18 +94,71 @@ array of $3 \times \text{\texttt{num\_particles}}$ elements (flattened) with
 particle coordinates determined by the strategy set with the \texttt{init\_conf}
 parameter. The second function, \texttt{sweep}, performs a single Monte Carlo
 sweep of \texttt{num\_particles} trial moves using the Metropolis algorithm. The
-\texttt{sweep} function requires a pointer to a \texttt{compute\_energy\_delta}
+\texttt{sweep} function requires a pointer to a \texttt{compute\_energy\_delta()}
 function, specific to the system being simulated, which returns the energy
 difference resulting from the trial move. The header file \texttt{integration.h}
 also defines a \texttt{struct observables}, intended to store the current system
 energy and the acceptance ratio from the last sweep. The \texttt{sweep} function
 takes a \texttt{struct observables} as an argument and updates it accordingly.
 
-\section{Off-lattice Monte Carlo of hard spheres}
+\section{Hard spheres}
 
 \begin{sourcefiles}
   \item[Source codes] src/083\_hard\_spheres.c, src/offlat/integration.c,
     src/offlat/integration.h, src/offlat/parameters.c, src/offlat/parameters.h
   \item[Analysis scripts] src/083\_hard\_spheres.R, src/083\_hard\_spheres.sh
   \item[Executable] exe/083\_hard\_spheres
+\end{sourcefiles}
+
+In the code for this exercise, \texttt{083\_hard\_spheres.c}, following the
+structure outlined in the previous section, I implemented a
+\texttt{compute\_energy\_delta()} function: given a particle index and the
+coordinates of a trial move, it performs a Metropolis test and accepts or
+rejects it. In this case, the criterion is straightforward: if the trial move
+brings two particles closer than $\sigma = 1$ to each other, the energy
+difference is increased by a large amount, set to \num{e6} in the code.
+Conversely, if the trial move removes an \enquote{overlap}, the energy
+difference is reduced by the same amount. In practice, this means that only
+moves that reduce the total number of overlaps are accepted.
+
+I performed a set of simulations with $N = \num{100}$ particles at four
+different densities, $\rho \in \{ \num{0.05}, \num{0.3}, \num{0.5}, \num{1} \}$,
+varying the maximum displacement, $d_{\mathrm{max}} \in \{ \num{0.01},
+\num{0.1}, \num{0.3}, \num{0.6}, \num{1} \}$. Each combination of $\rho$ and
+$d_{\mathrm{max}}$ was tested with both random initialization and starting from
+a cubic lattice, and averaged over \num{10} realizations, each lasting \num{e5}
+Monte Carlo sweeps. The first \num{e4} sweeps were discarded to allow for
+equilibration. I recorded the acceptance ratio of each sweep and the total
+energy of the system in terms of the number of overlaps.
+
+The results are shown in \cref{fig:083}. If the density is sufficiently low, the
+equilibrium configuration displays no overlaps. As the maximum displacement,
+this configuration gets easier to reach, and indeed the average energy decreases
+with larger $d_{\mathrm{max}}$, eventually stabilizing. The trade-off is in the
+acceptance ratio, which decreases too as $d_{\mathrm{max}}$ increases.
+Naturally, the higher the density, the harder it is to reach a stable configuration,
+and the acceptance ratio drops even quicker. For intermediate densities, such as
+\num{0.3} or \num{0.5}, we can strike a good balance by selecting a maximum
+displacement between \num{0.3} and \num{0.5}. For higher densities, a lower
+value should be chosen. When the density is low enough, equilibrium is easily
+achieved with maximum displacements greater than \num{0.1}.
+
+\begin{figure}
+  \centering
+  \includegraphics{img/083.png}
+  \caption{Monte Carlo averages of acceptance ratio and energy as a function of
+    the maximum displacement for a hard spheres gas of \num{100} particles, at
+    different densitie and with lattice or random initialization. Each point is
+    averaged over \num{10} realizations, each lasting \num{e5} sweeps, with the
+    first \num{e4} discarded to allow for equilibration.}
+  \label{fig:083}
+\end{figure}
+
+\section{Lennard-Jones particles}
+
+\begin{sourcefiles}
+  \item[Source codes] src/084\_lennard\_jones.c, src/offlat/integration.c,
+    src/offlat/integration.h, src/offlat/parameters.c, src/offlat/parameters.h
+  \item[Analysis scripts] src/084\_lennard\_jones.R, src/084\_lennard\_jones.sh
+  \item[Executable] exe/084\_lennard\_jones
 \end{sourcefiles}
