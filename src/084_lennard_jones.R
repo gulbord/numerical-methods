@@ -8,7 +8,7 @@ if (!exists(".Random.seed")) invisible(runif(1))
 
 num_particles <- 100L
 max_disp <- 0.3
-num_steps <- 5e4L
+num_steps <- 1e5L
 num_realizations <- 10L
 
 num_rho <- 11L
@@ -28,7 +28,7 @@ split(pars, seq_len(nrow(pars))) |>
         paste("max_disp", max_disp),
         paste("temperature", x$temp),
         paste("num_steps", num_steps),
-        paste("num_realization", num_realizations),
+        paste("num_realizations", num_realizations),
         paste("init_conf lattice"),
         paste("seed", x$seed)
       )
@@ -43,5 +43,5 @@ split(pars, seq_len(nrow(pars))) |>
 
       unlink(cfg_file)
     },
-    mc.cores = min(11, parallel::detectCores() - 1)
+    mc.cores = min(num_rho, parallel::detectCores() - 2)
   )
