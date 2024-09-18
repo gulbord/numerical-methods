@@ -75,8 +75,8 @@ eq_time <- 10000
 #       results <- lapply(
 #         names(df),
 #         function(col) {
-#           acf <- acf_fft(df[[col]], max_lag = 250, thr = 0.005)
-#           tau <- sum((1 - seq_along(acf) / N) * acf)
+#           acf <- acf_fft(df[[col]], max_lag = 250, thr = 0.005)[-1]
+#           tau <- sum((N - seq_along(acf)) * acf / (N - 1))
 # 
 #           return(
 #             list(
@@ -189,8 +189,8 @@ pars_big <- data.table(
 #       results <- lapply(
 #         names(df),
 #         function(col) {
-#           acf <- acf_fft(df[[col]], max_lag = 250, thr = 0.005)
-#           tau <- sum((1 - seq_along(acf) / N) * acf)
+#           acf <- acf_fft(df[[col]], max_lag = 250, thr = 0.005)[-1]
+#           tau <- sum((N - seq_along(acf)) * acf / (N - 1))
 # 
 #           return(list(obs = col, tau = tau, mean = mean(df[[col]])))
 #         }

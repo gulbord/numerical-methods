@@ -64,8 +64,8 @@ eq_steps <- 10000
 #       energy <- fread(fname)[(eq_steps + 1):.N, energy / side^2]
 #       N <- length(energy)
 # 
-#       acf <- acf_fft(energy, max_lag = 250, thr = 0.005)
-#       tau <- sum((1 - seq_along(acf) / N) * acf)
+#       acf <- acf_fft(energy, max_lag = 250, thr = 0.005)[-1]
+#       tau <- sum((N - seq_along(acf)) * acf / (N - 1))
 # 
 #       result <- var(energy) * (side / temp)^2 * (N - 1) / (N - 1 - 2 * tau)
 # 
@@ -173,11 +173,12 @@ crit_obs <- tcrits[, sprintf("out/051_crit_L%d_T%g.csv", side, temp)] |>
       df <- fread(fname) |>
         _[(eq_steps + 1):.N] |>
         _[, let(magnet = abs(magnet) / side^2, energy = energy / side^2)]
+      N <- nrow(df)
 
-      acf_e <- acf_fft(df$energy, max_lag = 250, thr = 0.005)
-      tau_e <- sum((1 - seq_along(acf_e) / nrow(df)) * acf_e)
-      acf_m <- acf_fft(df$magnet, max_lag = 250, thr = 0.005)
-      tau_m <- sum((1 - seq_along(acf_m) / nrow(df)) * acf_m)
+      acf_e <- acf_fft(df$energy, max_lag = 250, thr = 0.005)[-1]
+      tau_e <- sum((N - seq_along(acf_e)) * acf_e / (N - 1))
+      acf_m <- acf_fft(df$magnet, max_lag = 250, thr = 0.005)[-1]
+      tau_m <- sum((N - seq_along(acf_m)) * acf_m / (N - 1))
 
       N <- nrow(df)
       V <- side^2

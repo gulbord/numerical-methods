@@ -33,8 +33,8 @@ get_tau <- function(L, eqtime) {
   res <- lapply(
     cbind(metro = metro, wolff = wolff),
     function(x) {
-      acf <- acf_fft(x)
-      tau <- sum((1 - seq_along(acf) / N) * acf)
+      acf <- acf_fft(x, max_lag = 250, thr = 0.005)[-1]
+      tau <- sum((N - seq_along(acf)) * acf / (N - 1))
       return(tau)
     }
   )
