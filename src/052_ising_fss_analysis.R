@@ -4,6 +4,7 @@ if (!is.na(src))
   setwd(paste(wd[1:(src - 1)], collapse = "/"))
 source("src/preamble.R")
 library(stringr)
+if (!exists(".Random.seed")) invisible(runif(1))
 
 launch_sim <- function(x, prefix = "", num_steps = 5e5) {
   if (prefix != "")
@@ -122,8 +123,14 @@ plt_nu <- ggplot(tcrits, aes(abs(temp - Tc) / Tc, side)) +
     linewidth = 0.5,
   ) +
   geom_point() +
-  scale_x_log10(breaks = scales::pretty_breaks()) +
-  scale_y_log10(breaks = scales::pretty_breaks()) +
+  scale_x_log10(
+    breaks = scales::pretty_breaks(),
+    guide = "axis_logticks",
+  ) +
+  scale_y_log10(
+    breaks = scales::pretty_breaks(),
+    guide = "axis_logticks",
+  ) +
   labs(
     x = "Relative distance from <i>T</i><sub>c</sub>",
     y = "Lattice size",
@@ -219,8 +226,14 @@ plt_crit_obs <- crit_obs |>
       linewidth = 0.5,
     ) +
     geom_point() +
-    scale_x_log10(breaks = scales::pretty_breaks()) +
-    scale_y_log10(breaks = scales::pretty_breaks()) +
+    scale_x_log10(
+      breaks = scales::pretty_breaks(),
+      guide = "axis_logticks",
+    ) +
+    scale_y_log10(
+      breaks = scales::pretty_breaks(),
+      guide = "axis_logticks",
+    ) +
     facet_wrap(
       vars(variable),
       scales = "free_y",
