@@ -4,8 +4,8 @@
 
 \begin{sourcefiles}
   \item[Source codes] src/061\_ising\_wolff.c
-  \item[Analysis scripts] src/061a\_wolff\_clusters.R
-    src/061b\_autocorrelation.sh src/061b\_autocorrelation.R
+  \item[Analysis scripts] src/061a\_wolff\_clusters.R,
+    src/061b\_autocorrelation.R
   \item[Executable] exe/061\_ising\_wolff
 \end{sourcefiles}
 
@@ -72,11 +72,11 @@ given temperature and lattice size.
 
 A log-log plot of $\tau$ as a function of $L$, separated by algorithm and
 observable, is presented in \cref{fig:061d}. The parameters of the fitted lines
-are listed in \cref{tab:061}. The slope ($z$) for Wolff's energy is in good
-agreement with the expected value of $z \approx 0.25$, while the magnetization
-$z$ is approximately half that. Another result in line with expectations is the
-smaller exponent $z$ for the Wolff algorithm, observed for both energy and
-magnetization. In general, all autocorrelation times for the Metropolis
+are listed in \cref{tab:061}. The slope ($z$) for Wolff's magnetization is in
+sufficient agreement with the expected value of $z \approx 0.25$, while the
+energy $z$ comes out slightly larger. Another result in line with expectations
+is the smaller exponent $z$ for the Wolff algorithm, observed for both energy
+and magnetization. In general, all autocorrelation times for the Metropolis
 algorithm are larger than those for the Wolff algorithm, particularly at larger
 lattice sizes. This is consistent with the expectation that the Wolff algorithm
 is significantly more efficient than the Metropolis algorithm near
@@ -107,17 +107,16 @@ $T_{\mathrm{c}}$.
     Algorithm & Observable & Parameter & {Estimate} & {\textit{t}-statistic} &
     {\textit{p}-value} \\
     \midrule
-    Metropolis & Energy & Intercept & -2.35(2) & -14 & 1.7e-4 \\
-    Metropolis & Energy & Slope & 1.54(6) & 28 & 9.6e-6 \\
-    Metropolis & Magnetization & Intercept & -2.9(1) & -24 & 1.9e-5 \\
-    Metropolis & Magnetization & Slope & 1.94(4) & 49 & 1.0e-6 \\
-    Wolff & Energy & Intercept & -0.13(3) & -3.9 & 1.7e-2 \\
-    Wolff & Energy & Slope & 0.24(1) & 23 & 2.3e-5 \\
-    Wolff & Magnetization & Intercept & 0.08(4) & 2.1 & 9.9e-2 \\
-    Wolff & Magnetization & Slope & 0.12(1) & 10 & 5.1e-4 \\
+    Metropolis & Energy & Intercept & -0.9(2) & -5.5 & 5.2e-3 \\
+    Metropolis & Energy & Slope & 1.16(4) & 27 & 1.1e-5 \\
+    Metropolis & Magnetization & Intercept & -0.5(2) & -2.2 & 8.9e-2 \\
+    Metropolis & Magnetization & Slope & 1.30(6) & 21 & 2.9e-5 \\
+    Wolff & Energy & Intercept & -0.70(9) & -7.8 & 1.5e-3 \\
+    Wolff & Energy & Slope & 0.34(2) & 15 & 1.2e-4 \\
+    Wolff & Magnetization & Intercept & -0.6(1) & -4.0 & 1.6e-2 \\
+    Wolff & Magnetization & Slope & 0.21(3) & 6.0 & 3.8e-3 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 \section{Multiple Markov chains}
-

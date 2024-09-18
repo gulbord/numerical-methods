@@ -3,40 +3,44 @@ src <- match("src", wd)
 if (!is.na(src))
   setwd(paste(wd[1:(src - 1)], collapse = "/"))
 source("src/preamble.R")
+if (!exists(".Random.seed")) invisible(runif(1))
 
-lat_sides <- round(exp(seq(log(10), log(50), length.out = 6)))
+lat_sides <- round(exp(seq(log(40), log(70), length.out = 6)))
 num_steps <- 1e6L
 Tc <- 2 / log(1 + sqrt(2))
 
-# for (L in lat_sides) {
-#   message(paste("Running Metropolis for L =", L))
-#   system(sprintf(
-#     "exe/051_ising_metropolis %s%d %d %f %d",
-#     "acor_L", L, L, Tc, num_steps
-#   ))
-#   message(paste("Running Wolff for L =", L))
-#   system(sprintf(
-#     "exe/061_ising_wolff %s%d %d %f %d",
-#     "acor_L", L, L, Tc, num_steps
-#   ))
-# }
+pars <- data.table(
+  algo = rep(c("metro", "wolff"), times = length(lat_sides)),
+  side = rep(lat_sides, each = 2),
+  seed = sample(.Random.seed, 2 * length(lat_sides))
+)
 
-get_tau <- function(L, eqtime) {
-  metro <- fread(paste0("out/051_acor_L", L, ".csv"))[eqtime:.N]
+# split(pars, seq_len(nrow(pars))) |>
+#   parallel::mclapply(
+#     function(x) {
+#       system(
+#         sprintf(
+#           "exe/0%s %s%d %d %f %d %d",
+#           if (x$algo == "metro") "51_ising_metropolis" else "61_ising_wolff",
+#           "acor_L", x$side, x$side, Tc, num_steps, x$seed
+#         )
+#       )
+#     },
+#     mc.cores = min(12, parallel::detectCores() - 1)
+#   )
+
+get_tau <- function(L, eq_steps) {
+  metro <- fread(paste0("out/051_acor_L", L, ".csv"))[eq_steps:.N]
   metro[, magnet := abs(magnet)]
 
-  wolff <- fread(paste0("out/061_acor_L", L, ".csv"))[eqtime:.N]
+  wolff <- fread(paste0("out/061_acor_L", L, ".csv"))[eq_steps:.N]
   avg_cs <- mean(wolff$clus_size)
   wolff[, let(clus_size = NULL, magnet = abs(magnet))]
   N <- nrow(metro)
 
   res <- lapply(
     cbind(metro = metro, wolff = wolff),
-    function(x) {
-      acf <- acf_fft(x, max_lag = 250, thr = 0.005)[-1]
-      tau <- sum((N - seq_along(acf)) * acf / (N - 1))
-      return(tau)
-    }
+    \(x) sum(acf_fft(x, max_lag = 250, thr = 0.005)[-1])
   )
 
   res$wolff.energy <- res$wolff.energy * avg_cs / L^2
@@ -45,13 +49,17 @@ get_tau <- function(L, eqtime) {
   return(res)
 }
 
-taus <- lapply(lat_sides, get_tau, eqtime = 1000L) |>
+taus <- parallel::mclapply(
+  lat_sides,
+  \(L) get_tau(L, eq_steps = 10000L),
+  mc.cores = min(length(lat_sides), parallel::detectCores() - 1)
+) |>
   rbindlist() |>
-  _[, lat_side := lat_sides]
+  _[, side := lat_sides]
 
 plt <- taus |>
   melt(
-    id.vars = "lat_side",
+    id.vars = "side",
     measure.vars = measure(algorithm, variable, sep = ".")
   ) |>
   _[, variable := factor(
@@ -59,7 +67,7 @@ plt <- taus |>
     levels = c("energy", "magnet"),
     labels = c("Energy", "Magnetization")
   )] |>
-  ggplot(aes(lat_side, value, colour = variable, fill = variable)) +
+  ggplot(aes(side, value, colour = variable, fill = variable)) +
     geom_point(size = 1) +
     scale_x_log10(guide = "axis_logticks") +
     scale_y_log10(guide = "axis_logticks") +
@@ -84,10 +92,10 @@ plot_tex("061d", plt, asp_ratio = 1, scale_factor = 0.75)
 # Parameters
 fits <- taus |>
   melt(
-    id.vars = "lat_side",
+    id.vars = "side",
     measure.vars = measure(algorithm, variable, sep = ".")
   ) |>
-  _[, broom::tidy(lm(log(value) ~ log(lat_side)))
+  _[, broom::tidy(lm(log(value) ~ log(side)))
     , by = .(algorithm, variable)]
 
 fwrite(fits, "src/data/061b_fits.csv")
