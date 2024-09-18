@@ -3,29 +3,45 @@ src <- match("src", wd)
 if (!is.na(src))
   setwd(paste(wd[1:(src - 1)], collapse = "/"))
 source("src/preamble.R")
+library(stringr)
+if (!exists(".Random.seed")) invisible(runif(1))
 
-df <- fread("out/084_N100_r0.5_d0.3_T2_ilattice_s50000.csv") |>
-  _[, energy := energy / 100] |>
-  _[, iter := 1:.N, by = realization]
+num_particles <- 100L
+max_disp <- 0.3
+num_steps <- 5e4L
+num_realizations <- 10L
 
-df[, c(mean = lapply(.SD, mean), sd = lapply(.SD, sd)),
-   , by = iter, .SDcols = c("energy", "pressure")] |>
-  setnames(-1, c("energy.mean", "pressure.mean", "energy.sd", "pressure.sd")) |>
-  melt(
-    id.vars = "iter",
-    measure.vars = measure(variable, value.name, sep = ".")
-  ) |>
-  ggplot() +
-    geom_ribbon(
-      aes(iter, ymin = mean - sd, ymax = mean + sd),
-      alpha = 0.5,
-    ) +
-    geom_line(aes(iter, mean)) +
-    geom_hline(aes(yintercept = df[iter > 2e4L, mean(pressure)])) +
-    facet_wrap(
-      vars(variable),
-      nrow = 2,
-      scales = "free_y",
-      labeller = as_labeller(c(energy = "Energy", pressure = "Pressure")),
-    ) +
-    labs(x = "Monte Carlo sweeps", y = "Average over 10 realizations")
+num_rho <- 11L
+pars <- data.table(
+  rho = rep(seq(0.05, 0.9, length.out = num_rho), each = 2L),
+  temp = rep(c(0.9, 2), times = num_rho),
+  seed = abs(.Random.seed[sample(seq_along(.Random.seed), 2L * num_rho)])
+)
+
+split(pars, seq_len(nrow(pars))) |>
+  parallel::mclapply(
+    function(x) {
+      cfg_file <- tempfile()
+      cfg_text <- c(
+        paste("num_particles", num_particles),
+        paste("density", x$rho),
+        paste("max_disp", max_disp),
+        paste("temperature", x$temp),
+        paste("num_steps", num_steps),
+        paste("num_realization", num_realizations),
+        paste("init_conf lattice"),
+        paste("seed", x$seed)
+      )
+      writeLines(cfg_text, cfg_file, sep = "\n")
+
+      system(
+        sprintf(
+          "exe/084_lennard_jones %s T%.1f_r%g",
+          cfg_file, x$temp, x$rho
+        )
+      )
+
+      unlink(cfg_file)
+    },
+    mc.cores = min(11, parallel::detectCores() - 1)
+  )
