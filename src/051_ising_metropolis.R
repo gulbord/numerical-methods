@@ -77,8 +77,7 @@ fluct <- pars |>
   _[obs == "energy", var := var / temp]
 
 # fwrite(fluct, "src/data/051_fluct.csv")
-
-fluct <- fread("src/data/051_fluct.csv")
+# fluct <- fread("src/data/051_fluct.csv")
 
 plt_fluct <- fluct |>
   ggplot(aes(temp, var)) +
@@ -183,8 +182,7 @@ observ <- pars_big |>
   melt(id.vars = c("side", "temp", "obs"))
 
 # fwrite(observ, "src/data/051_observ.csv")
-
-observ <- fread("src/data/051_observ.csv")
+# observ <- fread("src/data/051_observ.csv")
 
 plt_obs <- ggplot(observ[variable == "mean"], aes(temp, value)) +
   geom_point(aes(colour = factor(side)), size = 0.5) +
