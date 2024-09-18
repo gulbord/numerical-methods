@@ -18,25 +18,25 @@ appropriate number of equilibration time steps, I calculated the autocorrelation
 time of each time series. Given an observable $\mathcal{O}$, we estimate its
 expectation value $\expval{\mathcal{O}}$ using the Monte Carlo average
 \begin{equation}
-  \bar{\mathcal{O}} = \frac{1}{T} \sum_{t=1}^{T} \mathcal{O}_{t},
+  \hat{\mathcal{O}} = \frac{1}{T} \sum_{t=1}^{T} \mathcal{O}_{t},
 \end{equation}
-where $T$ is the length of the time series after equilibration. The sample
-variance of the estimator can be derived from the expression
+where $T$ is the length of the time series after equilibration. The variance of
+the estimator can be derived from the expression
 \begin{align}
-  \sigma_{\bar{\mathcal{O}}}^{2} &= \expval{\bar{\mathcal{O}}^{2}} -
-  \expval{\bar{\mathcal{O}}}^{2} = \frac{1}{T(T - 1)} \sum_{s,t = 1}^{T}
-  \expval{\mathcal{O}_{s} \mathcal{O}_{t}} - \frac{1}{T(T - 1)} \sum_{s,t =
-  1}^{T} \expval{\mathcal{O}_{s}} \expval{\mathcal{O}_{t}}. \label{eq:var-obar}
+  \sigma_{\hat{\mathcal{O}}}^{2} &= \expval{\hat{\mathcal{O}}^{2}} -
+  \expval{\hat{\mathcal{O}}}^{2} = \frac{1}{T^{2}} \sum_{s,t = 1}^{T}
+  \expval{\mathcal{O}_{s} \mathcal{O}_{t}} - \frac{1}{T^{2}} \sum_{s,t = 1}^{T}
+  \expval{\mathcal{O}_{s}} \expval{\mathcal{O}_{t}}. \label{eq:var-obar}
   \\
 \intertext{If we collect the $s = t$ and $s \neq t$ terms, we get}
-  \sigma_{\bar{\mathcal{O}}}^{2} &= \frac{1}{T(T - 1)} \sum_{t=1}^{T}
-  \left(\expval{\mathcal{O}_{t}^{2}} - \expval{\mathcal{O}_{t}}^{2}\right)
-  + \frac{1}{T(T - 1)} \sum_{s \neq t}^{T} \left(\expval{\mathcal{O}_{s}
+  \sigma_{\hat{\mathcal{O}}}^{2} &= \frac{1}{T^{2}} \sum_{t=1}^{T}
+  \left(\expval{\mathcal{O}_{t}^{2}} - \expval{\mathcal{O}_{t}}^{2}\right) +
+  \frac{1}{T^{2}} \sum_{s \neq t}^{T} \left(\expval{\mathcal{O}_{s}
   \mathcal{O}_{t}} - \expval{\mathcal{O}_{s}} \expval{\mathcal{O}_{t}}\right).
 \end{align}
 The first term is simply the variance of the time series,
-$\sigma_{\mathcal{O}}^{2}$, divided by $T - 1$. For the second term, we can
-rewrite it as
+$\sigma_{\mathcal{O}}^{2}$, divided by $T$. For the second term, we can rewrite
+it as
 \begin{align}
   \sum_{s \neq t}^{T} \left(\expval{\mathcal{O}_{s} \mathcal{O}_{t}} -
   \expval{\mathcal{O}_{s}} \expval{\mathcal{O}_{t}}\right) &= 2 \sum_{s = 1}^{T
@@ -53,15 +53,16 @@ $T - t$:}
 where the $t = T$ cancels out. Inserting this result back into
 \cref{eq:var-obar}, we can express:
 \begin{equation}
-  \sigma_{\bar{\mathcal{O}}}^{2} = \frac{\sigma_{\mathcal{O}}^{2}}{T} +
+  \sigma_{\hat{\mathcal{O}}}^{2} = \frac{\sigma_{\mathcal{O}}^{2}}{T} +
   \frac{2}{T} \sum_{t=1}^{T} \left(\expval{\mathcal{O}_{s}
   \mathcal{O}_{s+t}} - \expval{\mathcal{O}_{s}}
-  \expval{\mathcal{O}_{s+t}}\right) \left(\frac{T - t}{T - 1}\right) 
+  \expval{\mathcal{O}_{s+t}}\right) \left(1 - \frac{t}{T}\right) 
   = \frac{\sigma_{\mathcal{O}}^{2}}{T} (1 + 2 \tau_{\mathcal{O}}),
+  \label{eq:var-obar-final}
 \end{equation}
 where we define the \emph{integrated autocorrelation time} as
 \begin{equation}
-  \tau_{\mathcal{O}} \coloneq \sum_{t=1}^{T} \left(\frac{T-t}{T-1}\right)
+  \tau_{\mathcal{O}} \coloneq \sum_{t=1}^{T} \left(1 - \frac{t}{T}\right)
   C_{\mathcal{O}}(t),
   \label{eq:tau-def}
 \end{equation}
@@ -86,3 +87,30 @@ so that we can approximate the integrated correlation time with
   \tau_{\mathcal{O}}' \coloneq \sum_{t=1}^{T} C_{\mathcal{O}}(t) \approx
   \tau_{\mathcal{O}}.
 \end{equation}
+
+An additional consideration has to be made for the computation of observables
+related to second order moments, like the specific heat and the magnetic
+susceptibility. The standard estimator for the variance is
+\begin{equation}
+  \hat{\sigma}_{\mathcal{O}}^{2} = \frac{1}{T} \sum_{t=1}^{T} (\mathcal{O}_{t} -
+  \hat{\mathcal{O}})^{2}.
+\end{equation}
+In the presence of correlation, this estimator is biased. Indeed, its expected
+value is
+\begin{align}
+  \expval{\hat{\sigma}_{\mathcal{O}}^{2}} &= \expval[\bigg]{\frac{1}{T}
+  \sum_{t=1}^{T} \mathcal{O}_{t}^{2}} - \expval{\hat{\mathcal{O}}^{2}}, \\
+\intertext{and if we add and subtract $\expval{\hat{\mathcal{O}}}^{2}$,}
+  \expval{\hat{\sigma}_{\mathcal{O}}^{2}} &= \expval[\bigg]{\frac{1}{T}
+  \sum_{t=1}^{T} \mathcal{O}_{t}^{2}} - \expval{\hat{\mathcal{O}}}^{2} -
+  \bigl(\expval{\hat{\mathcal{O}}^{2}} - \expval{\hat{\mathcal{O}}}^{2}\bigr),
+  \\
+\intertext{we can recognize the variance of the time series in the first two
+terms, and the variance of the estimator $\hat{\mathcal{O}}$ in the second two.
+Retrieving the previous result from \cref{eq:var-obar-final}, we get}
+  \expval{\hat{\sigma}_{\mathcal{O}}^{2}} &= \sigma_{\mathcal{O}}^{2} -
+  \frac{\sigma_{\mathcal{O}}^{2}}{T} (1 + 2 \tau_{\mathcal{O}}) =
+  \sigma_{\mathcal{O}}^{2} \left(1 - \frac{1 + 2 \tau_{\mathcal{O}}}{T}\right).
+\end{align}
+To adjust the estimations of $C_{V}$ and $\chi$ accordingly, I multiplied the
+time series variance by

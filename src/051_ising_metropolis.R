@@ -18,16 +18,6 @@ launch_sim <- function(x, prefix = "", num_steps = 5e5) {
   )
 }
 
-launch_sim(
-  list(side = 64, temp = temps[16], seed = 141428),
-  num_steps = 1e6L
-)
-
-launch_sim(
-  list(side = 45, temp = temps[11], seed = 152359),
-  num_steps = 1e6L
-)
-
 Tc <- 2 / log(1 + sqrt(2))
 temp_step <- 0.005
 num_temps <- 60
@@ -48,54 +38,43 @@ pars <- data.table(
 #     mc.cores = min(10, parallel::detectCores())
 #   )
 
-plot_one <- function(side, temp) {
-  fread(sprintf("out/051_L%d_T%g.csv", side, temp)) |>
-    _[1:5e4] |>
-    _[, names(.SD) := lapply(.SD, \(x) x / side^2)] |>
-    _[, iter := 1:.N] |>
-    melt(id.vars = "iter") |>
-    ggplot(aes(iter, value)) +
-      geom_line() +
-      facet_wrap(vars(variable), nrow = 2, scales = "free_y")
-}
-
 eq_time <- 10000
 
-# fluct <- pars |>
-#   _[, sprintf("out/051_L%d_T%g.csv", side, temp)] |>
-#   purrr::map(
-#     function(fname) {
-#       side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
-#       temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
-# 
-#       df <- fread(fname)[(eq_time + 1):.N]
-#       df[, let(magnet = abs(magnet) / side^2, energy = energy / side^2)]
-#       N <- nrow(df)
-# 
-#       results <- lapply(
-#         names(df),
-#         function(col) {
-#           acf <- acf_fft(df[[col]], max_lag = 250, thr = 0.005)[-1]
-#           tau <- sum((N - seq_along(acf)) * acf / (N - 1))
-# 
-#           return(
-#             list(
-#               obs = col,
-#               tau = tau,
-#               mean = mean(df[[col]]),
-#               var = var(df[[col]]) * (N - 1) / (N - 1 - 2 * tau)
-#             )
-#           )
-#         }
-#       )
-# 
-#       return(cbind(side = side, temp = temp, rbindlist(results)))
-#     },
-#     .progress = TRUE
-#   ) |>
-#   rbindlist() |>
-#   _[, var := var * side^2 / temp] |>
-#   _[obs == "energy", var := var / temp]
+fluct <- pars |>
+  _[, sprintf("out/051_L%d_T%g.csv", side, temp)] |>
+  purrr::map(
+    function(fname) {
+      side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
+      temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
+
+      df <- fread(fname)[(eq_time + 1):.N]
+      df[, let(magnet = abs(magnet) / side^2, energy = energy / side^2)]
+      N <- nrow(df)
+
+      results <- lapply(
+        names(df),
+        function(col) {
+          acf <- acf_fft(df[[col]], max_lag = 250, thr = 0.005)[-1]
+          tau <- sum((1 - seq_along(acf) / N) * acf)
+
+          return(
+            list(
+              obs = col,
+              tau = tau,
+              mean = mean(df[[col]]),
+              var = var(df[[col]]) * (N - 1) / (N - 1 - 2 * tau)
+            )
+          )
+        }
+      )
+
+      return(cbind(side = side, temp = temp, rbindlist(results)))
+    },
+    .progress = TRUE
+  ) |>
+  rbindlist() |>
+  _[, var := var * side^2 / temp] |>
+  _[obs == "energy", var := var / temp]
 
 # fwrite(fluct, "src/data/051_fluct.csv")
 
@@ -175,33 +154,33 @@ pars_big <- data.table(
 #     mc.cores = min(10, parallel::detectCores())
 #   )
 
-# observ <- pars_big |>
-#   _[, sprintf("out/051_L%d_T%g.csv", side, temp)] |>
-#   parallel::mclapply(
-#     function(fname) {
-#       side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
-#       temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
-# 
-#       df <- fread(fname)[(eq_time + 1):.N]
-#       df[, let(magnet = abs(magnet) / side^2, energy = energy / side^2)]
-#       N <- nrow(df)
-# 
-#       results <- lapply(
-#         names(df),
-#         function(col) {
-#           acf <- acf_fft(df[[col]], max_lag = 250, thr = 0.005)[-1]
-#           tau <- sum((N - seq_along(acf)) * acf / (N - 1))
-# 
-#           return(list(obs = col, tau = tau, mean = mean(df[[col]])))
-#         }
-#       )
-# 
-#       return(cbind(side = side, temp = temp, rbindlist(results)))
-#     },
-#     mc.cores = min(10, parallel::detectCores())
-#   ) |>
-#   rbindlist() |>
-#   melt(id.vars = c("side", "temp", "obs"))
+observ <- pars_big |>
+  _[, sprintf("out/051_L%d_T%g.csv", side, temp)] |>
+  parallel::mclapply(
+    function(fname) {
+      side <- as.integer(str_extract(fname, "(?<=L)\\d+"))
+      temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
+
+      df <- fread(fname)[(eq_time + 1):.N]
+      df[, let(magnet = abs(magnet) / side^2, energy = energy / side^2)]
+      N <- nrow(df)
+
+      results <- lapply(
+        names(df),
+        function(col) {
+          acf <- acf_fft(df[[col]], max_lag = 250, thr = 0.005)[-1]
+          tau <- sum((1 - seq_along(acf) / N) * acf)
+
+          return(list(obs = col, tau = tau, mean = mean(df[[col]])))
+        }
+      )
+
+      return(cbind(side = side, temp = temp, rbindlist(results)))
+    },
+    mc.cores = min(10, parallel::detectCores())
+  ) |>
+  rbindlist() |>
+  melt(id.vars = c("side", "temp", "obs"))
 
 # fwrite(observ, "src/data/051_observ.csv")
 
