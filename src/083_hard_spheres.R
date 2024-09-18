@@ -5,7 +5,6 @@ if (!is.na(src))
 source("src/preamble.R")
 library(stringr)
 
-# List all files from previous runs
 fnames <- list.files(
   path = "out",
   pattern = "083_r[.0-9]+_d[.0-9]+_(random|lattice).csv",
