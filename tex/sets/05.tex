@@ -88,29 +88,33 @@ so that we can approximate the integrated correlation time with
   \tau_{\mathcal{O}}.
 \end{equation}
 
-An additional consideration has to be made for the computation of observables
-related to second order moments, like the specific heat and the magnetic
-susceptibility. The standard estimator for the variance is
+An additional consideration must be made when computing observables related to
+second-order moments, such as specific heat and magnetic susceptibility. The
+standard estimator for the variance is given by
 \begin{equation}
   \hat{\sigma}_{\mathcal{O}}^{2} = \frac{1}{T} \sum_{t=1}^{T} (\mathcal{O}_{t} -
   \hat{\mathcal{O}})^{2}.
 \end{equation}
-In the presence of correlation, this estimator is biased. Indeed, its expected
-value is
+In the presence of correlations, this estimator is biased.\footnote{It is biased
+for uncorrelated samples too, but in that case it suffices to switch to the
+sample variance $T \hat{\sigma}_{\mathcal{O}}^{2} / (T - 1)$.} Indeed, its
+expected value is
 \begin{align}
   \expval{\hat{\sigma}_{\mathcal{O}}^{2}} &= \expval[\bigg]{\frac{1}{T}
   \sum_{t=1}^{T} \mathcal{O}_{t}^{2}} - \expval{\hat{\mathcal{O}}^{2}}, \\
-\intertext{and if we add and subtract $\expval{\hat{\mathcal{O}}}^{2}$,}
+\intertext{and by adding and subtracting $\expval{\hat{\mathcal{O}}}^{2}$, we
+obtain}
   \expval{\hat{\sigma}_{\mathcal{O}}^{2}} &= \expval[\bigg]{\frac{1}{T}
   \sum_{t=1}^{T} \mathcal{O}_{t}^{2}} - \expval{\hat{\mathcal{O}}}^{2} -
-  \bigl(\expval{\hat{\mathcal{O}}^{2}} - \expval{\hat{\mathcal{O}}}^{2}\bigr),
+  \bigl(\expval{\hat{\mathcal{O}}^{2}} - \expval{\hat{\mathcal{O}}}^{2}\bigr).
   \\
-\intertext{we can recognize the variance of the time series in the first two
+\intertext{We can recognize the variance of the time series in the first two
 terms, and the variance of the estimator $\hat{\mathcal{O}}$ in the second two.
-Retrieving the previous result from \cref{eq:var-obar-final}, we get}
+Using the previously derived result from \cref{eq:var-obar-final}, we find}
   \expval{\hat{\sigma}_{\mathcal{O}}^{2}} &= \sigma_{\mathcal{O}}^{2} -
   \frac{\sigma_{\mathcal{O}}^{2}}{T} (1 + 2 \tau_{\mathcal{O}}) =
   \sigma_{\mathcal{O}}^{2} \left(1 - \frac{1 + 2 \tau_{\mathcal{O}}}{T}\right).
 \end{align}
 To adjust the estimations of $C_{V}$ and $\chi$ accordingly, I multiplied the
-time series variance by
+time series variance by $(T - 1) / (T - 1 - 2 \tau_{\mathcal{O}})$, with the
+additional $-1$ at the numerator due to the use of the sample variance.
