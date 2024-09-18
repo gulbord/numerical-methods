@@ -18,10 +18,7 @@ int main(int argc, const char **argv)
     }
 
     unsigned long seed = atol(argv[5]);
-    if (seed == 0)
-        rng_set_seed(time(NULL));
-    else
-        rng_set_seed(seed);
+    rng_set_seed(seed > 0 ? seed : (unsigned long)time(NULL));
 
     char fname[100];
     snprintf(fname, sizeof(fname), "out/061_%s.csv", argv[1]);

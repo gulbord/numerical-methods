@@ -73,11 +73,11 @@ int main(int argc, const char **argv)
         return 1;
     }
 
-    rng_set_seed(time(NULL));
-
     struct parameters params;
     if (parse_config(argv[1], &params))
         return 1;
+
+    rng_set_seed(params.seed > 0 ? params.seed : (unsigned long)time(NULL));
 
     char fname[255];
     snprintf(fname, sizeof(fname), "out/083_%s.csv", argv[2]);
