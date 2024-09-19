@@ -32,7 +32,7 @@ split(pars, seq_len(nrow(pars))) |>
         paste("init_conf lattice"),
         paste("seed", x$seed)
       )
-      writeLines(cfg_text, cfg_file, sep = "\n")
+      writeLines(text = cfg_text, con = cfg_file, sep = "\n")
 
       system(
         sprintf(
@@ -43,5 +43,5 @@ split(pars, seq_len(nrow(pars))) |>
 
       unlink(cfg_file)
     },
-    mc.cores = min(num_rho, parallel::detectCores() - 2)
+    mc.cores = min(5L, parallel::detectCores() - 2L)
   )

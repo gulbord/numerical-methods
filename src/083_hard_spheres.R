@@ -4,12 +4,49 @@ if (!is.na(src))
   setwd(paste(wd[1:(src - 1)], collapse = "/"))
 source("src/preamble.R")
 library(stringr)
+if (!exists(".Random.seed")) invisible(runif(1))
 
-fnames <- list.files(
-  path = "out",
-  pattern = "083_r[.0-9]+_d[.0-9]+_(random|lattice).csv",
-  full.names = TRUE
-)
+num_particles <- 100L
+num_steps <- 1e5L
+num_realizations <- 10L
+
+densities <- c(0.05, 0.3, 0.5, 1)
+max_disps <- c(0.01, 0.1, 0.3, 0.6, 1)
+init <- c("random", "lattice")
+total <- length(max_disps) * length(densities)
+pars <- data.table(
+  rho = rep(densities, each = 2L * length(max_disps)),
+  dmax = rep(max_disps, times = 2L * length(densities)),
+  init = rep(init, times = total)
+)[, seed := abs(.Random.seed[sample(seq_along(.Random.seed), .N)])]
+
+split(pars, seq_len(nrow(pars))) |>
+  parallel::mclapply(
+    function(x) {
+      cfg_file <- tempfile()
+      cfg_text <- c(
+        paste("num_particles", num_particles),
+        paste("density", x$rho),
+        paste("max_disp", x$dmax),
+        paste("temperature 1.0"),
+        paste("num_steps", num_steps),
+        paste("num_realizations", num_realizations),
+        paste("init_conf", x$init),
+        paste("seed", x$seed)
+      )
+      writeLines(text = cfg_text, con = cfg_file, sep = "\n")
+
+      system(
+        sprintf(
+          "exe/083_hard_spheres %s r%g_d%g",
+          cfg_file, x$rho, x$dmax
+        )
+      )
+
+      unlink(cfg_file)
+    },
+    mc.cores = min(10L, parallel::detectCores() - 2L)
+  )
 
 eq_time <- 1e4L
 obs <- lapply(

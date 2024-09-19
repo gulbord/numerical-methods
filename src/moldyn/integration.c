@@ -49,7 +49,7 @@ void initialize(struct particle *particles, const struct parameters *params)
     } else if (strcmp(params->init_conf, "lattice") == 0) {
         // Number of particles in each direction
         int n = ceil(cbrt(params->num_particles));
-        int spacing = params->box_size / n;
+        double spacing = params->box_size / n;
         int assigned = 0;
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {

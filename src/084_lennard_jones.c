@@ -59,6 +59,7 @@ double compute_potential(const double *particles,
                          const struct parameters *params)
 {
     double energy = 0.0;
+
     for (int i = 0; i < 3 * params->num_particles - 3; i += 3) {
         for (int j = i + 3; j < 3 * params->num_particles; j += 3) {
             double r2 = 0.0;
