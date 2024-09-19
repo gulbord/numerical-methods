@@ -38,8 +38,8 @@ split(pars, seq_len(nrow(pars))) |>
 
       system(
         sprintf(
-          "exe/083_hard_spheres %s r%g_d%g",
-          cfg_file, x$rho, x$dmax
+          "exe/083_hard_spheres %s r%g_d%g_%s",
+          cfg_file, x$rho, x$dmax, x$init
         )
       )
 
@@ -49,20 +49,25 @@ split(pars, seq_len(nrow(pars))) |>
   )
 
 eq_time <- 1e4L
-obs <- lapply(
-  fnames,
-  function(f) {
-    rho <- as.numeric(str_extract(f, "(?<=r)[.0-9]+"))
-    dmax <- as.numeric(str_extract(f, "(?<=d)[.0-9]+"))
-    init <- sub(".*_([a-z]+).csv", "\\1", f)
+obs <- pars[, sprintf("out/083_r%g_d%g.csv", rho, dmax)] |>
+  purrr::map(
+    function(fname) {
+      rho <- as.numeric(str_extract(fname, "(?<=r)\\d+\\.?\\d*"))
+      dmax <- as.numeric(str_extract(fname, "(?<=d)\\d+\\.?\\d*"))
+      temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
+      init <- sub(".*_([a-z]+).csv", "\\1", fname)
 
-    df <- fread(f)[(eq_time + 1):.N]
-    df[, let(realization = NULL, energy = energy / (100 * 99))]
+      df <- fread(fname)[(eq_time + 1):.N]
+      tot_overlaps <- num_particles * (num_particles - 1)
+      df[, let(realization = NULL, energy = energy / tot_overlaps)]
 
-    return(cbind(rho = rho, dmax = dmax, init = init, df[, lapply(.SD, mean)]))
-  }
-) |>
-  rbindlist()
+      return(
+        cbind(rho = rho, dmax = dmax, init = init, df[, lapply(.SD, mean)])
+      )
+    },
+    .progress = TRUE
+  ) |>
+    rbindlist()
 
 plt <- melt(obs, measure.vars = c("acc_ratio", "energy")) |>
   ggplot(aes(dmax, value, colour = factor(rho))) +
