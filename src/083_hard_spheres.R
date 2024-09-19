@@ -45,7 +45,7 @@ split(pars, seq_len(nrow(pars))) |>
 
       unlink(cfg_file)
     },
-    mc.cores = min(10L, parallel::detectCores() - 2L)
+    mc.cores = min(5L, parallel::detectCores() - 2L)
   )
 
 eq_time <- 1e4L
