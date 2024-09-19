@@ -18,30 +18,34 @@ pars <- data.table(
   seed = abs(.Random.seed[sample(seq_along(.Random.seed), 2L * num_rho)])
 )
 
-split(pars, seq_len(nrow(pars))) |>
-  parallel::mclapply(
-    function(x) {
-      cfg_file <- tempfile()
-      cfg_text <- c(
-        paste("num_particles", num_particles),
-        paste("density", x$rho),
-        paste("max_disp", max_disp),
-        paste("temperature", x$temp),
-        paste("num_steps", num_steps),
-        paste("num_realizations", num_realizations),
-        paste("init_conf lattice"),
-        paste("seed", x$seed)
-      )
-      writeLines(text = cfg_text, con = cfg_file, sep = "\n")
+# split(pars, seq_len(nrow(pars))) |>
+#   parallel::mclapply(
+#     function(x) {
+#       cfg_file <- tempfile()
+#       cfg_text <- c(
+#         paste("num_particles", num_particles),
+#         paste("density", x$rho),
+#         paste("max_disp", max_disp),
+#         paste("temperature", x$temp),
+#         paste("num_steps", num_steps),
+#         paste("num_realizations", num_realizations),
+#         paste("init_conf lattice"),
+#         paste("seed", x$seed)
+#       )
+#       writeLines(text = cfg_text, con = cfg_file, sep = "\n")
+# 
+#       system(
+#         sprintf(
+#           "exe/084_lennard_jones %s T%.1f_r%g",
+#           cfg_file, x$temp, x$rho
+#         )
+#       )
+# 
+#       unlink(cfg_file)
+#     },
+#     mc.cores = min(5L, parallel::detectCores() - 2L)
+#   )
 
-      system(
-        sprintf(
-          "exe/084_lennard_jones %s T%.1f_r%g",
-          cfg_file, x$temp, x$rho
-        )
-      )
+eq_steps <- 5000L
 
-      unlink(cfg_file)
-    },
-    mc.cores = min(5L, parallel::detectCores() - 2L)
-  )
+pars[, sprintf("out/084_T%.1f_r%g.csv", temp, rho)]
