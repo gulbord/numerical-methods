@@ -147,9 +147,10 @@ configuration, and the acceptance ratio drops even quicker.
   \includegraphics{img/083.png}
   \caption{Monte Carlo averages of acceptance ratio and energy as a function of
     the maximum displacement for a hard spheres gas of \num{100} particles, at
-    different densitie and with lattice or random initialization. Each point is
-    averaged over \num{10} realizations, each lasting \num{e5} sweeps, with the
-    first \num{e4} discarded to allow for equilibration.}
+    different densities and with lattice or random initialization. Each data
+    point represents an average over \num{10} realizations, each lasting
+    \num{e5} sweeps, with the first \num{e4} discarded to allow for
+    equilibration.}
   \label{fig:083}
 \end{figure}
 
@@ -161,3 +162,32 @@ configuration, and the acceptance ratio drops even quicker.
   \item[Analysis script] src/084\_lennard\_jones.R
   \item[Executable] exe/084\_lennard\_jones
 \end{sourcefiles}
+
+Once again, I reused the code in \texttt{src/offlat/} by implementing a
+Lennard-Jones \enquote{energy delta} function. I also introduced a cut radius
+for the potential, fixing it to $3 \sigma$. The code
+\texttt{src/084\_lennard\_jones.c} tracks not only the energy and acceptance
+ratio, as in the previous exercise, but also the pressure. The goal of the
+exercise was to recreate the tabulated values -- found in
+\texttt{src/data/lj\_t09.csv} and \texttt{src/data/lj\_t2.csv} -- for two
+isotherms in the pressure-density diagram.
+
+The results are shown in \cref{fig:084}. I performed simulations consisting of
+\num{10} realizations of \num{e5} sweeps each, with \num{100} particles, for
+\num{11} density values between \num{0.05} and \num{0.9}, both at $T =
+\num{0.9}$ and $T = \num{2.0}$. The pressure values at the higher temperature
+seem perfectly in line with the theoretical result, while the $T = \num{0.9}$
+experimental isotherm shows a \enquote{dip} of negative pressures around $\rho =
+\num{0.6}$, where the expected pressure is zero.
+
+\begin{figure}
+  \centering
+  \includegraphics{img/084.png}
+  \caption{pressure-density diagram of a Lennard-Jones system with \num{100}
+    particles at two different temperatures, $T = \num{0.9}$ and $T = \num{2.0}$
+    (in reduced units). Each point represents an average over \num{10}
+    realizations, each lasting \num{e5} sweeps, with the first \num{e4}
+    discarded to allow for equilibration. Error bars represent one standard
+    deviation, and the dashed lines are the theoretical isotherms.}
+  \label{fig:084}
+\end{figure}

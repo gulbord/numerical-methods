@@ -92,6 +92,8 @@ plt <- ggplot(obs[variable == "pressure"], aes(colour = factor(temp))) +
     size = 0.1,
     linewidth = 0.4
   ) +
+  scale_x_continuous(breaks = scales::pretty_breaks()) +
+  scale_y_continuous(breaks = scales::pretty_breaks()) +
   scale_colour_brewer(palette = "Dark2") +
   labs(x = "Density", y = "Pressure", colour = "Temperature")
 
