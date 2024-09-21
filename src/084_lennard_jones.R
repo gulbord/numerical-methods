@@ -46,7 +46,7 @@ pars <- data.table(
 #     mc.cores = min(5L, parallel::detectCores() - 2L)
 #   )
 
-eq_steps <- 10000L
+eq_steps <- 1e4L
 
 obs <- pars[, sprintf("out/084_T%.1f_r%g.csv", temp, rho)] |>
   purrr::map(
@@ -80,11 +80,19 @@ theo <- merge(
 )[, .(density, temp, pressure = fcoalesce(.SD))
   , .SDcols = patterns("^pressure")]
 
-list(
-  theo = theo,
-  obs = obs[, .(density = rho, temp, pressure)]
-) |>
-  rbindlist(idcol = "type") |>
-  ggplot(aes(density, pressure, colour = factor(temp))) +
-    geom_line(data = \(x) x[type == "theo"]) +
-    geom_point(data = \(x) x[type == "obs"])
+plt <- ggplot(obs[variable == "pressure"], aes(colour = factor(temp))) +
+  geom_line(
+    aes(density, pressure),
+    data = theo,
+    linetype = "dashed",
+    linewidth = 0.4,
+  ) +
+  geom_pointrange(
+    aes(density, mean, ymin = mean - sd, ymax = mean + sd),
+    size = 0.1,
+    linewidth = 0.4
+  ) +
+  scale_colour_brewer(palette = "Dark2") +
+  labs(x = "Density", y = "Pressure", colour = "Temperature")
+
+plot_tex("084", plt, asp_ratio = 3 / 2, scale_factor = 0.75)
