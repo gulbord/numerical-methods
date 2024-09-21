@@ -10,7 +10,7 @@ num_particles <- 100L
 num_steps <- 1e5L
 num_realizations <- 10L
 
-densities <- c(0.05, 0.3, 0.5, 1)
+densities <- c(0.05, 0.3, 0.5, 0.7, 1)
 max_disps <- c(0.01, 0.1, 0.3, 0.6, 1)
 init <- c("random", "lattice")
 total <- length(max_disps) * length(densities)
@@ -45,12 +45,12 @@ split(pars, seq_len(nrow(pars))) |>
 
       unlink(cfg_file)
     },
-    mc.cores = min(5L, parallel::detectCores() - 2L)
+    mc.cores = min(10L, parallel::detectCores() - 2L)
   )
 
 eq_steps <- 1e4L
 
-obs <- pars[, sprintf("out/083_r%g_d%g.csv", rho, dmax)] |>
+obs <- pars[, sprintf("out/083_r%g_d%g_%s.csv", rho, dmax, init)] |>
   purrr::map(
     function(fname) {
       rho <- as.numeric(str_extract(fname, "(?<=r)\\d+\\.?\\d*"))
@@ -59,8 +59,7 @@ obs <- pars[, sprintf("out/083_r%g_d%g.csv", rho, dmax)] |>
       init <- sub(".*_([a-z]+).csv", "\\1", fname)
 
       df <- fread(fname)[(eq_steps + 1):.N]
-      tot_overlaps <- num_particles * (num_particles - 1)
-      df[, let(realization = NULL, energy = energy / tot_overlaps)]
+      df[, let(realization = NULL, energy = energy / 1e6)]
 
       return(
         cbind(rho = rho, dmax = dmax, init = init, df[, lapply(.SD, mean)])
@@ -100,4 +99,4 @@ plt <- melt(obs, measure.vars = c("acc_ratio", "energy")) |>
     ) +
     theme(legend.position = "bottom")
 
-plot_tex("083", plt, asp_ratio = 0.75, scale_factor = 1)
+plot_tex("083", plt, asp_ratio = 1, scale_factor = 1)

@@ -121,27 +121,26 @@ Conversely, if the trial move removes an \enquote{overlap}, the energy
 difference is reduced by the same amount. In practice, this means that only
 moves that reduce the total number of overlaps are accepted.
 
-I performed a set of simulations with $N = \num{100}$ particles at four
-different densities, $\rho \in \{ \num{0.05}, \num{0.3}, \num{0.5}, \num{1} \}$,
-varying the maximum displacement, $d_{\mathrm{max}} \in \{ \num{0.01},
-\num{0.1}, \num{0.3}, \num{0.6}, \num{1} \}$. Each combination of $\rho$ and
-$d_{\mathrm{max}}$ was tested with both random initialization and starting from
-a cubic lattice, and averaged over \num{10} realizations, each lasting \num{e5}
-Monte Carlo sweeps. The first \num{e4} sweeps were discarded to allow for
-equilibration. I recorded the acceptance ratio of each sweep and the total
-energy of the system in terms of the number of overlaps.
+I performed a set of simulations with $N = \num{100}$ particles at five
+different densities, $\rho \in \{ \num{0.05}, \num{0.3}, \num{0.5}, \num{0.7},
+\num{1} \}$, varying the maximum displacement, $d_{\mathrm{max}} \in \{
+\num{0.01}, \num{0.1}, \num{0.3}, \num{0.6}, \num{1} \}$. Each combination of
+$\rho$ and $d_{\mathrm{max}}$ was tested with both random initialization and
+starting from a cubic lattice, and averaged over \num{10} realizations, each
+lasting \num{e5} Monte Carlo sweeps. The first \num{e4} sweeps were discarded to
+allow for equilibration. I recorded the acceptance ratio of each sweep and the
+total energy of the system in terms of the number of overlaps.
 
 The results are shown in \cref{fig:083}. If the density is sufficiently low, the
-equilibrium configuration displays no overlaps. As the maximum displacement,
-this configuration gets easier to reach, and indeed the average energy decreases
-with larger $d_{\mathrm{max}}$, eventually stabilizing. The trade-off is in the
-acceptance ratio, which decreases too as $d_{\mathrm{max}}$ increases.
-Naturally, the higher the density, the harder it is to reach a stable configuration,
-and the acceptance ratio drops even quicker. For intermediate densities, such as
-\num{0.3} or \num{0.5}, we can strike a good balance by selecting a maximum
-displacement between \num{0.3} and \num{0.5}. For higher densities, a lower
-value should be chosen. When the density is low enough, equilibrium is easily
-achieved with maximum displacements greater than \num{0.1}.
+equilibrium configuration exhibits no overlaps. With the cubic lattice
+initialization, this happened for all but the highest tested density, $\rho =
+1$, which displayed a minimum of \num{9} overlaps when $d_{\mathrm{max}} =
+\num{0.3}$. When the system is initialized randomly, it may not reach the
+optimal configuration of zero overlaps if $d_{\mathrm{max}}$ is not large
+enough, even at lower densities. There is, however, a trade-off in the
+acceptance ratio though, as it decreases as $d_{\mathrm{max}}$ increases.
+Naturally, the higher the density, the harder it is to reach a stable
+configuration, and the acceptance ratio drops even quicker. 
 
 \begin{figure}
   \centering
