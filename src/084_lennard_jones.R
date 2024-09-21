@@ -46,6 +46,45 @@ pars <- data.table(
 #     mc.cores = min(5L, parallel::detectCores() - 2L)
 #   )
 
-eq_steps <- 5000L
+eq_steps <- 10000L
 
-pars[, sprintf("out/084_T%.1f_r%g.csv", temp, rho)]
+obs <- pars[, sprintf("out/084_T%.1f_r%g.csv", temp, rho)] |>
+  purrr::map(
+    function(fname) {
+      rho <- as.numeric(str_extract(fname, "(?<=r)\\d+\\.?\\d*"))
+      temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
+
+      df <- fread(fname)[(eq_steps + 1L):.N]
+      df[, let(realization = NULL, energy = energy / num_particles)]
+      
+      return(
+        cbind(
+          density = rho,
+          temp = temp,
+          mean = df[, lapply(.SD, mean)],
+          sd = df[, lapply(.SD, sd)]
+        )
+      )
+    },
+    .progress = TRUE
+  ) |>
+  rbindlist() |>
+  melt(measure.vars = measure(value.name, variable, sep = ".")) 
+
+# Theorical result
+theo <- merge(
+  fread("src/data/lj_t09.csv")[, temp := 0.9],
+  fread("src/data/lj_t2.csv")[, temp := 2],
+  by = c("density", "temp"),
+  all = TRUE
+)[, .(density, temp, pressure = fcoalesce(.SD))
+  , .SDcols = patterns("^pressure")]
+
+list(
+  theo = theo,
+  obs = obs[, .(density = rho, temp, pressure)]
+) |>
+  rbindlist(idcol = "type") |>
+  ggplot(aes(density, pressure, colour = factor(temp))) +
+    geom_line(data = \(x) x[type == "theo"]) +
+    geom_point(data = \(x) x[type == "obs"])

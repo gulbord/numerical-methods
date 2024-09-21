@@ -48,7 +48,8 @@ split(pars, seq_len(nrow(pars))) |>
     mc.cores = min(5L, parallel::detectCores() - 2L)
   )
 
-eq_time <- 1e4L
+eq_steps <- 1e4L
+
 obs <- pars[, sprintf("out/083_r%g_d%g.csv", rho, dmax)] |>
   purrr::map(
     function(fname) {
@@ -57,7 +58,7 @@ obs <- pars[, sprintf("out/083_r%g_d%g.csv", rho, dmax)] |>
       temp <- as.numeric(str_extract(fname, "(?<=T)\\d+\\.?\\d*"))
       init <- sub(".*_([a-z]+).csv", "\\1", fname)
 
-      df <- fread(fname)[(eq_time + 1):.N]
+      df <- fread(fname)[(eq_steps + 1):.N]
       tot_overlaps <- num_particles * (num_particles - 1)
       df[, let(realization = NULL, energy = energy / tot_overlaps)]
 
@@ -67,7 +68,7 @@ obs <- pars[, sprintf("out/083_r%g_d%g.csv", rho, dmax)] |>
     },
     .progress = TRUE
   ) |>
-    rbindlist()
+  rbindlist()
 
 plt <- melt(obs, measure.vars = c("acc_ratio", "energy")) |>
   ggplot(aes(dmax, value, colour = factor(rho))) +
