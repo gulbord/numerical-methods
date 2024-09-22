@@ -6,7 +6,7 @@ EXE := exe
 
 RNG := $(SRC)/utils/random.c
 
-all: 1 2 3 5 6 7 8 10
+all: 1 2 3 5 6 7 8 9 10
 
 clean:
 	rm -f $(EXE)/*
@@ -96,6 +96,11 @@ clean:
 84: $(SRC)/084_lennard_jones.c $(SRC)/offlat/integration.c \
 	$(SRC)/offlat/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/084_lennard_jones
+
+9: 91
+
+91: $(SRC)/091_first_order.c
+	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/091_first_order
 
 10: 102
 
