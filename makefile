@@ -97,10 +97,13 @@ clean:
 	$(SRC)/offlat/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/084_lennard_jones
 
-9: 91
+9: 91 92
 
 91: $(SRC)/091_first_order.c
-	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/091_first_order
+	$(CC) $(CFLAGS) $^ -o $(EXE)/091_first_order
+
+92: $(SRC)/092_higher_order.c
+	$(CC) $(CFLAGS) $^ -o $(EXE)/092_higher_order
 
 10: 102
 
