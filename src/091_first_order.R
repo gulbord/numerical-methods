@@ -49,7 +49,7 @@ plt_err <- copy(results) |>
     labs(
       x = "Time",
       y = "Absolute error",
-      colour = "Variable"
+      colour = "Coordinate",
     ) +
     theme(
       legend.position = "bottom",

@@ -27,7 +27,7 @@ int main(int argc, const char **argv)
         fprintf(stderr, "Wrong number of arguments! (Should be %d)\n", N_ARGS);
         fprintf(stderr, "[executable] [output file prefix] [x0] [p0] [step "
                         "size] [# of steps]\n");
-        return 0;
+        return 1;
     }
 
     double x0 = atof(argv[2]);
