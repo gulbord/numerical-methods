@@ -39,8 +39,8 @@ parallel::mclapply(
       paste("num_steps", num_steps),
       paste("num_eq_steps", num_eq_steps),
       paste("thinning", thinning),
-      paste("num_realizations", num_realizations)
-      paste("init_conf", init_conf)
+      paste("num_realizations", num_realizations),
+      paste("init_conf", init_conf),
       paste("eq_type", eq_type),
       paste("seed", x$seed)
     )
