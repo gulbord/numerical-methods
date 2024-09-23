@@ -116,13 +116,25 @@ the transformation, we get
 \begin{figure}
   \centering
   \includegraphics{img/091a}
-  \caption{absolute error of $x(t)$ and $p(t)$ for the one-dimensional harmonic
-    oscillator integrated with the non-symplectic integrator in
+  \caption{absolute error of $x_{t}$ and $p_{t}$ for the one-dimensional
+    harmonic oscillator integrated with the non-symplectic integrator in
     \cref{eq:non-symp} (left panels) and the symplectic integrator in
     \cref{eq:symp} (right panels). The two upper panels refer to an integration
     with time step $\Delta t = \num{0.01}$, the bottom two to $\Delta t =
     \num{0.001}$.}
   \label{fig:091a}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{img/091b}
+  \caption{Hamiltonian and shadow Hamiltonian of the one-dimensional harmonic
+    oscillator integrated with the non-symplectic integrator in
+    \cref{eq:non-symp} (left panels) and the symplectic integrator in
+    \cref{eq:symp} (right panels). The two upper panels refer to an integration
+    with time step $\Delta t = \num{0.01}$, the bottom two to $\Delta t =
+    \num{0.001}$.}
+  \label{fig:091b}
 \end{figure}
 
 \Cref{fig:091a} shows the absolute integration error of the two presented
@@ -139,14 +151,91 @@ of the non-symplectic integrator, the Hamiltonian grows linearly in time, and
 $\mathcal{H}^{\prime}$ is the one that oscillates around it, also growing in
 time.
 
+\section{Higher order integrators}
+
+\begin{sourcefiles}
+  \item[Source code] src/092\_higher\_order.c
+  \item[Executable] exe/092\_higher\_order
+\end{sourcefiles}
+
+Inside \texttt{src/092\_higher\_order.c}, I implemented two higher order
+integration schemes: \emph{velocity Verlet} and \emph{Beeman’s algorithm}. In
+this case, I left the possibility to set $k$ and $m$ different from \num{1},
+while the rest of the program is broadly similar to
+\texttt{src/091\_first\_order.c}. With a generic $k$, the force at time $t$ is
+$f(x_{t}) = - kx_{t}$, and the velocity Verlet step becomes:
+\begin{align}
+  p_{t + \Delta t / 2} &= p_{t} - \frac{k x_{t}}{2} \Delta t, \\
+  x_{t + \Delta t} &= x_{t} + \frac{p_{t + \Delta t / 2}}{m} \Delta t, \\
+  p_{t + \Delta t} &= p_{t + \Delta t / 2} - \frac{k x_{t + \Delta t}}{2}
+    \Delta t.
+\end{align}
+
+Beeman’s algorithm provides more accuracy in the momentum, but it needs the
+force -- hence, the position -- at the previous time step $t - \Delta t$ to
+update the system to $t + \Delta t$. The algorithm is implemented as follows:
+\begin{align}
+  x_{t + \Delta t} &= x_{t} + \frac{p_{t}}{m} \Delta t -
+  \frac{k(4 x_{t} - x_{t - \Delta t})}{6m} \Delta t^{2}, \\
+  p_{t + \Delta t} &= p_{t} + \frac{k}{6} (2 x_{t + \Delta t} + 5 x_{t} - x_{t -
+  \Delta t}) \Delta t.
+\end{align}
+Since the position at $t = -\Delta t$ is needed to proceed from the initial
+condition $(x_{0}, p_{0})$, I simply used velocity Verlet for the first step of
+Beeman’s.
+
+\section{Testing the higher order integrators}
+
+\begin{sourcefiles}
+  \item[Source code] src/092\_higher\_order.c
+  \item[Analysis script] src/093\_higher\_order.R
+  \item[Executable] exe/092\_higher\_order
+\end{sourcefiles}
+
+For this exercise, I compared the two algorithms presented above in two
+scenarios: a \enquote{normal} one with $k = m = 1$ and $\Delta t = \num{0.1}$,
+and a \enquote{problematic} integration with $k = \num{312.5}$, $m = \num{0.5}$
+and $\Delta t = \num{0.1}$. The second set of parameters corresponds to $\omega
+= \sqrt{k/m} = 25$, and since the stability condition for the velocity Verlet
+algorithm is $\omega \Delta t < 2$, I expected that integrator to fail, and
+possibly also Beeman's.
+
+\Cref{fig:093a,fig:093b} display the results in terms of, respectively, the
+absolute error relative to the exact solution
+\begin{equation}
+  \begin{cases}
+    x_{t} = \cos(\omega t), \\
+    p_{t} = -m \omega \sin(\omega t),
+  \end{cases}
+\end{equation}
+and the relative difference of the Hamiltonian from its initial value,
+$\mathcal{H}_{t} / \mathcal{H}_{0} - 1$. We can notice immediately that the
+second scenario, with $\omega \Delta t = \num{2.5} > 2$, is highly unstable
+for both algorithms: the coordinates, and with them the Hamiltonian, grow
+exponentially with time. Conversely, in the first scenario both algorithms seem
+to work properly, with the errors on $x$ and $p$ oscillating and slowly
+increasing with time, and the Hamiltonian oscillating steadily around a constant
+value -- as expected, since both algorithms are symplectic.
+
 \begin{figure}
   \centering
-  \includegraphics{img/091b}
-  \caption{Hamiltonian and shadow Hamiltonian of the one-dimensional harmonic
-    oscillator integrated with the non-symplectic integrator in
-    \cref{eq:non-symp} (left panels) and the symplectic integrator in
-    \cref{eq:symp} (right panels). The two upper panels refer to an integration
-    with time step $\Delta t = \num{0.01}$, the bottom two to $\Delta t =
-    \num{0.001}$.}
-  \label{fig:091b}
+  \includegraphics{img/093a}
+  \caption{absolute error of $x_{t}$ and $p_{t}$ for the one-dimensional
+    harmonic oscillator integrated with the velocity Verlet scheme (left panels)
+    and Beeman’s algorithm (right panels). The two upper panels refer to an
+    integration with $k = m = 1$, the bottom two to one with $k = \num{312.5}$
+    and $m = \num{0.5}$, while both have $\Delta t = \num{0.1}$.}
+  \label{fig:093a}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{img/093b}
+  \caption{relative difference of the Hamiltonian from its initial value,
+    $\mathcal{H}_{t} / \mathcal{H}_{0} - 1$, for the one-dimensional harmonic
+    oscillator integrated with the velocity Verlet scheme (left panels) and
+    Beeman’s algorithm (right panels). The two upper panels refer to an
+    integration with $k = m = 1$, the bottom two to one with $k = \num{312.5}$
+    and $m = \num{0.5}$, while both have $\Delta t = \num{0.1}$.}
+  \label{fig:093b}
 \end{figure}

@@ -33,7 +33,8 @@ km <- matrix(c(1, k_uns, 1, m_uns), ncol = 2)
 
 plt_err <- rbindlist(results, idcol = "run") |>
   _[, omega := sqrt(km[run, 1] / km[run, 2])] |>
-  _[, let(x = x - cos(omega * time), p = p + omega * sin(omega * time))] |>
+  _[, let(x = x - cos(omega * time),
+          p = p + km[run, 2] * omega * sin(omega * time))] |>
   melt(id.vars = 1:3, measure.vars = c("x", "p"), variable.name = "coord") |>
   ggplot(aes(time, value, colour = coord)) +
     geom_line() +
@@ -65,7 +66,7 @@ plot_tex("093a", plt_err, asp_ratio = 1, scale_factor = 0.9)
 
 plt_ham <- rbindlist(results, idcol = "run") |>
   _[, ham := (p^2 / km[run, 2] + km[run, 1] * x^2) / 2] |>
-  _[, ham := (ham - ham[1]) / ham[1], by = .(run, algo)] |>
+  _[, ham := 100 * (ham - ham[1]) / ham[1], by = .(run, algo)] |>
   ggplot(aes(time, ham)) +
     geom_line() +
     facet_grid(
@@ -81,7 +82,7 @@ plt_ham <- rbindlist(results, idcol = "run") |>
         )
       )
     ) +
-    labs(x = "Time", y = "Relative difference from initial energy") +
+    labs(x = "Time", y = "Relative difference from initial energy (%)") +
     theme(strip.text = ggtext::element_markdown())
 
 plot_tex("093b", plt_ham, asp_ratio = 1, scale_factor = 0.9)
