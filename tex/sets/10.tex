@@ -1,0 +1,44 @@
+\chapter{Interaction potentials and thermostats}
+
+\section{Canonical fluctuations}
+
+The exercise asked to show that the temperature fluctuations in the canonical
+ensemble are
+\begin{equation}
+  \frac{\sigma_{T_{K}}^{2}}{\expval{T_{K}}^{2}} = \frac{\expval{T_{K}^{2}} -
+  \expval{T_{K}}^{2}}{\expval{T_{K}}^{2}} = \frac{2}{3N},
+\end{equation}
+where the kinetic temperature $T_{K}$ is given by
+\begin{equation}
+  T_{K} = \frac{1}{3N k_{\mathrm{B}}} \sum_{i=1}^{N} m_{i} v_{i}^{2}.
+\end{equation}
+
+First, denoting the kinetic energy with $E_{K}$, we can rewrite $T_{K}$ as
+\begin{equation}
+  T_{K} = \frac{2E_{K}}{3N k_{\mathrm{B}}}, \quad \text{with }
+  E_{K} = \frac{1}{2} \sum_{i=1}^{N} m_{i} v_{i}^{2}.
+  \label{eq:tk-ek}
+\end{equation}
+At this point we need the variance of $E_{K}$: we can start from the
+equipartition theorem
+\begin{equation}
+  \expval{E_{K}} = \frac{3N}{2 \beta},
+\end{equation}
+and being in the canonical ensemble we can derive with respect to $\beta$:
+\begin{equation}
+  \sigma_{E_{K}}^{2} = \expval{E_{K}^{2}} - \expval{E_{K}}^{2} =
+  -\pdiff{}{\beta} \expval{E_{K}} = -\frac{3N}{2} \pdiff{}{\beta}\frac{1}{\beta}
+  = \frac{3N}{2 \beta^{2}}.
+\end{equation}
+Putting this into \cref{eq:tk-ek} we get
+\begin{equation}
+  \sigma_{T_{K}}^{2} = \expval{T_{K}^{2}} - \expval{T_{K}}^{2} =
+  \frac{4}{9N^{2} k_{\mathrm{B}}^{2}} \frac{3N}{2 \beta^{2}} = \frac{2}{3N
+  k_{\mathrm{B}}^{2} \beta^{2}}.
+\end{equation}
+By squaring \cref{eq:tk-ek} we also get $\expval{T_{K}}^{2}$, so, finally:
+\begin{equation}
+  \frac{\sigma_{T_{K}}^{2}}{\expval{T_{K}}^{2}} = \frac{2}{3N k_{\mathrm{B}}^{2}
+  \beta^{2}} \frac{9 N^{2} k_{\mathrm{B}}^{2}}{4 \expval{E_{K}}^{2}} =
+  \frac{3N}{2 \beta^{2}} \frac{4 \beta^{2}}{9 N^{2}} = \frac{2}{3N}.
+\end{equation}
