@@ -5,9 +5,51 @@ if (!is.na(src))
 source("src/preamble.R")
 if (!exists(".Random.seed")) invisible(runif(1))
 
+L <- 50L
+N <- L * L
+num_steps <- 5e5L
+Tc <- 2 / log(1 + sqrt(2))
+temps <- c(Tc / 2, Tc, 2 * Tc)
+temp_names <- c("low", "crit", "high")
+
+# for (i in seq_along(temps)) {
+#   argv <- sprintf(
+#     "exe/061_ising_wolff %s %d %g %d 0",
+#     temp_names[i], L, temps[i], num_steps
+#   )
+#   system(argv)
+# }
+
+plt_temps <- lapply(
+  temp_names,
+  function(f) {
+    df <- fread(sprintf("out/061_%s.csv", f), select = "clus_size")
+    h <- hist(df$clus_size, breaks = "FD", plot = FALSE)
+
+    mask <- h$counts > 0
+    x <- h$mids[mask]
+    y <- h$counts[mask]
+    err <- sqrt(y)
+
+    ggplot(data.table(x, y, err)) +
+      geom_pointrange(
+        aes(x, y, ymin = y - err, ymax = y + err),
+        size = 0.04,
+        linewidth = 0.4,
+      ) +
+      scale_y_log10(guide = "axis_logticks") +
+      labs(x = "Cluster size", y = "Count")
+  }
+)
+
+plot_tex("061a", plt_temps[[1]], asp_ratio = 4 / 3, scale_factor = 0.75)
+plot_tex("061b", plt_temps[[2]], asp_ratio = 4 / 3, scale_factor = 0.75)
+plot_tex("061c", plt_temps[[3]], asp_ratio = 4 / 3, scale_factor = 0.75)
+
+# Second part: autocorrelations
+
 lat_sides <- round(exp(seq(log(40), log(70), length.out = 6)))
 num_steps <- 1e6L
-Tc <- 2 / log(1 + sqrt(2))
 
 pars <- data.table(
   algo = rep(c("metro", "wolff"), times = length(lat_sides)),
@@ -57,7 +99,7 @@ taus <- parallel::mclapply(
   rbindlist() |>
   _[, side := lat_sides]
 
-plt <- taus |>
+plt_acor <- taus |>
   melt(
     id.vars = "side",
     measure.vars = measure(algorithm, variable, sep = ".")
@@ -87,7 +129,7 @@ plt <- taus |>
       fill = "Observable",
     )
 
-plot_tex("061d", plt, asp_ratio = 1, scale_factor = 0.75)
+plot_tex("061d", plt_acor, asp_ratio = 1, scale_factor = 0.75)
 
 # Parameters
 fits <- taus |>
@@ -98,4 +140,4 @@ fits <- taus |>
   _[, broom::tidy(lm(log(value) ~ log(side)))
     , by = .(algorithm, variable)]
 
-fwrite(fits, "src/data/061b_fits.csv")
+fwrite(fits, "src/data/061_fits.csv")
