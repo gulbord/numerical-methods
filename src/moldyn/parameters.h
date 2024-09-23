@@ -24,6 +24,7 @@ struct parameters {
     int num_realizations;
     char init_conf[TOKEN_BUFSIZ];
     char eq_type[TOKEN_BUFSIZ];
+    unsigned long seed;
 };
 
 int parse_config(const char *filename, struct parameters *params);

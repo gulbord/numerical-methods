@@ -32,6 +32,7 @@ int parse_config(const char *filename, struct parameters *params)
     params->num_realizations = 1;
     strcpy(params->init_conf, "random");
     strcpy(params->eq_type, "md");
+    params->seed = 0;
 
     // Read line by line and split key-value pairs by whitespace
     char line[LINE_BUFSIZ];
@@ -79,6 +80,8 @@ int parse_config(const char *filename, struct parameters *params)
             strcpy(params->init_conf, value);
         else if (strcmp(key, "eq_type") == 0)
             strcpy(params->eq_type, value);
+        else if (strcmp(key, "seed") == 0)
+            params->seed = atol(value);
     }
 
     if (params->temperature < 0.0) {
