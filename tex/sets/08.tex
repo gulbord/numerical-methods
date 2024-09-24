@@ -1,4 +1,4 @@
-\chapter{Off-lattice Monte Carlo simulations}
+\chapter{Off-lattice Monte Carlo simulations}\label{ch:offlat}
 
 \section{Reduced units}
 
@@ -55,7 +55,7 @@ of $\eta$ are thus $\unit{m^{-1} s^{-1}}$, and using once again
   \sqrt{\frac{\epsilon_{\ce{X}}}{m_{\ce{X}}}}.
 \end{equation}
 
-\section{Program prototype}
+\section{Program prototype}\label{ex:082}
 
 \begin{sourcefiles}
   \item[Source codes] src/082\_off\_lattice\_mc.c, src/offlat/integration.c,
@@ -68,15 +68,15 @@ off-lattice Monte Carlo simulation. \texttt{parameters.c} and
 \texttt{parameters.h} define a \texttt{struct parameters} to hold the simulation
 parameters that are fed to the program through a configuration file with a
 \texttt{keyword\textvisiblespace value} format. The function
-\texttt{parse\_config} reads the configuration file and updates the
+\texttt{parse\_config()} reads the configuration file and updates the
 \texttt{struct parameters} it receives. The parameters to set are:
 \begin{description}[font=\normalfont\ttfamily]
   \item[num\_particles] number of particles.
   \item[box\_size] length of the (cubic) simulation box's side, in reduced
     units.
   \item[density] in reduced units. Only two between this and the two
-    previous two parameters need be specified; \texttt{parse\_config} calculates
-    the remaining one.
+    previous two parameters need be specified; \texttt{parse\_config()}
+    calculates the remaining one.
   \item[temperature] in reduced units.
   \item[max\_disp] maximum displacement in each Cartesian direction of a Monte
     Carlo trial move, in reduced units.
@@ -85,6 +85,7 @@ parameters that are fed to the program through a configuration file with a
   \item[num\_realizations] number of system realizations.
   \item[init\_conf] initialization strategy, either \texttt{random} or
     (cubic) \texttt{lattice}.
+  \item[seed] for the \abbr{rng}.
 \end{description}
 
 \texttt{integration.c} holds two functions that take the \texttt{parameters}
@@ -92,14 +93,15 @@ structure updated through the configuration file to run the specified
 simulation. The first function, \texttt{initialize}, populates a \texttt{double}
 array of $3 \times \text{\texttt{num\_particles}}$ elements (flattened) with
 particle coordinates determined by the strategy set with the \texttt{init\_conf}
-parameter. The second function, \texttt{sweep}, performs a single Monte Carlo
+parameter. The second function, \texttt{sweep()}, performs a single Monte Carlo
 sweep of \texttt{num\_particles} trial moves using the Metropolis algorithm. The
-\texttt{sweep} function requires a pointer to a \texttt{compute\_energy\_delta()}
-function, specific to the system being simulated, which returns the energy
-difference resulting from the trial move. The header file \texttt{integration.h}
-also defines a \texttt{struct observables}, intended to store the current system
-energy and the acceptance ratio from the last sweep. The \texttt{sweep} function
-takes a \texttt{struct observables} as an argument and updates it accordingly.
+\texttt{sweep()} function requires a pointer to a
+\texttt{compute\_energy\_delta()} function, specific to the system being
+simulated, which returns the energy difference resulting from the trial move.
+The header file \texttt{integration.h} also defines a \texttt{struct
+observables}, intended to store the current system energy and the acceptance
+ratio from the last sweep. The \texttt{sweep()} function takes a \texttt{struct
+observables} as an argument and updates it accordingly.
 
 \section{Hard spheres}
 

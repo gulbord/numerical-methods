@@ -52,3 +52,24 @@ By squaring \cref{eq:tk-ek} we also get $\expval{T_{K}}^{2}$, so, finally:
   \item[Analysis script] src/102\_lennard\_jones.R
   \item[Executable] exe/102\_lennard\_jones
 \end{sourcefiles}
+
+The six source files inside the \texttt{src/moldyn} directory have a similar
+structure to those from \cref{ch:offlat}. \texttt{parameters.c} and
+\texttt{parameters.h} workin the same way as their previously mentioned
+namesakes, but present a larger set of parameters. Those listed in \cref{ex:082}
+are still there -- with \texttt{max\_disp} now referring only to the (optional)
+Monte Carlo equilibration phase, while the additional ones are:
+\begin{description}[font=\normalfont\ttfamily]
+  \item[r\_cut] cut radius of the potential.
+  \item[step\_size] of the Molecular Dynamics simulation.
+  \item[eq\_type] either \texttt{mc} (Monte Carlo) or \texttt{md} (Molecular
+    Dynamics).
+  \item[num\_eq\_steps] number of Monte Carlo sweeps or \abbr{md} steps in the
+    equilibration phase. The total number of steps in the simulation is thus
+    $\text{\texttt{num\_eq\_steps}} + \text{\texttt{num\_steps}}$.
+  \item[thinning] if larger than \num{1}, the program writes to file every
+    \texttt{thinning} non-equilibration steps.
+  \item[rdf\_max\_radius] maximum inter-particle distance to consider in the
+    calculation of the radial distribution function.
+  \item[rdf\_num\_bins] number of bins for the radial distribution function.
+\end{description}
