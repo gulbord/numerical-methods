@@ -16,7 +16,7 @@ static void thermostat(struct particle *particles,
         for (int i = 0; i < params->num_particles; ++i)
             for (int j = 0; j < 3; ++j)
                 kin_temp += particles[i].v[j] * particles[i].v[j];
-        kin_temp /= 3 * params->num_particles;
+        kin_temp /= 3.0 * params->num_particles;
 
         // Rescale velocities
         double temp_delta = params->temperature / kin_temp - 1.0;
@@ -65,6 +65,25 @@ void initialize(struct particle *particles, const struct parameters *params)
             }
         }
     }
+
+    // Initialize velocities with Maxwell-Boltzmann
+    double v_tot[3] = {0.0, 0.0, 0.0};
+    double sigma_mb = sqrt(params->temperature);
+    for (int i = 0; i < params->num_particles; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            double v = sigma_mb * rng_gauss();
+            particles[i].v[j] = v;
+            v_tot[j] += v;
+        }
+    }
+
+    // Normalize total momentum and subtract it from each velocity
+    for (int i = 0; i < 3; ++i)
+        v_tot[i] /= params->num_particles;
+
+    for (int i = 0; i < params->num_particles; ++i)
+        for (int j = 0; j < 3; ++j)
+            particles[i].v[j] -= v_tot[j];
 }
 
 void equilibrate(struct particle *particles, const struct parameters *params,
@@ -93,25 +112,6 @@ void equilibrate(struct particle *particles, const struct parameters *params,
         for (int t = 0; t < params->num_eq_steps; ++t)
             step(particles, params, compute_forces);
     }
-
-    // Initialize velocities with Maxwell-Boltzmann
-    double v_tot[3] = {0.0, 0.0, 0.0};
-    double sigma_mb = sqrt(params->temperature);
-    for (int i = 0; i < params->num_particles; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            double v = sigma_mb * rng_gauss();
-            particles[i].v[j] = v;
-            v_tot[j] += v;
-        }
-    }
-
-    // Normalize total momentum and subtract it from each velocity
-    for (int i = 0; i < 3; ++i)
-        v_tot[i] /= params->num_particles;
-
-    for (int i = 0; i < params->num_particles; ++i)
-        for (int j = 0; j < 3; ++j)
-            particles[i].v[j] -= v_tot[j];
 }
 
 void step(struct particle *particles, const struct parameters *params,

@@ -42,7 +42,7 @@ void update_obs(struct observables *obs, const struct particle *particles,
     for (int i = 0; i < params->rdf_num_bins; ++i)
         obs->rdf[i] *= k / (3 * i * i + 3 * i + 1);
 
-    obs->temperature = obs->kin_energy / (3 * params->num_particles);
-    obs->kin_energy /= 2 * params->num_particles;
+    obs->temperature = obs->kin_energy / (3.0 * params->num_particles);
+    obs->kin_energy /= 2.0 * params->num_particles;
     obs->pot_energy /= params->num_particles;
 }
