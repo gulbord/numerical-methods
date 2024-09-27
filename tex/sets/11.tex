@@ -1,0 +1,67 @@
+\chapter{Langevin and Brownian dynamics}
+
+\section{Validity of the Langevin approach}
+
+As suggested, let’s consider a time scale of $\tau_{\mathrm{coll}} =
+\qty{e-12}{s}$ for the heat bath fluctuations. We want our algorithm to have a
+time step $\Delta t$ at least \num{10} times larger than $\tau_{\mathrm{coll}}$,
+i.e. $\Delta t > \qty{e-11}{s}$. We also assume the characteristic time of the
+dynamics $\tau$ to be of the order of $\num{100}\, \Delta t$.
+
+$\tau$ can be related to the mass, characteristic length $\sigma$ and
+characteristic energy -- which we take equal to the thermal energy
+$k_{\mathrm{B}} T$ at $T = \qty{300}{K}$ -- of the particle as follows:
+\begin{equation}
+  \tau = \sqrt{\frac{m \sigma^{2}}{k_{\mathrm{B}} T}}.
+\end{equation}
+If we take a spherical particle with roughly the same density as water, we get
+\begin{equation}
+  \tau = \sqrt{\frac{\pi \rho \sigma^{5}}{6 \smash[b]{k_{\mathrm{B}}} T}}
+  \approx (\qty{3.6e11}{s\per\meter^{5/2}}) \, \sigma^{5/2},
+\end{equation}
+which implies the inequality
+\begin{equation}
+  \sigma \approx (\qty{2.4e-5}{m\per\second^{2/5}})\, \tau^{2/5} >
+  \qty{6e-9}{m}
+  \label{eq:langevin-req}
+\end{equation}
+for the characteristic length scale of the particle.
+
+For the second question, we start from the mean square displacement in a
+diffusive regime,
+\begin{equation}
+  \expval{(x(t) - x_{0})^{2}} \approx 2Dt.
+\end{equation}
+To have a displacement of $\sigma$ in a time $\Delta t$ we need
+\begin{equation}
+  \sigma^{2} \approx 2 D \Delta t \implies
+  D \approx \frac{\sigma^{2}}{2 \Delta t}.
+\end{equation}
+From the Stokes--Einstein relation,
+\begin{equation}
+  D = \frac{k_{\mathrm{B}} T}{3 \pi \eta \sigma},
+\end{equation}
+and taking $\eta = \qty{0.853e-3}{Pa.s}$ as the viscosity of water at
+\qty{300}{K}, we get:
+\begin{equation}
+  \frac{k_{\mathrm{B}} T}{3 \pi \eta \sigma} \approx
+  \frac{\sigma^{2}}{2 \Delta t} \implies \Delta t \approx
+  \frac{3 \pi \eta \sigma^{3}}{2k_{\mathrm{B}} T} \approx
+  (\qty{9.7e-17}{s\per m^{3}}) \, \sigma^{3}.
+  \label{eq:timescale-brownian}
+\end{equation}
+With $\sigma = \qty{e-8}{m}$ we have a time scale $\Delta t \approx
+\qty{e-6}{s}$, perfectly compatible with the requirement for the Langevin
+description.
+
+Lastly, the exercise asked to show that Brownian motion becomes negligible for
+particles sizes above
+$\sigma = \qty{5}{\micro m}$. If we assume the Brownian motion description is
+valid up to a time scale on the order of seconds, and we set $\Delta t =
+\qty{1}{s}$ in \cref{eq:timescale-brownian}, we get:
+\begin{equation}
+  \sigma = \biggl(\frac{2k_{\mathrm{B}} T \Delta t}{3 \pi \eta}\biggr)^{1/3}
+  \approx \qty{1}{\micro m}.
+\end{equation}
+Beyond this scale, the Langevin description is no longer applicable, and
+inertial forces become dominant.
