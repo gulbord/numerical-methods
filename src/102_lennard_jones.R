@@ -53,8 +53,6 @@ eq_type <- "mc"
 #   mc.cores = min(10L, parallel::detectCores() - 2L)
 # )
 
-fnames <- sprintf("out/102_rc%g_obs.csv", pars$r_cut)
-
 pot <- sprintf("out/102_rc%g_obs.csv", pars$r_cut) |>
   lapply(
     function(fname) {
@@ -73,7 +71,7 @@ plt_pot <- ggplot(pot[sample > 10], aes(pot_energy, factor(r_cut))) +
     linewidth = 0.25
   ) +
   scale_y_discrete(labels = c("2<sup>1/6</sup>", unique(pot$r_cut)[-1])) +
-  labs(x = "Potential energy", y = "Cut radius") +
+  labs(x = "Potential energy", y = "Cutoff radius") +
   theme(axis.text.y = ggtext::element_markdown())
 
 plot_tex("102a", plt_pot, asp_ratio = 4 / 5, scale_factor = 1)
@@ -93,7 +91,7 @@ plt_rdf_all <- ggplot(rdf, aes(radius, rdf, colour = r_cut, group = r_cut)) +
   labs(
     x = "<i>r</i>",
     y = "<i>g</i>(<i>r</i>)",
-    colour = "Cut radius",
+    colour = "Cutoff radius",
   ) +
   theme(axis.title = ggtext::element_markdown())
 
