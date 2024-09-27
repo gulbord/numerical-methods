@@ -1,12 +1,13 @@
 \chapter{Interaction potentials and thermostats}
 
-\section{Canonical fluctuations}
+\section{Canonical fluctuations}\label{ex:101}
 
 The exercise asked to show that the temperature fluctuations in the canonical
 ensemble are
 \begin{equation}
   \frac{\sigma_{T_{K}}^{2}}{\expval{T_{K}}^{2}} = \frac{\expval{T_{K}^{2}} -
   \expval{T_{K}}^{2}}{\expval{T_{K}}^{2}} = \frac{2}{3N},
+  \label{eq:sigmaTK-def}
 \end{equation}
 where the kinetic temperature $T_{K}$ is given by
 \begin{equation}
@@ -108,6 +109,35 @@ after \num{1000} Monte Carlo sweeps for equilibration -- with a thinning of
 \num{10} and repeated for \num{10} realizations. I varied $r_{\mathrm{cut}}$
 from $2^{1/6}$ to \num{3.9} with steps of \num{0.2}, in units of $\sigma$.
 
+\begin{figure}
+  \centering
+  \includegraphics{img/102a}
+  \caption{potential energy distributions at different cutoff radii for a
+    Lennard-Jones system of \num{200} particles, box size $L = \num{10}$ and
+    temperature $T = \num{1}$. Each histogram is the aggregate of \num{10}
+    realizations with \num{10000} \abbr{md} steps, sampled every \num{10} steps
+    after an equilibration phase of \num{1000} \abbr{mc} sweeps.}
+  \label{fig:102a}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{img/102b}
+  \caption{radial distribution function $g(r)$ at different cutoff radii for a
+    Lennard-Jones system of \num{200} particles, box size $L = \num{10}$ and
+    temperature $T = \num{1}$. Each line is the average over \num{10}
+    realizations with \num{10000} \abbr{md} steps, sampled every \num{10} steps
+    after an equilibration phase of \num{1000} \abbr{mc} sweeps.}
+  \label{fig:102b}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{img/102c}
+  \caption{a selection of $g(r)$ profiles from \cref{fig:102b}.}
+  \label{fig:102c}
+\end{figure}
+
 \Cref{fig:102a} shows the resulting potential energy distributions overlaid for
 comparison. In general, the distribution broadens and the average decreases as
 the cutoff radius increases. This behaviour is expected, as longer-distance
@@ -119,31 +149,81 @@ displays a single peak around the equilibrium distance $2^{1/6}$, followed by a
 rapid decay to \num{1}. However, with larger cutoff radii, the first peak grows,
 and a second one appears, indicating a transition to a more liquid phase.
 
+\section{Lennard-Jones fluid with thermostats}
+
+\begin{sourcefiles}
+  \item[Source codes] src/102\_lennard\_jones.c, src/moldyn/integration.c,
+    src/moldyn/integration.h, src/moldyn/observables.c,
+    src/moldyn/observables.h, src/moldyn/parameters.c, src/moldyn/parameters.h
+  \item[Analysis script] src/103\_thermostats.R
+  \item[Executable] exe/102\_lennard\_jones
+\end{sourcefiles}
+
+This exercise shares the same source code as the previous one. Inside the
+\texttt{step()} function defined in \texttt{integration.c}, there is a call to a
+\texttt{thermostat()} function, which is controlled by three parameters set
+through the configuration file and a call to \texttt{parse\_config()}. The first
+parameter, \texttt{thermostat}, and can be one of the following: \texttt{none},
+\texttt{andersen} for an Andersen thermostat or \texttt{berendsen} for a
+Berendsen thermostat. The other two parameters, \texttt{andersen\_freq} and
+\texttt{berendsen\_tau}, are only used when the corresponding thermostat is
+selected.
+
+The Andersen thermostat consists in \enquote{resetting} the velocity of randomly
+chosen particles, with new values drawn from the equilibrium Maxwell--Boltzmann
+distribution to simulate collisions with a heat bath. These collisions occur at
+a rate $\omega$; at each time step, a particle’s velocity is reset with
+probability $\omega \Delta t$, where $\Delta t$ is the integration time step.
+The rate $\omega$ is set by the aforementioned \texttt{andersen\_freq}
+parameter. The Berendsen thermostat is instead a multiplicative velocity
+rescaling, with a scaling factor $\lambda$ defined as:
+\begin{equation}
+  \lambda = \sqrt{1 + \frac{\Delta t}{\tau} \left(\frac{T_{0}}{T_{K}} - 1
+  \right)},
+\end{equation}
+where $T_{0}$ is the reference temperature and $T_{K}$ the current kinetic
+temperature. The parameter $\tau$, which controls the rate of temperature
+coupling, is set by the \texttt{berendsen\_tau} parameter.
+
 \begin{figure}
   \centering
-  \includegraphics{img/102a}
-  \caption{potential energy distributions at different cutoff radii for a
-    Lennard-Jones system of \num{200} particles, box size $L = \num{10}$ and
-    temperature $T = \num{1}$. Each histogram is the aggregate of \num{10}
-    realizations with \num{10000} \abbr{md} steps sampled every \num{10}, after
-    an equilibration phase of \num{1000} \abbr{mc} sweeps.}
-  \label{fig:102a}
+  \includegraphics{img/103a}
+  \caption{box and whiskers plots of the kinetic energy distributions as a
+    function of the number of particles, for Lennard-Jones systems with a box
+    size of $L = \num{10}$ and temperature $T = \num{2}$, thermally regulated
+    using both the Andersen and Berendsen thermostats. Each run consists of
+    \num{10} realizations of \num{10000} \abbr{md} steps, sampled every \num{10}
+    steps after an equilibration phase of \num{1000} \abbr{mc} sweeps. The lower
+    and upper hinges correspond to the 25th and 75th percentiles, the central
+    line to the median, while the whiskers extend \num{1.5} times the
+    $\mathrm{IQR}$ from each hinge.}
+  \label{fig:103a}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics{img/102b}
-  \caption{radial distribution function $g(r)$ at different cutoff radii for a
-    Lennard-Jones system of \num{200} particles, box size $L = \num{10}$ and
-    temperature $T = \num{1}$. Each line is the average over \num{10}
-    realizations with \num{10000} \abbr{md} steps sampled every \num{10}, after
-    an equilibration phase of \num{1000} \abbr{mc} sweeps.}
-  \label{fig:102b}
+  \includegraphics{img/103b}
+  \caption{relative variance of the kinetic temperature $T_{K}$, as defined in
+    \cref{eq:sigmaTK-def}, as a function of the number of particles, for the
+    Lennard-Jones simulations of \cref{fig:103a}. The error bars indicate the
+    standard deviation across the realizations, while the dashed line represents
+    the theoretical prediction $\sigma_{T_{K}}^{2} / \expval{T_{K}}^{2} = 2 /
+    (3N)$.}
+  \label{fig:103b}
 \end{figure}
 
-\begin{figure}
-  \centering
-  \includegraphics{img/102c}
-  \caption{a selection of $g(r)$ profiles from \cref{fig:102b}.}
-  \label{fig:102c}
-\end{figure}
+\Cref{fig:103a,fig:103b} show the results of \num{10} runs performed with
+different values of $N$, ranging from \num{20} to \num{200}, while keeping $L =
+\num{10}$ and $T = \num{2}$ fixed. The kinetic energy distributions in
+\cref{fig:103a} align with expectations: since $E_{K} / k_{\mathrm{B}} = 3 N
+T_{K} / 2$, we observe a kinetic energy per particle of \num{3} when $T =
+\num{2}$, in reduced units. Both thermostats perform well in this regard, but
+the superiority of the Andersen thermostat becomes apparent in \cref{fig:103b},
+which illustrates the scaling of the relative variance of $T_{K}$. As discussed
+in \cref{ex:101}, we expect:
+\begin{equation}
+  \frac{\sigma_{T_{K}}^{2}}{\expval{T_{K}}^{2}} = \frac{2}{3N}.
+\end{equation}
+Indeed, only the averages from the Andersen-thermostatted runs align with the
+theoretical prediction line in \cref{fig:103b}, while the Berendsen thermostat
+leads to extremely narrow $E_{K}$ distributions in comparison.

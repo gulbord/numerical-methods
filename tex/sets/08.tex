@@ -90,12 +90,12 @@ parameters that are fed to the program through a configuration file with a
 
 \texttt{integration.c} holds two functions that take the \texttt{parameters}
 structure updated through the configuration file to run the specified
-simulation. The first function, \texttt{initialize}, populates a \texttt{double}
-array of $3 \times \text{\texttt{num\_particles}}$ elements (flattened) with
-particle coordinates determined by the strategy set with the \texttt{init\_conf}
-parameter. The second function, \texttt{sweep()}, performs a single Monte Carlo
-sweep of \texttt{num\_particles} trial moves using the Metropolis algorithm. The
-\texttt{sweep()} function requires a pointer to a
+simulation. The first function, \texttt{initialize()}, populates a
+\texttt{double} array of $3 \times \text{\texttt{num\_particles}}$ elements
+(flattened) with particle coordinates determined by the strategy set with the
+\texttt{init\_conf} parameter. The second function, \texttt{sweep()}, performs a
+single Monte Carlo sweep of \texttt{num\_particles} trial moves using the
+Metropolis algorithm. The \texttt{sweep()} function requires a pointer to a
 \texttt{compute\_energy\_delta()} function, specific to the system being
 simulated, which returns the energy difference resulting from the trial move.
 The header file \texttt{integration.h} also defines a \texttt{struct
