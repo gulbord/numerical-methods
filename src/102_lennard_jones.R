@@ -71,7 +71,7 @@ plt_pot <- ggplot(pot[sample > 10], aes(pot_energy, factor(r_cut))) +
     linewidth = 0.25
   ) +
   scale_y_discrete(labels = c("2<sup>1/6</sup>", unique(pot$r_cut)[-1])) +
-  labs(x = "Potential energy", y = "Cutoff radius") +
+  labs(x = "Potential energy per particle", y = "Cutoff radius") +
   theme(axis.text.y = ggtext::element_markdown())
 
 plot_tex("102a", plt_pot, asp_ratio = 4 / 5, scale_factor = 1)
