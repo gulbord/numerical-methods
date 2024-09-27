@@ -45,13 +45,26 @@
 
 \def\ps@headings{%
 	\let\@oddfoot\@empty\let\@evenfoot\@empty
-	\def\@evenhead{\rlap\thepage\hfil{\itshape\leftmark}
-		\hfil\llap{\S\thesection}}%
-	\def\@oddhead{\rlap{\S\thesection}\hfil{\itshape\rightmark}
-		\hfil\llap\thepage}%
+	\def\@evenhead{%
+    \rlap\thepage%
+    \hfil{\itshape\leftmark}%
+    \ifnum\c@section>0
+      \hfil\llap{\S\thesection}%
+    \else
+    \fi
+  }
+	\def\@oddhead{%
+    \ifnum\c@section>0
+      \rlap{\S\thesection}\hfil%
+    \else
+    \fi
+    {\itshape\rightmark}%
+    \hfil\llap\thepage%
+  }%
 	\let\@mkboth\markboth
 	\def\chaptermark##1{\markboth{##1}{##1}}%
-	\def\sectionmark##1{\markright{##1}}}
+	\def\sectionmark##1{\markright{##1}}%
+}
 
 % get parindent as in normal text
 \newlength\normalparindent
@@ -65,7 +78,7 @@
 	\long\def\@makefntext##1{\hangindent\normalparindent\noindent
 		\hb@xt@\normalparindent{\normalfont\@thefnmark.\hss}##1}%
 	\newpage
-	\global\@topnum\z@   % Prevents figures from going at top of page.
+	\global\@topnum\z@ % Prevents figures from going at top of page.
 	\@maketitle
 	\thispagestyle{empty}\@thanks
 	\endgroup
