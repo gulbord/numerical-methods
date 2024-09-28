@@ -187,9 +187,7 @@ Beeman’s.
 \section{Testing the higher order integrators}
 
 \begin{sourcefiles}
-  \item[Source code] src/092\_higher\_order.c
   \item[Analysis script] src/093\_higher\_order.R
-  \item[Executable] exe/092\_higher\_order
 \end{sourcefiles}
 
 For this exercise, I compared the two algorithms presented above in two
@@ -199,23 +197,6 @@ and $\Delta t = \num{0.1}$. The second set of parameters corresponds to $\omega
 = \sqrt{k/m} = 25$, and since the stability condition for the velocity Verlet
 algorithm is $\omega \Delta t < 2$, I expected that integrator to fail, and
 possibly also Beeman's.
-
-\Cref{fig:093a,fig:093b} display the results in terms of, respectively, the
-absolute error relative to the exact solution
-\begin{equation}
-  \begin{cases}
-    x_{t} = \cos(\omega t), \\
-    p_{t} = -m \omega \sin(\omega t),
-  \end{cases}
-\end{equation}
-and the relative difference of the Hamiltonian from its initial value,
-$\mathcal{H}_{t} / \mathcal{H}_{0} - 1$. We can notice immediately that the
-second scenario, with $\omega \Delta t = \num{2.5} > 2$, is highly unstable
-for both algorithms: the coordinates, and with them the Hamiltonian, grow
-exponentially with time. Conversely, in the first scenario both algorithms seem
-to work properly, with the errors on $x$ and $p$ oscillating and slowly
-increasing with time, and the Hamiltonian oscillating steadily around a constant
-value -- as expected, since both algorithms are symplectic.
 
 \begin{figure}
   \centering
@@ -239,3 +220,20 @@ value -- as expected, since both algorithms are symplectic.
     and $m = \num{0.5}$, while both have $\Delta t = \num{0.1}$.}
   \label{fig:093b}
 \end{figure}
+
+\Cref{fig:093a,fig:093b} display the results in terms of, respectively, the
+absolute error relative to the exact solution
+\begin{equation}
+  \begin{cases}
+    x_{t} = \cos(\omega t), \\
+    p_{t} = -m \omega \sin(\omega t),
+  \end{cases}
+\end{equation}
+and the relative difference of the Hamiltonian from its initial value,
+$\mathcal{H}_{t} / \mathcal{H}_{0} - 1$. We can notice immediately that the
+second scenario, with $\omega \Delta t = \num{2.5} > 2$, is highly unstable
+for both algorithms: the coordinates, and with them the Hamiltonian, grow
+exponentially with time. Conversely, in the first scenario both algorithms seem
+to work properly, with the errors on $x$ and $p$ oscillating and slowly
+increasing with time, and the Hamiltonian oscillating steadily around a constant
+value -- as expected, since both algorithms are symplectic.
