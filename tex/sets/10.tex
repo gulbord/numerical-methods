@@ -112,11 +112,12 @@ from $2^{1/6}$ to \num{3.9} with steps of \num{0.2}, in units of $\sigma$.
 \begin{figure}
   \centering
   \includegraphics{img/102a}
-  \caption{potential energy distributions at different cutoff radii for a
-    Lennard-Jones system of \num{200} particles, box size $L = \num{10}$ and
-    temperature $T = \num{1}$. Each histogram is the aggregate of \num{10}
-    realizations with \num{10000} \abbr{md} steps, sampled every \num{10} steps
-    after an equilibration phase of \num{1000} \abbr{mc} sweeps.}
+  \caption{potential energy distributions, with tail corrections removed, at
+    different cutoff radii for a Lennard-Jones system of \num{200} particles,
+    box size $L = \num{10}$ and temperature $T = \num{1}$. Each histogram is the
+    aggregate of \num{10} realizations with \num{10000} \abbr{md} steps, sampled
+    every \num{10} steps after an equilibration phase of \num{1000} \abbr{mc}
+    sweeps.}
   \label{fig:102a}
 \end{figure}
 
@@ -138,25 +139,22 @@ from $2^{1/6}$ to \num{3.9} with steps of \num{0.2}, in units of $\sigma$.
   \label{fig:102c}
 \end{figure}
 
-\Cref{fig:102a} shows the resulting potential energy distributions overlaid for
-comparison. In general, the distribution broadens and the average decreases as
-the cutoff radius increases. This behaviour is expected, as longer-distance
-interactions lead to a more tightly bound system. In contrast, at smaller values
-of $r_{\mathrm{cut}}$, the fluid behaves almost like a non-interacting gas. This
-trend is further supported by the evolution of the radial distribution function,
-shown in \cref{fig:102b,fig:102c}. When $r_{\mathrm{cut}}$ is small, $g(r)$
-displays a single peak around the equilibrium distance $2^{1/6}$, followed by a
-rapid decay to \num{1}. However, with larger cutoff radii, the first peak grows,
-and a second one appears, indicating a transition to a more liquid phase.
+\Cref{fig:102a} shows the resulting potential energy distributions, with tail
+corrections removed, overlaid for comparison. In general, the distribution
+broadens and the average decreases as the cutoff radius increases. This
+behaviour is expected, as longer-distance interactions lead to a more tightly
+bound system. In contrast, at smaller values of $r_{\mathrm{cut}}$, the fluid
+behaves almost like a non-interacting gas. This trend is further supported by
+the evolution of the radial distribution function, shown in
+\cref{fig:102b,fig:102c}. When $r_{\mathrm{cut}}$ is small, $g(r)$ displays a
+single peak around the equilibrium distance $2^{1/6}$, followed by a rapid decay
+to \num{1}. However, with larger cutoff radii, the first peak grows, and a
+second one appears, indicating a transition to a more liquid phase.
 
 \section{Lennard-Jones fluid with thermostats}
 
 \begin{sourcefiles}
-  \item[Source codes] src/102\_lennard\_jones.c, src/moldyn/integration.c,
-    src/moldyn/integration.h, src/moldyn/observables.c,
-    src/moldyn/observables.h, src/moldyn/parameters.c, src/moldyn/parameters.h
   \item[Analysis script] src/103\_thermostats.R
-  \item[Executable] exe/102\_lennard\_jones
 \end{sourcefiles}
 
 This exercise shares the same source code as the previous one. Inside the

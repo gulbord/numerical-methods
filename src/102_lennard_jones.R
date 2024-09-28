@@ -53,6 +53,7 @@ eq_type <- "mc"
 #   mc.cores = min(10L, parallel::detectCores() - 2L)
 # )
 
+utail <- \(r) (8 * pi / 9) * density * (1 / r^9 - 3 / r^3)
 pot <- sprintf("out/102_rc%g_obs.csv", pars$r_cut) |>
   lapply(
     function(fname) {
@@ -60,7 +61,8 @@ pot <- sprintf("out/102_rc%g_obs.csv", pars$r_cut) |>
       return(cbind(r_cut, fread(fname)))
     }
   ) |>
-  rbindlist()
+  rbindlist() |>
+  _[, pot_energy := pot_energy - utail(r_cut)]
 
 plt_pot <- ggplot(pot[sample > 10], aes(pot_energy, factor(r_cut))) +
   ggridges::geom_density_ridges(
