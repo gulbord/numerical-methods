@@ -1,0 +1,28 @@
+\chapter{Reweighting techniques}
+
+\section{Change of measure}
+
+Let $\pi$ be a canonical distribution at inverse temperature $\beta$:
+\begin{equation}
+  \pi(\mathcal{C}) = \frac{e^{-\beta E(\mathcal{C})}}{\mathcal{Z}},
+  \quad \text{with } \mathcal{Z} = \sum_{\mathcal{C}} e^{-\beta E(\mathcal{C})}.
+  \label{eq:pi-dist-def}
+\end{equation}
+Therefore, the expected value of an observable $\mathcal{O}$ under $\pi$ can be
+written as
+\begin{equation}
+  \expval{\mathcal{O}}_{\pi}
+  = \sum_{\mathcal{C}} \mathcal{O}(\mathcal{C}) \pi(\mathcal{C})
+  = \sum_{\mathcal{C}} \frac{\mathcal{O}(\mathcal{C})
+  \pi(\mathcal{C})}{g(\mathcal{C})} \, g(\mathcal{C}) =
+  \expval*{\frac{\mathcal{O} \pi}{g}}_{g}.
+\end{equation}
+Using \cref{eq:pi-dist-def}, we can then write
+\begin{equation}
+  \expval*{\frac{\mathcal{O} \pi}{g}}_{g}
+  = \frac{1}{\mathcal{Z}} \expval*{\frac{\mathcal{O}\, e^{-\beta E}}{g}}_{g}
+  = \frac{1}{\sum_{\mathcal{C}} e^{-\beta E(\mathcal{C})} g(\mathcal{C}) /
+  g(\mathcal{C})} \expval*{\frac{\mathcal{O} \, e^{-\beta E}}{g}}_{g}
+  = \frac{\expval{\mathcal{O} e^{-\beta E} / g}_{g}}{%
+    \expval{e^{-\beta E} / g}_{g}}.
+\end{equation}
