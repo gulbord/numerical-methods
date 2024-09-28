@@ -12,7 +12,7 @@ int main(int argc, const char **argv)
     if (argc != N_ARGS) {
         fprintf(stderr, "Wrong number of arguments! (Should be %d)\n", N_ARGS);
         fprintf(stderr, "[executable] [output file prefix] [lattice side]\\\n");
-        fprintf(stderr, "  [min. beta] [max. beta] [# of chains] \\\n");
+        fprintf(stderr, "  [min. temp.] [max. temp.] [# of chains] \\\n");
         fprintf(stderr, "  [# of steps between swaps] [# of steps]\n");
         return 1;
     }
@@ -29,8 +29,8 @@ int main(int argc, const char **argv)
     }
 
     int side = atoi(argv[2]);
-    double min_beta = atof(argv[3]);
-    double max_beta = atof(argv[4]);
+    double min_temp = atof(argv[3]);
+    double max_temp = atof(argv[4]);
     int num_chains = atoi(argv[5]);
     if (num_chains < 2) {
         fprintf(stderr, "Put at least two chains!\n");
@@ -40,18 +40,18 @@ int main(int argc, const char **argv)
     int num_steps = atoi(argv[7]);
 
     // Construct the array of inverse temperatures
-    double beta_step = (max_beta - min_beta) / (num_chains - 1);
+    double temp_step = (max_temp - min_temp) / (num_chains - 1);
     double *betas = malloc(num_chains * sizeof(*betas));
-    // Array holding the beta index of the corresponding chain
-    int *which_beta = malloc(num_chains * sizeof(*which_beta));
+    // Array holding the index of the corresponding configuration
+    int *which_conf = malloc(num_chains * sizeof(*which_conf));
     for (int c = 0; c < num_chains; ++c) {
-        betas[c] = min_beta + c * beta_step;
-        which_beta[c] = c;
+        betas[c] = 1.0 / (min_temp + c * temp_step);
+        which_conf[c] = c;
     }
 
     // Prepare the output file header
     for (int c = 1; c <= num_chains; ++c)
-        fprintf(file, "beta.%d,energy.%d,magnet.%d,", c, c, c);
+        fprintf(file, "energy.%d,magnet.%d,", c, c);
     fprintf(file, "swap.a,swap.b\n");
 
     int num_spins = side * side;
@@ -90,28 +90,26 @@ int main(int argc, const char **argv)
 
         // Visit all chains and spins sequentially
         for (int c = 0; c < num_chains; ++c) {
-            double beta = betas[which_beta[c]];
-
+            int k = which_conf[c];
             for (int i = 0; i < num_spins; ++i) {
-                int s = spins[c][i];
+                int s = spins[k][i];
 
                 int nn_sum = 0;
                 for (int j = 0; j < 4; ++j)
-                    nn_sum += spins[c][nn[i][j]];
+                    nn_sum += spins[k][nn[i][j]];
                 int delta = 2 * s * nn_sum;
 
                 // Metropolis acceptance condition
-                if (delta < 0 || rng_real() < exp(-beta * delta)) {
-                    spins[c][i] = -s;
-                    energies[c] += delta;
-                    magnets[c] -= 2 * s;
+                if (delta < 0 || rng_real() < exp(-betas[c] * delta)) {
+                    spins[k][i] = -s;
+                    energies[k] += delta;
+                    magnets[k] -= 2 * s;
                 }
             }
 
-            fprintf(file, "%f,%d,%d,", beta, energies[c], magnets[c]);
+            fprintf(file, "%d,%d,", energies[k], magnets[k]);
         }
 
-        // Swap temperatures if it's time
         if (t % swap_step != 0) {
             // No swap, so swap.a/swap.b are meaningless
             fprintf(file, "NA,NA\n");
@@ -128,17 +126,17 @@ int main(int argc, const char **argv)
         else
             c2 = rng_real() < 0.5 ? c1 - 1 : c1 + 1;
 
-        double beta1 = betas[which_beta[c1]];
-        double beta2 = betas[which_beta[c2]];
-        if ((energies[c2] > energies[c1] && beta2 > beta1) ||
-            rng_real() < exp((beta2 - beta1) * (energies[c2] - energies[c1]))) {
-            // Swap the 'pointers' which_beta
-            int tmp = which_beta[c1];
-            which_beta[c1] = which_beta[c2];
-            which_beta[c2] = tmp;
+        int k1 = which_conf[c1];
+        int k2 = which_conf[c2];
+        double logp = (betas[c2] - betas[c1]) * (energies[k2] - energies[k1]);
+        if (logp > 0 || rng_real() < exp(logp)) {
+            // Swap the 'pointers' which_conf
+            int tmp = which_conf[c1];
+            which_conf[c1] = which_conf[c2];
+            which_conf[c2] = tmp;
 
-            // Save the swapped temperatures
-            fprintf(file, "%f,%f\n", beta1, beta2);
+            // Save the swapped chains
+            fprintf(file, "%d,%d\n", c1, c2);
         } else
             fprintf(file, "-1,-1\n"); // No swap
     }
@@ -147,7 +145,7 @@ int main(int argc, const char **argv)
 
     fclose(file);
     free(betas);
-    free(which_beta);
+    free(which_conf);
     free(spins);
     free(nn);
     free(energies);
