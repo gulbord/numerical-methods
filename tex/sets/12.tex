@@ -26,3 +26,51 @@ Using \cref{eq:pi-dist-def}, we can then write
   = \frac{\expval{\mathcal{O} e^{-\beta E} / g}_{g}}{%
     \expval{e^{-\beta E} / g}_{g}}.
 \end{equation}
+
+\section{Single histogram method}\label{ex:122}
+
+\begin{sourcefiles}
+  \item[Analysis script] src/122\_single\_histogram.R
+\end{sourcefiles}
+
+Using the Metropolis algorithm implementation from \cref{ch:metropolis}, I ran
+\num{11} simulations at different temperatures between $T_{\mathrm{min}} =
+\num{2.2}$ and $T_{\mathrm{max}} = \num{2.3}$. Then I used four of these, namely
+\numlist{2.2;2.23;2.26;2.29}, to as starting points for interpolations with the
+single histogram method, generating a smooth curve of reweighted average
+energies between $T_{\mathrm{min}}$ and $T_{\mathrm{max}}$.
+
+\begin{figure}
+  \centering
+  \includegraphics{img/122a}
+  \caption{histograms of the energy per spin at four different temperatures from
+    the set of simulations in \cref{ex:122}. The lattice size is \num{100} and
+    the number of time steps is \num{2000000}, with the first \num{10000}
+    discarded for equilibration.}
+  \label{fig:122a}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{img/122b}
+  \caption{interpolations using the single histogram method, with the four
+    temperatures from \cref{fig:122a} as starting points. The black points with
+    error bars represent the average energy per spin, along with its
+    autocorrelation-adjusted standard deviation, from the full set of
+    simulations.}
+  \label{fig:122b}
+\end{figure}
+
+The results of the reweighting are shown in \cref{fig:122b}. The two central
+temperatures, \numlist{2.23;2.26}, appear to yield better fits. If we account
+for the associated uncertainties, $T = \num{2.29}$ is mostly compatible with all
+the experimental averages. The lowest temperature, \num{2.2}, performs well
+locally but shows significant deviations on the upper end of the scale.
+
+The reason why higher temperatures serve better as starting points for
+reweighting is due to their wider distributions. In fact, as seen in
+\cref{fig:122a}, the four overlapping histograms of the energy distributions
+illustrate that $T = \num{2.29}$ has a broader distribution that extends to the
+right tail of the distribution for $T = \num{2.2}$. This narrower distribution
+does not overlap significantly with the rightmost one, $T = \num{2.3}$,
+resulting in an incorrect tail in the interpolation shown in \cref{fig:122b}.
