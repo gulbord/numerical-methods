@@ -52,7 +52,7 @@ int main(int argc, const char **argv)
     // Prepare the output file header
     for (int c = 1; c <= num_chains; ++c)
         fprintf(file, "energy.%d,magnet.%d,", c, c);
-    fprintf(file, "swap.a,swap.b\n");
+    fprintf(file, "swap.a,swap.b,swapped\n");
 
     int num_spins = side * side;
     int(*spins)[num_spins] = malloc(num_chains * sizeof(*spins));
@@ -112,7 +112,7 @@ int main(int argc, const char **argv)
 
         if (t % swap_step != 0) {
             // No swap, so swap.a/swap.b are meaningless
-            fprintf(file, "NA,NA\n");
+            fprintf(file, "NA,NA,NA\n");
             continue;
         }
 
@@ -136,9 +136,9 @@ int main(int argc, const char **argv)
             which_conf[c2] = tmp;
 
             // Save the swapped chains
-            fprintf(file, "%d,%d\n", c1, c2);
+            fprintf(file, "%d,%d,1\n", c1, c2);
         } else
-            fprintf(file, "-1,-1\n"); // No swap
+            fprintf(file, "%d,%d,0\n", c1, c2);
     }
 
     printf("\n"); // After progress bar
