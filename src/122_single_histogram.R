@@ -67,7 +67,7 @@ plt_hist <- rbindlist(samples[which_preds]) |>
       aes(energy, after_stat(density)),
       bins = 86,
       position = "identity",
-      alpha = 0.5,
+      alpha = 0.75,
     ) +
     scale_fill_viridis_d() +
     scale_x_continuous(breaks = scales::pretty_breaks()) +
