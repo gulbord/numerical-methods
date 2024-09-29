@@ -51,7 +51,7 @@ plt_hist <- melt(
     scale_fill_viridis_d() +
     labs(x = "Energy per spin", y = "Density", fill = "Temperature")
 
-plot_tex("062a", plt_hist, asp_ratio = 4 / 3, scale_factor = 0.9)
+plot_tex("062a", plt_hist, asp_ratio = 1.4, scale_factor = 0.9)
 
 # Replicate the simulation without swaps
 # system(
