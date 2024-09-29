@@ -6,103 +6,103 @@ EXE := exe
 
 RNG := $(SRC)/utils/random.c
 
-all: 1 2 3 5 6 7 8 9 10
+all: 01 02 03 05 06 07 08 09 10 12
 
 clean:
 	rm -f $(EXE)/*
 
-1: 11 12 13 14
+01: 011 012 013 014
 
-11: 11a 11b
+011: 011a 011b
 
-11a: $(SRC)/011a_rect_hit_miss.c $(RNG)
+011a: $(SRC)/011a_rect_hit_miss.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/011a_rect_hit_miss
 
-11b: $(SRC)/011b_disk_hit_miss.c $(RNG)
+011b: $(SRC)/011b_disk_hit_miss.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/011b_disk_hit_miss
 
-12: $(SRC)/012_inversion_power34.c $(RNG)
+012: $(SRC)/012_inversion_power34.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/012_inversion_power34
 
-13: $(SRC)/013_inversion_power2.c $(RNG)
+013: $(SRC)/013_inversion_power2.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/013_inversion_power2
 
-14: 14a 14b 14c
+014: 014a 014b 014c
 
-14a: $(SRC)/014a_inversion_exp.c $(RNG)
+014a: $(SRC)/014a_inversion_exp.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/014a_inversion_exp
 
-14b: $(SRC)/014b_inversion_exp2.c $(RNG)
+014b: $(SRC)/014b_inversion_exp2.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/014b_inversion_exp2
 
-14c: $(SRC)/014c_inversion_powerlaw.c $(RNG)
+014c: $(SRC)/014c_inversion_powerlaw.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/014c_inversion_powerlaw
 
-2: 21 22 23
+02: 021 022 023
 
-21: $(SRC)/021_disk_sampling.c $(RNG)
+021: $(SRC)/021_disk_sampling.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/021_disk_sampling
 
-22: $(SRC)/022_box_muller.c $(RNG)
+022: $(SRC)/022_box_muller.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/022_box_muller
 
-23: 23a 23b
+023: 023a 023b
 
-23a: $(SRC)/023a_rejection_sampling.c $(RNG)
+023a: $(SRC)/023a_rejection_sampling.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/023a_rejection_sampling
 
-23b: $(SRC)/023b_rejection_accratio.c $(RNG)
+023b: $(SRC)/023b_rejection_accratio.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/023b_rejection_accratio
 
-3: 31 32
+03: 031 032
 
-31: $(SRC)/031_crude_vs_importance.c $(RNG)
+031: $(SRC)/031_crude_vs_importance.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/031_crude_vs_importance
 
-32: $(SRC)/032_cosx_importance.c $(RNG)
+032: $(SRC)/032_cosx_importance.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/032_cosx_importance
 
-5: 51
+05: 051
 
-51: $(SRC)/051_ising_metropolis.c $(SRC)/utils/progress.c $(RNG)
+051: $(SRC)/051_ising_metropolis.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/051_ising_metropolis
 
-6: 61 62
+06: 061 062
 
-61: $(SRC)/061_ising_wolff.c $(SRC)/utils/progress.c $(RNG)
+061: $(SRC)/061_ising_wolff.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/061_ising_wolff
 
-62: $(SRC)/062_ising_mmc.c $(SRC)/utils/progress.c $(RNG)
+062: $(SRC)/062_ising_mmc.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/062_ising_mmc
 
-7: 71 72
+07: 071 072
 
-71: $(SRC)/071_lotka_volterra.c $(SRC)/ctmp/gillespie.c $(RNG)
+071: $(SRC)/071_lotka_volterra.c $(SRC)/ctmp/gillespie.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/071_lotka_volterra
 
-72: $(SRC)/072_brusselator.c $(SRC)/ctmp/gillespie.c $(RNG)
+072: $(SRC)/072_brusselator.c $(SRC)/ctmp/gillespie.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/072_brusselator
 
-8: 82 83 84
+08: 082 083 084
 
-82: $(SRC)/082_off_lattice_mc.c $(SRC)/offlat/integration.c \
+082: $(SRC)/082_off_lattice_mc.c $(SRC)/offlat/integration.c \
 	$(SRC)/offlat/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/082_off_lattice_mc
 
-83: $(SRC)/083_hard_spheres.c $(SRC)/offlat/integration.c \
+083: $(SRC)/083_hard_spheres.c $(SRC)/offlat/integration.c \
 	$(SRC)/offlat/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/083_hard_spheres
 
-84: $(SRC)/084_lennard_jones.c $(SRC)/offlat/integration.c \
+084: $(SRC)/084_lennard_jones.c $(SRC)/offlat/integration.c \
 	$(SRC)/offlat/parameters.c $(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/084_lennard_jones
 
-9: 91 92
+09: 091 092
 
-91: $(SRC)/091_first_order.c
+091: $(SRC)/091_first_order.c
 	$(CC) $(CFLAGS) $^ -o $(EXE)/091_first_order
 
-92: $(SRC)/092_higher_order.c
+092: $(SRC)/092_higher_order.c
 	$(CC) $(CFLAGS) $^ -o $(EXE)/092_higher_order
 
 10: 102
@@ -111,5 +111,10 @@ clean:
 	$(SRC)/moldyn/observables.c $(SRC)/moldyn/parameters.c \
 	$(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/102_lennard_jones
+
+12: 123
+
+123: $(SRC)/123_mhm_partition.c
+	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/123_mhm_partition
 
 .PHONY: all clean
