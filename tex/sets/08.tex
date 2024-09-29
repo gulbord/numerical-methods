@@ -129,9 +129,9 @@ different densities, $\rho \in \{ \num{0.05}, \num{0.3}, \num{0.5}, \num{0.7},
 \num{0.01}, \num{0.1}, \num{0.3}, \num{0.6}, \num{1} \}$. Each combination of
 $\rho$ and $d_{\mathrm{max}}$ was tested with both random initialization and
 starting from a cubic lattice, and averaged over \num{10} realizations, each
-lasting \num{e5} Monte Carlo sweeps. The first \num{e4} sweeps were discarded to
-allow for equilibration. I recorded the acceptance ratio of each sweep and the
-total energy of the system in terms of the number of overlaps.
+lasting \num{100000} Monte Carlo sweeps. The first \num{10000} sweeps were
+discarded to allow for equilibration. I recorded the acceptance ratio of each
+sweep and the total energy of the system in terms of the number of overlaps.
 
 The results are shown in \cref{fig:083}. If the density is sufficiently low, the
 equilibrium configuration exhibits no overlaps. With the cubic lattice
@@ -151,7 +151,7 @@ configuration, and the acceptance ratio drops even quicker.
     the maximum displacement for a hard spheres gas of \num{100} particles, at
     different densities and with lattice or random initialization. Each data
     point represents an average over \num{10} realizations, each lasting
-    \num{e5} sweeps, with the first \num{e4} discarded to allow for
+    \num{100000} sweeps, with the first \num{10000} discarded for
     equilibration.}
   \label{fig:083}
 \end{figure}
@@ -166,7 +166,7 @@ configuration, and the acceptance ratio drops even quicker.
 \end{sourcefiles}
 
 Once again, I reused the code in \texttt{src/offlat/} by implementing a
-Lennard-Jones \enquote{energy delta} function. I also introduced a cut radius
+Lennard-Jones \enquote{energy delta} function. I also introduced a cutoff radius
 for the potential, fixing it to $3 \sigma$. The code
 \texttt{src/084\_lennard\_jones.c} tracks not only the energy and acceptance
 ratio, as in the previous exercise, but also the pressure. The goal of the
@@ -175,7 +175,7 @@ exercise was to recreate the tabulated values -- found in
 isotherms in the pressure-density diagram.
 
 The results are shown in \cref{fig:084}. I performed simulations consisting of
-\num{10} realizations of \num{e5} sweeps each, with \num{100} particles, for
+\num{10} realizations of \num{100000} sweeps each, with \num{100} particles, for
 \num{11} density values between \num{0.05} and \num{0.9}, both at $T =
 \num{0.9}$ and $T = \num{2.0}$. The pressure values at the higher temperature
 seem perfectly in line with the theoretical result, while the $T = \num{0.9}$
@@ -188,8 +188,8 @@ experimental isotherm shows a \enquote{dip} of negative pressures around $\rho =
   \caption{pressure-density diagram of a Lennard-Jones system with \num{100}
     particles at two different temperatures, $T = \num{0.9}$ and $T = \num{2.0}$
     (in reduced units). Each point represents an average over \num{10}
-    realizations, each lasting \num{e5} sweeps, with the first \num{e4}
-    discarded to allow for equilibration. Error bars represent one standard
-    deviation, and the dashed lines are the theoretical isotherms.}
+    realizations, each lasting \num{100000} sweeps, with the first \num{10000}
+    discarded for equilibration. Error bars represent one standard deviation,
+    and the dashed lines are the theoretical isotherms.}
   \label{fig:084}
 \end{figure}
