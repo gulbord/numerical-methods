@@ -135,6 +135,136 @@ plt_U <- ggplot(Udata) +
     y = "Energy per spin",
   )
 
-plot_tex("123a", plt_U, asp_ratio = 4 / 3, scale_factor = 0.8)
+# plot_tex("123a", plt_U, asp_ratio = 4 / 3, scale_factor = 0.8)
 
-# Second part of the analysis
+Tc <- 2 / log(1 + sqrt(2))
+temp_step <- 0.005
+num_temps <- 60
+temps <- c(
+  seq(to = Tc - temp_step, by = temp_step, length.out = num_temps %/% 2),
+  seq(from = Tc, by = temp_step, length.out = num_temps - num_temps %/% 2)
+)
+L <- c(32, 45, 64, 90)
+
+eq_time <- 1e4
+reweigh <- parallel::mclapply(
+  c(32, 45, 64, 90),
+  function(L) {
+    fnames <- sprintf("out/051_L%d_T%g.csv", L, temps)
+    samples <- fnames |>
+      lapply(\(f) fread(f)[(eq_time + 1):.N, energy]) |>
+      do.call(cbind, args = _)
+    betas <- 1 / temps
+    taus <- apply(
+      samples,
+      MARGIN = 2,
+      FUN = function(x) {
+        acf <- acf_fft(x, max_lag = 250, thr = 0.005)[-1]
+        return(sum((1 - seq_along(acf) / length(x)) * acf))
+      }
+    )
+
+    energy_breaks <- seq(min(samples), max(samples) + 1) - 0.5
+    energies <- seq(min(samples), max(samples))
+    counts <- apply(
+      samples,
+      MARGIN = 2,
+      FUN = \(x) hist(x, breaks = energy_breaks, plot = FALSE)$counts
+    )
+
+    Z <- scpf(betas, energies, counts, taus, max_iter = 1000)
+    message(paste("Computed Z for L =", L))
+
+    logN <- log(colSums(counts) / taus)
+    nums <- colSums(t(counts) / taus)
+    U <- vapply(
+      betas,
+      function(b) {
+        sum(
+          vapply(
+            seq_along(energies)[nums > 0],
+            function(i) {
+              denom <- exp(
+                logN[1] - log(Z[1]) + (b - betas[1]) * energies[i]
+              ) * sum(
+                exp(
+                  logN - logN[1] - log(Z) + log(Z[1]) +
+                    (betas[1] - betas) * energies[i]
+                )
+              )
+              return(energies[i] * nums[i] / denom)
+            },
+            numeric(1)
+          )
+        )
+      },
+      numeric(1)
+    ) / Z
+
+    U2 <- vapply(
+      betas,
+      function(b) {
+        sum(
+          vapply(
+            seq_along(energies)[nums > 0],
+            function(i) {
+              denom <- exp(
+                logN[1] - log(Z[1]) + (b - betas[1]) * energies[i]
+              ) * sum(
+                exp(
+                  logN - logN[1] - log(Z) + log(Z[1]) +
+                    (betas[1] - betas) * energies[i]
+                )
+              )
+              return(energies[i]^2 * nums[i] / denom)
+            },
+            numeric(1)
+          )
+        )
+      },
+      numeric(1)
+    ) / Z
+
+    C <- temps^2 * (U2 - U^2) / L^2
+
+    return(list(energy = U / L^2, spheat = C))
+  },
+  mc.cores = min(4, getDTthreads())
+) |>
+  rbindlist(idcol = "L") |>
+  _[, let(temp = rep(temps, 4), L = c(32, 45, 64, 90)[L])] |>
+  _[, .(L, temp, energy, spheat)]
+
+# fwrite(rew[, .(L, temp, energy, spheat)], "src/data/123_reweighting.csv")
+reweigh <- fread("src/data/123_reweighting.csv")
+
+real_data <- parallel::mclapply(
+  c(32, 45, 64, 90),
+  function(L) {
+    res <- lapply(
+      temps,
+      function(t) {
+        fname <- sprintf("out/051_L%d_T%g.csv", L, t)
+        energy <- fread(fname)[(eq_time + 1):.N, energy / L^2]
+
+        N <- length(energy)
+        acf <- acf_fft(energy, max_lag = 250, thr = 0.005)[-1]
+        tau <- sum((1 - seq_along(acf) / N) * acf)
+
+        return(
+          list(
+            L = L,
+            temp = t,
+            energy = mean(energy),
+            spheat = var(energy) * (t * L)^2 * (N - 1) / (N - 1 - 2 * tau)
+          )
+        )
+      }
+    )
+    return(rbindlist(res))
+  },
+  mc.cores = min(4, getDTthreads())
+) |> rbindlist()
+
+# fwrite(real_data, "src/data/123_real_data.csv")
+# real_data <- fread("src/data/123_real_data.csv")
