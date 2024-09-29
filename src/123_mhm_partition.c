@@ -171,6 +171,10 @@ int main(int argc, const char **argv)
             delta += (1.0 - z_old[i] / z_new[i]) * (1.0 - z_old[i] / z_new[i]);
         if (delta < tol)
             break;
+
+        // Set z_old = z_new
+        for (int i = 0; i < num_betas; ++i)
+            z_old[i] = z_new[i];
     };
 
     // Print results
