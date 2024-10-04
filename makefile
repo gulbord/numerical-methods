@@ -6,7 +6,7 @@ EXE := exe
 
 RNG := $(SRC)/utils/random.c
 
-all: 01 02 03 05 06 07 08 09 10 12
+all: 01 02 03 05 06 07 08 09 10
 
 clean:
 	rm -f $(EXE)/*
@@ -111,10 +111,5 @@ clean:
 	$(SRC)/moldyn/observables.c $(SRC)/moldyn/parameters.c \
 	$(SRC)/utils/progress.c $(RNG)
 	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/102_lennard_jones
-
-12: 123
-
-123: $(SRC)/123_mhm_partition.c
-	$(CC) $(CFLAGS) $^ -lm -o $(EXE)/123_mhm_partition
 
 .PHONY: all clean
