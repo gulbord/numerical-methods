@@ -9,6 +9,7 @@
 #define N_ARGS 3
 #define RCUT 3.0
 #define RCUT2 9.0
+#define VCUT -0.005479442
 
 double compute_energy_delta(int pick, const double *trial,
                             const double *particles,
@@ -73,7 +74,7 @@ double compute_potential(const double *particles,
                 continue;
 
             double inv_r6 = 1.0 / (r2 * r2 * r2);
-            energy += inv_r6 * inv_r6 - inv_r6;
+            energy += inv_r6 * inv_r6 - inv_r6 - VCUT;
         }
     }
 

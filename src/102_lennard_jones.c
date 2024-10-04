@@ -92,8 +92,9 @@ double compute_potential_r2(double r2, const struct parameters *params)
 
     double inv_r2 = 1.0 / r2;
     double inv_r6 = inv_r2 * inv_r2 * inv_r2;
+    double inv_cut = 1.0 / pow(params->r_cut, 12) - 1.0 / pow(params->r_cut, 6);
 
-    return 4.0 * (inv_r6 * inv_r6 - inv_r6);
+    return 4.0 * (inv_r6 * inv_r6 - inv_r6 - inv_cut);
 }
 
 int main(int argc, const char **argv)
